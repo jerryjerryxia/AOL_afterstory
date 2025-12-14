@@ -12,12 +12,12 @@ define narrator = Character(None, kind=adv)
 ## 主角内心独白
 define protag_thought = Character(None, kind=adv, what_prefix='"', what_suffix='"', what_italic=True)
 
-## 示例角色 - 请根据实际剧本修改
+## 主要角色
 ## 格式: define 变量名 = Character("显示名称", color="名字颜色")
 
-define placeholder_a = Character("角色A", color="#c8ffc8")
-define placeholder_b = Character("角色B", color="#c8c8ff")
-define placeholder_c = Character("角色C", color="#ffc8c8")
+define wangshuang = Character("王霜", color="#555555")  # 暗灰色
+define ahe = Character("阿鹤", color="#4a90d9")  # 蓝色
+define shishou = Character("尸首", color="#dc143c")  # 深红色
 
 ## 未知角色（用于角色未揭示身份时）
 define unknown = Character("???", color="#888888")
@@ -30,9 +30,9 @@ define unknown = Character("???", color="#888888")
 ## 占位符精灵图 - 用纯色方块代替
 ## 当美术资源准备好后，替换为实际的 layeredimage 定义
 
-image placeholder_a_sprite = Solid("#4a7c4a", xsize=400, ysize=800)
-image placeholder_b_sprite = Solid("#4a4a7c", xsize=400, ysize=800)
-image placeholder_c_sprite = Solid("#7c4a4a", xsize=400, ysize=800)
+image wangshuang_sprite = Solid("#555555", xsize=400, ysize=800)
+image ahe_sprite = Solid("#4a90d9", xsize=400, ysize=800)
+image shishou_sprite = Solid("#dc143c", xsize=400, ysize=800)
 
 ## 实际角色精灵图示例（当资源准备好时使用）：
 # layeredimage character_name:
