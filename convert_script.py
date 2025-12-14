@@ -7,8 +7,23 @@ Handles branching with A:/B: options and 【选项分线到此结束】 converge
 import re
 
 def escape_quotes(text):
-    """Escape double quotes for Ren'Py"""
+    """Escape straight double quotes for Ren'Py"""
     return text.replace('"', '\\"')
+
+def has_curly_quotes(text):
+    """Check if text contains curly double quotes"""
+    return '"' in text or '"' in text
+
+def format_dialogue(text):
+    """Format dialogue string, using single quotes if curly quotes present"""
+    if has_curly_quotes(text):
+        # Use single quotes as delimiter, escape any single quotes in text
+        escaped = text.replace("'", "\\'")
+        return f"'{escaped}'"
+    else:
+        # Use double quotes as delimiter, escape any double quotes in text
+        escaped = text.replace('"', '\\"')
+        return f'"{escaped}"'
 
 def convert_content_line(line, indent="    "):
     """Convert a single content line to Ren'Py format"""
@@ -31,17 +46,17 @@ def convert_content_line(line, indent="    "):
     if char_action_match:
         char_name = char_action_match.group(1)
         action = char_action_match.group(2)
-        dialogue = escape_quotes(char_action_match.group(3).strip())
+        dialogue = char_action_match.group(3).strip()
         char_var = {'王霜': 'wangshuang', '阿鹤': 'ahe', '尸首': 'shishou'}[char_name]
-        return f'{indent}## {action}\n{indent}{char_var} "{dialogue}"'
+        return f'{indent}## {action}\n{indent}{char_var} {format_dialogue(dialogue)}'
 
     # Character dialogue (simple)
     char_match = re.match(r'^(王霜|阿鹤|尸首)[：:](.*)$', line)
     if char_match:
         char_name = char_match.group(1)
-        dialogue = escape_quotes(char_match.group(2).strip())
+        dialogue = char_match.group(2).strip()
         char_var = {'王霜': 'wangshuang', '阿鹤': 'ahe', '尸首': 'shishou'}[char_name]
-        return f'{indent}{char_var} "{dialogue}"'
+        return f'{indent}{char_var} {format_dialogue(dialogue)}'
 
     # Section headers
     if re.match(r'^[一二三四五六七八九十]+周目', line):
@@ -53,7 +68,7 @@ def convert_content_line(line, indent="    "):
         return f"{indent}## {end_match.group(1)}"
 
     # Narrative text
-    return f'{indent}"{escape_quotes(line)}"'
+    return f'{indent}{format_dialogue(line)}'
 
 
 def is_choice_a(line):
