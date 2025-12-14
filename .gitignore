@@ -1,0 +1,39 @@
+# Ren'Py generated files
+*.rpyc
+*.rpymc
+*.rpyb
+*.rpa
+
+# Cache and saves
+game/cache/
+game/saves/
+saves/
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs
+*.zip
+*.tar.gz
+
+# Logs
+log.txt
+traceback.txt
+errors.txt
