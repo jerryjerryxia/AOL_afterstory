@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./renpy.exe:*)",
+      "Bash(cmd /c mklink /D \"X:\\RenPy\\renpy-8.5.0-sdk\\AOL_afterstory\" \"X:\\GameDev\\AOL_afterstory\")",
+      "Bash(dir \"X:\\GameDev\\AOL_afterstory\\game\\saves\")",
+      "Bash(dir \"%APPDATA%\\RenPy\\AOLAfterstory-1234567890\")",
+      "Bash(del /Q \"X:\\GameDev\\AOL_afterstory\\game\\saves\\*\")",
+      "Bash(\"X:\\RenPy\\renpy-8.5.0-sdk\\renpy.exe\" \"X:\\GameDev\\AOL_afterstory\" lint)",
+      "Bash(cmd /c \"rmdir /S /Q X:\\GameDev\\AOL_afterstory\\game\\saves\")",
+      "Bash(dir:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c \"taskkill /F /IM renpy.exe\")",
+      "Bash(cmd /c \"rmdir /S /Q X:\\GameDev\\AOL_afterstory\\game\\saves && echo Deleted\")",
+      "Bash(test:*)",
+      "Bash(git init:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: AOL Afterstory visual novel prototype\n\n- Ren''Py 8.5 project setup with 1920x1080 base resolution\n- Chinese UI with full translation of built-in strings\n- Main menu, save/load, preferences, history screens\n- Quick menu with all standard VN controls\n- Placeholder characters and backgrounds\n- Test script with 2 branching endings\n- Music room screen (placeholder)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(gh auth status:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git config:*)",
+      "Bash(ssh:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(python -c:*)",
+      "Bash(pip install:*)",
+      "Bash(chcp 6500)",
+      "Bash(python:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(chcp 65001)",
+      "Bash(del \"X:\\GameDev\\AOL_afterstory\\game\\scripts\\route1.rpy\")",
+      "Bash(cmd /c \"del X:\\GameDev\\AOL_afterstory\\game\\scripts\\route1.rpy\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

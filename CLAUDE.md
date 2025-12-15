@@ -77,5 +77,5 @@ B: Choice B text（madness+1）
    ```
 
 **Google Docs Sync:**
-- `python sync_gdocs.py pull` - Download from Google Docs
-- `python sync_gdocs.py push` - Upload to Google Docs
+- `python sync_gdocs.py pull` - Download from Google Docs. note that this is usually not used. do not use unless specifically asked to. 
+- `python sync_gdocs.py push` - Upload to Google Docs. 
