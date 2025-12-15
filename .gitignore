@@ -37,3 +37,11 @@ Thumbs.db
 log.txt
 traceback.txt
 errors.txt
+
+# Google API credentials
+client_secret_*.json
+token.json
+
+# Windows temp files
+~$*
+nul
