@@ -45,6 +45,15 @@ def convert_content_line(line, indent="    "):
             title = title_match.group(1)
             return f'{indent}call screen route_title("{title}")'
 
+    # Bad End markers - unlock ending and return to main menu (MUST be before general stage direction check)
+    bad_end_match = re.match(r'^【(Bad End \d+[：:].*)】$', line)
+    if bad_end_match:
+        end_text = bad_end_match.group(1)
+        # Extract the bad end number
+        num_match = re.search(r'Bad End (\d+)', end_text)
+        end_num = num_match.group(1) if num_match else "1"
+        return f"{indent}## {end_text}\n{indent}$ unlock_ending(\"bad_end_{end_num}\")\n{indent}return"
+
     # Stage direction (standalone) -> comment
     stage_match = re.match(r'^【(.+?)】$', line)
     if stage_match:
@@ -70,11 +79,6 @@ def convert_content_line(line, indent="    "):
     # Section headers
     if re.match(r'^[一二三四五六七八九十]+周目', line):
         return f"\n## {line}\n"
-
-    # End markers
-    end_match = re.match(r'^【(.*(End|结局).*)】$', line)
-    if end_match:
-        return f"{indent}## {end_match.group(1)}"
 
     # Narrative text
     return f'{indent}{format_dialogue(line)}'
@@ -113,6 +117,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
 
     i = start_line
     choice_counter = 0
+    last_dialogue = None  # Track the last dialogue line for menu caption
 
     while i < end_line and i < len(lines):
         line = lines[i].strip()
@@ -159,8 +164,11 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                     i += 1
 
             # Generate menu structure
+            # Keep the dialogue line before menu, use "extend" to keep textbox visible
             output.append("")
             output.append("    menu:")
+            output.append('        extend ""')
+            last_dialogue = None
 
             # Choice A
             output.append(f'        "{choice_a_text}":')
@@ -194,6 +202,11 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
         converted = convert_content_line(line)
         if converted:
             output.append(converted)
+            # Track dialogue lines (character dialogue or narration) for menu captions
+            # These are lines that display in the textbox
+            stripped = converted.strip()
+            if not stripped.startswith('##') and not stripped.startswith('$') and not stripped.startswith('call '):
+                last_dialogue = stripped
 
     # End of route
     output.append("")

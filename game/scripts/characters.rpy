@@ -15,7 +15,7 @@ define protag_thought = Character(None, kind=adv, what_prefix='"', what_suffix='
 ## 主要角色
 ## 格式: define 变量名 = Character("显示名称", color="名字颜色")
 
-define wangshuang = Character("王霜", color="#555555")  # 暗灰色
+define wangshuang = Character("王霜", color="#9b59b6")  # 紫色
 define ahe = Character("阿鹤", color="#4a90d9")  # 蓝色
 define shishou = Character("尸首", color="#dc143c")  # 深红色
 
@@ -30,7 +30,7 @@ define unknown = Character("???", color="#888888")
 ## 占位符精灵图 - 用纯色方块代替
 ## 当美术资源准备好后，替换为实际的 layeredimage 定义
 
-image wangshuang_sprite = Solid("#555555", xsize=400, ysize=800)
+image wangshuang_sprite = Solid("#9b59b6", xsize=400, ysize=800)
 image ahe_sprite = Solid("#4a90d9", xsize=400, ysize=800)
 image shishou_sprite = Solid("#dc143c", xsize=400, ysize=800)
 

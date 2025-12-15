@@ -6,6 +6,22 @@
 ################################################################################
 
 label prologue:
+    ## 根据进度跳转到对应周目
+    ## 每个周目都有自己的序章内容，在各自的route文件中
+    $ route = get_current_route()
+
+    if route == 1:
+        jump route1_prologue
+    elif route == 2:
+        jump route2_start
+    else:
+        jump route3_start
+
+################################################################################
+## 一周目序章 - 只在第一次游戏时播放
+################################################################################
+
+label route1_prologue:
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead), 深海白噪音
 
     ## 一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。
@@ -47,12 +63,5 @@ label prologue:
     "那就当你同意了。"
     "请自便吧。"
 
-    ## 序章结束，根据进度跳转到对应周目
-    $ route = get_current_route()
-
-    if route == 1:
-        jump route1_start
-    elif route == 2:
-        jump route2_start
-    else:
-        jump route3_start
+    ## 一周目序章结束，跳转到一周目正式开始
+    jump route1_start
