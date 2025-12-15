@@ -52,3 +52,30 @@ B: Choice B text（madness+1）
 1. Add `default persistent.new_end_unlocked = False` in variables.rpy
 2. Add case to `unlock_ending()` function
 3. Use `【Bad End N：name】` in raw script
+
+## Testing Workflow
+
+**Before letting the user test, always run:**
+
+1. **Ren'Py Lint:**
+   ```
+   X:\RenPy\renpy-8.5.0-sdk\renpy.exe "X:\GameDev\AOL_afterstory" lint
+   ```
+   - Fix any "Unreachable Statements" (usually missing `【选项分线到此结束】` markers)
+   - Fix any undefined labels or variables
+
+2. **Check traceback.txt:**
+   ```
+   X:\GameDev\AOL_afterstory\traceback.txt
+   ```
+   - If exists, read and fix the error
+   - Delete after confirming fix
+
+3. **Regenerate scripts after raw script changes:**
+   ```
+   python convert_script.py
+   ```
+
+**Google Docs Sync:**
+- `python sync_gdocs.py pull` - Download from Google Docs
+- `python sync_gdocs.py push` - Upload to Google Docs
