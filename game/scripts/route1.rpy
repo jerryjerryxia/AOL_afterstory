@@ -5,6 +5,7 @@ label route1_start:
 
 ## 一周目：浮潜
 
+    call screen route_title("浮潜")
     ## 黑屏
     ## 头出水面后大吸一口气音效
     "仿佛经历了一场亘古的潜行，你终于浮出水面。"

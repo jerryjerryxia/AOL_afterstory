@@ -36,6 +36,15 @@ def convert_content_line(line, indent="    "):
     if '选项分线到此结束' in line:
         return None
 
+    # Route transition screens 【展示X周目分屏"标题"】
+    if '展示' in line and '周目分屏' in line:
+        # Extract title between quotes using flexible matching
+        import re as re2
+        title_match = re2.search(r'分屏.(.+?).】$', line)
+        if title_match:
+            title = title_match.group(1)
+            return f'{indent}call screen route_title("{title}")'
+
     # Stage direction (standalone) -> comment
     stage_match = re.match(r'^【(.+?)】$', line)
     if stage_match:

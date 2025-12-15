@@ -930,3 +930,74 @@ style skip_frame:
 
 style skip_text:
     size gui.notify_text_size
+
+################################################################################
+## 周目标题界面 - Route Title Screen
+################################################################################
+
+screen route_title(title, subtitle=None):
+    ## 全屏显示周目标题，点击后淡出
+
+    modal True
+    zorder 100
+
+    default closing = False
+
+    ## 整个画面容器
+    frame:
+        background None
+        xfill True
+        yfill True
+
+        if not closing:
+            at route_title_fadein
+        else:
+            at route_title_fadeout
+
+        ## 背景图片占位（之后替换为实际美术资源）
+        add Solid("#000000")
+
+        ## 标题文字容器
+        vbox:
+            xalign 0.5
+            yalign 0.5
+            spacing 20
+
+            text title:
+                style "route_title_text"
+
+            if subtitle:
+                text subtitle:
+                    style "route_subtitle_text"
+
+    ## 点击任意处开始淡出
+    if not closing:
+        button:
+            xfill True
+            yfill True
+            action SetScreenVariable("closing", True)
+
+    ## 淡出完成后关闭
+    if closing:
+        timer 0.8 action Return()
+
+transform route_title_fadein:
+    alpha 0.0
+    ease 1.0 alpha 1.0
+
+transform route_title_fadeout:
+    ease 0.8 alpha 0.0
+
+style route_title_text:
+    font gui.text_font
+    size 120
+    color "#ffffff"
+    xalign 0.5
+    outlines [(4, "#000000", 0, 0)]
+
+style route_subtitle_text:
+    font gui.text_font
+    size 48
+    color "#cccccc"
+    xalign 0.5
+    outlines [(2, "#000000", 0, 0)]
