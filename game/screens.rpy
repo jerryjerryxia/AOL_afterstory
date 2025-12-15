@@ -8,6 +8,20 @@
 init offset = -1
 
 ################################################################################
+## 存档删除功能
+################################################################################
+
+init python:
+    def delete_all_saves():
+        """Delete all save files using Ren'Py's built-in functions."""
+        deleted_count = 0
+        # Use Ren'Py's API to list and delete all saves properly
+        for slot in renpy.list_slots():
+            renpy.unlink_save(slot)
+            deleted_count += 1
+        renpy.notify("已删除 {} 个存档".format(deleted_count))
+
+################################################################################
 ## GUI 变量定义（填补缺失的变量）
 ################################################################################
 
@@ -399,6 +413,7 @@ screen navigation():
         if main_menu:
             textbutton _("开始游戏") action Start()
             textbutton _("读取存档") action ShowMenu("load")
+            textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None)
             textbutton _("音乐鉴赏") action ShowMenu("music_room")
         else:
             textbutton _("历史记录") action ShowMenu("history")
@@ -460,7 +475,6 @@ screen file_slots(title):
                     value page_name_value
 
             grid gui.file_slot_cols gui.file_slot_rows:
-                style_prefix "slot"
                 xalign 0.5
                 yalign 0.5
                 spacing gui.slot_spacing
@@ -468,18 +482,28 @@ screen file_slots(title):
                 for i in range(gui.file_slot_cols * gui.file_slot_rows):
                     $ slot = i + 1
 
-                    button:
-                        action FileAction(slot)
+                    vbox:
+                        style "slot_vbox"
 
-                        has vbox
+                        button:
+                            style "slot_button"
+                            action FileAction(slot)
 
-                        add FileScreenshot(slot) xalign 0.5
+                            has vbox
 
-                        text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
-                            style "slot_time_text"
+                            add FileScreenshot(slot) xalign 0.5
 
-                        text FileSaveName(slot):
-                            style "slot_name_text"
+                            text FileTime(slot, format=_("{#file_time}%Y-%m-%d %H:%M"), empty=_("空存档位")):
+                                style "slot_time_text"
+
+                            text FileSaveName(slot):
+                                style "slot_name_text"
+
+                        ## Delete button - only show if slot has a save
+                        if FileLoadable(slot):
+                            textbutton _("删除"):
+                                style "slot_delete_button"
+                                action FileDelete(slot)
 
                         key "save_delete" action FileDelete(slot)
 
@@ -509,11 +533,6 @@ style page_label_text is gui_label_text
 style page_button is gui_button
 style page_button_text is gui_button_text
 
-style slot_button is gui_button
-style slot_button_text is gui_button_text
-style slot_time_text is slot_button_text
-style slot_name_text is slot_button_text
-
 style page_label:
     xpadding 75
     ypadding 5
@@ -530,6 +549,9 @@ style page_button_text:
     idle_color gui.idle_color
     hover_color gui.hover_color
 
+style slot_vbox:
+    spacing 5
+
 style slot_button:
     background Solid("#333333aa")
     hover_background Solid("#555555aa")
@@ -539,6 +561,27 @@ style slot_button:
 style slot_button_text:
     idle_color gui.idle_color
     hover_color gui.hover_color
+
+style slot_time_text:
+    idle_color gui.idle_color
+    size gui.slot_button_text_size
+    xalign gui.slot_button_text_xalign
+
+style slot_name_text:
+    idle_color gui.idle_color
+    size gui.slot_button_text_size
+    xalign gui.slot_button_text_xalign
+
+style slot_delete_button:
+    xalign 0.5
+    background Solid("#552222")
+    hover_background Solid("#773333")
+    padding (15, 5, 15, 5)
+
+style slot_delete_button_text:
+    size 18
+    idle_color "#ffaaaa"
+    hover_color "#ffffff"
 
 ################################################################################
 ## 设置界面 - Preferences Screen
@@ -592,6 +635,29 @@ screen preferences():
 
                             if config.sample_sound:
                                 textbutton _("测试") action Play("sound", config.sample_sound)
+
+            null height 30
+
+            hbox:
+                style_prefix "pref"
+                box_wrap True
+
+                vbox:
+                    label _("存档管理")
+                    textbutton _("删除所有存档"):
+                        style "delete_saves_button"
+                        action Confirm("确定要删除所有存档吗？此操作无法撤销。",
+                            yes=Function(delete_all_saves),
+                            no=None)
+
+style delete_saves_button is gui_button:
+    background Solid("#552222")
+    hover_background Solid("#773333")
+    padding (20, 10, 20, 10)
+
+style delete_saves_button_text is gui_button_text:
+    idle_color "#ffaaaa"
+    hover_color "#ffffff"
 
 style pref_label is gui_label
 style pref_label_text is gui_label_text
