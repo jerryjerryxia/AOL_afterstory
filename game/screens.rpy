@@ -128,6 +128,9 @@ screen say(who, what):
     ## 快捷按钮（跳过、自动、菜单等）
     use quick_menu
 
+    ## 开发者音乐选择器
+    use dev_music_selector
+
 style window is default
 style say_label is default
 style say_dialogue is default
@@ -1067,3 +1070,106 @@ style route_subtitle_text:
     color "#cccccc"
     xalign 0.5
     outlines [(2, "#000000", 0, 0)]
+
+################################################################################
+## 开发者音乐选择器 - Developer Music Selector
+################################################################################
+
+## Current scene music ID (set by script)
+default current_music_scene = None
+
+## Whether the music selector panel is expanded
+default dev_music_expanded = False
+
+screen dev_music_selector():
+    ## Only show if we have a valid scene and in developer mode
+    if current_music_scene and current_music_scene in scene_music and config.developer:
+        $ scene_data = scene_music[current_music_scene]
+        $ tracks = scene_data["tracks"]
+        $ scene_label = scene_data["label"]
+
+        # Top-right corner panel
+        frame:
+            style "dev_music_frame"
+            xalign 1.0
+            yalign 0.0
+            xoffset -10
+            yoffset 10
+
+            vbox:
+                spacing 5
+
+                # Header with toggle button
+                hbox:
+                    spacing 10
+                    if dev_music_expanded:
+                        textbutton "BGM参考菜单":
+                            style "dev_music_header"
+                            action SetVariable("dev_music_expanded", False)
+                    else:
+                        textbutton "BGM参考菜单 v":
+                            style "dev_music_header"
+                            action SetVariable("dev_music_expanded", True)
+
+                # Expanded track list
+                if dev_music_expanded:
+                    null height 5
+                    for track in tracks:
+                        $ is_selected = (persistent.scene_music_selections.get(current_music_scene) == track["id"])
+                        if is_selected:
+                            textbutton track["name"]:
+                                style "dev_music_track_selected"
+                                action Function(select_and_play_music, current_music_scene, track["id"])
+                        else:
+                            textbutton track["name"]:
+                                style "dev_music_track"
+                                action Function(select_and_play_music, current_music_scene, track["id"])
+
+                    null height 5
+                    hbox:
+                        spacing 15
+                        textbutton "■ 停止":
+                            style "dev_music_control"
+                            action Stop("music", fadeout=1.0)
+
+style dev_music_frame:
+    background Solid("#1a1a2acc")
+    padding (15, 10, 15, 10)
+    xmaximum 450
+
+style dev_music_header is button_text:
+    size 18
+    color "#ffcc00"
+    hover_color "#ffffff"
+
+style dev_music_track is button:
+    background Solid("#333333aa")
+    hover_background Solid("#555555aa")
+    padding (10, 5, 10, 5)
+    xfill True
+
+style dev_music_track_text is button_text:
+    size 16
+    color "#cccccc"
+    hover_color "#ffffff"
+
+style dev_music_track_selected is button:
+    background Solid("#4a5a3aaa")
+    hover_background Solid("#5a6a4aaa")
+    padding (10, 5, 10, 5)
+    xfill True
+
+style dev_music_track_selected_text is button_text:
+    size 16
+    color "#aaffaa"
+    hover_color "#ffffff"
+
+style dev_music_control is button:
+    background Solid("#552222aa")
+    hover_background Solid("#773333aa")
+    padding (8, 4, 8, 4)
+
+style dev_music_control_text is button_text:
+    size 14
+    color "#ffaaaa"
+    hover_color "#ffffff"

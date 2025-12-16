@@ -45,6 +45,7 @@ label route1_start:
     ## 场景背景里的黑暗碎裂，变为完美夏日，金色的沙滩和蔚蓝的海，只是一个人都没有
     ## 场景音乐参考风格1：樹氷の輝き (岸部真明)，夜の向日葵（素晴日bgm），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，
     ## 场景音乐参考风格2：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
+    $ set_scene_music("route1_scene1")
     wangshuang "你看，太阳。"
     ahe "啊， 太阳。"
     wangshuang "金色的，温暖的，让人舒适而安心的太阳，它就在那里，明白这一点就够了。"
