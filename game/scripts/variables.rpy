@@ -34,6 +34,9 @@ default persistent.route3_complete = False  # 三周目完成
 ## 音乐解锁状态（用于音乐鉴赏）
 default persistent.music_unlocked = set()
 
+## 开发者音乐选择（场景ID -> 曲目ID）
+default persistent.scene_music_selections = {}
+
 ################################################################################
 ## 游戏内变量（每次游戏重置）
 ################################################################################
@@ -106,3 +109,46 @@ init python:
         if persistent.happy_end_unlocked:
             count += 1
         return count
+
+    ##########################################################################
+    ## 开发者音乐选择器函数
+    ##########################################################################
+
+    def select_and_play_music(scene_id, track_id):
+        """选择并播放场景音乐"""
+        if scene_id not in scene_music:
+            return
+
+        # Save selection
+        persistent.scene_music_selections[scene_id] = track_id
+
+        # Find track and play
+        for track in scene_music[scene_id]["tracks"]:
+            if track["id"] == track_id:
+                renpy.music.play("audio/bgm/" + track["file"], fadeout=1.0, fadein=1.0)
+                break
+
+    def set_scene_music(scene_id):
+        """设置当前场景音乐并自动播放"""
+        global current_music_scene
+        store.current_music_scene = scene_id
+
+        if scene_id not in scene_music:
+            return
+
+        tracks = scene_music[scene_id]["tracks"]
+        if not tracks:
+            return
+
+        # Check if we have a saved selection for this scene
+        saved_track_id = persistent.scene_music_selections.get(scene_id)
+
+        if saved_track_id:
+            # Play the saved selection
+            for track in tracks:
+                if track["id"] == saved_track_id:
+                    renpy.music.play("audio/bgm/" + track["file"], fadeout=1.0, fadein=1.0)
+                    return
+
+        # No saved selection - play first track
+        renpy.music.play("audio/bgm/" + tracks[0]["file"], fadeout=1.0, fadein=1.0)

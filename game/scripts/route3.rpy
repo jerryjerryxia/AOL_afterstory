@@ -283,6 +283,7 @@ label route3_start:
             ahe "这样么...那希望，你也能找到自己的答案。"
             ## 黑屏
             ## Lovely Summer Time背景音乐：https://samply.app/p/zKOVrHFVD1PKSd4AyAhf?si=mhZIQjsjvpeL1K96BgcnRriTvN52
+            $ set_scene_music("route3_lovely_summer")
             "熟悉而陌生的音乐，在你睁眼前就萦绕在你脑海。那慵懒而色彩斑斓的旋律让你想起某个熟悉的面孔，但无论如何也记不起那人的名字。"
             "你只记得，你好像和那人一起做了一个长长的梦。"
             "在那梦里，你们上天入地无所不能，还能肆意掌控着成千上万人的意识与命运。"
@@ -398,6 +399,7 @@ label route3_start:
             ## 电视关机音效
             ## 黑屏
             ## Lovely Summer Time
+            $ set_scene_music("route3_ending")
             ## 无色透明多面体
             ## Happy End?
 

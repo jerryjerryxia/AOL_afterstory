@@ -23,6 +23,7 @@ label prologue:
 
 label route1_prologue:
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead), 深海白噪音
+    $ set_scene_music("prologue_1")
 
     ## 一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。
 

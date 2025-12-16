@@ -1,5 +1,7 @@
 # AOL Afterstory - Ren'Py Visual Novel
 
+**IMPORTANT: Always work directly in `X:\GameDev\AOL_afterstory`. Do NOT use git worktrees - the game can only be launched from the main location.**
+
 ## Quick Reference
 
 **Build scripts:** `python convert_script.py` - Converts `main_script_raw.txt` → route `.rpy` files
