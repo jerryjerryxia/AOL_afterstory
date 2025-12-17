@@ -196,28 +196,28 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
         if not line:
             continue
 
-        # Check for accumulating block markers (【NVL开始】 or 【NVL大文本框开始】)
+        # Check for accumulating block markers (【Extended文本框开始】 or 【Extended大文本框开始】)
         # These use extend to accumulate text with each click
-        if 'NVL大文本框开始' in line:
-            output.append("    ## NVL大文本框开始 - accumulating large textbox")
-            accumulated, i = collect_accumulating_block(lines, i, end_line, 'NVL大文本框结束', use_large=True)
+        if 'Extended大文本框开始' in line:
+            output.append("    ## Extended大文本框开始 - accumulating large textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended大文本框结束', use_large=True)
             output.extend(accumulated)
-            output.append("    ## NVL大文本框结束")
+            output.append("    ## Extended大文本框结束")
             continue
 
-        if 'NVL开始' in line and 'NVL大文本框' not in line:
-            output.append("    ## NVL开始 - accumulating textbox")
-            accumulated, i = collect_accumulating_block(lines, i, end_line, 'NVL结束', use_large=False)
+        if 'Extended文本框开始' in line and 'Extended大文本框' not in line:
+            output.append("    ## Extended文本框开始 - accumulating textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended文本框结束', use_large=False)
             output.extend(accumulated)
-            output.append("    ## NVL结束")
+            output.append("    ## Extended文本框结束")
             continue
 
         # Check for large textbox markers (non-combined, single line mode)
-        if '大文本框开始' in line and 'NVL' not in line:
+        if '大文本框开始' in line and 'Extended' not in line:
             use_large_textbox = True
             output.append("    ## 大文本框开始")
             continue
-        if '大文本框结束' in line and 'NVL' not in line:
+        if '大文本框结束' in line and 'Extended' not in line:
             use_large_textbox = False
             output.append("    ## 大文本框结束")
             continue
