@@ -185,13 +185,16 @@ screen large_say(who, what):
             yalign 0.5
             xsize 1360
             font gui.text_font
-            size 28
+            size gui.text_size
             color "#ffffff"
             line_spacing 10
             text_align 0.0
 
     ## 快捷按钮
     use quick_menu
+
+    ## 开发者音乐选择器
+    use dev_music_selector
 
 ################################################################################
 ## 快捷菜单 - Quick Menu
