@@ -90,7 +90,7 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if re.match(r'^[一二三四五六七八九十]+周目', line):
         return f"\n## {line}\n"
 
-    # Narrative text - use large_narrator if in large textbox mode
+    # Narrative text - choose narrator based on mode
     if use_large_textbox:
         return f'{indent}large_narrator {format_dialogue(line)}'
     return f'{indent}{format_dialogue(line)}'
@@ -119,6 +119,63 @@ def parse_choice(line):
     return None, 0
 
 
+def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=False):
+    """
+    Collect lines between markers and output them with extend for accumulating display.
+    First line is normal dialogue, subsequent lines use extend to append.
+    Returns (output_lines, new_index)
+    """
+    collected = []
+    i = start_i
+
+    while i < end_line and i < len(lines):
+        line = lines[i].strip()
+        i += 1
+
+        if not line:
+            continue
+
+        # Check for end marker
+        if marker_end in line:
+            break
+
+        # Character dialogue
+        char_match = re.match(r'^(王霜|阿鹤|尸首)[：:](.*)$', line)
+        if char_match:
+            char_name = char_match.group(1)
+            dialogue = char_match.group(2).strip()
+            char_var = {'王霜': 'wangshuang', '阿鹤': 'ahe', '尸首': 'shishou'}[char_name]
+            collected.append((char_var, dialogue))
+        else:
+            # Stage directions - skip
+            if line.startswith('【') and line.endswith('】'):
+                continue
+            # Narration
+            collected.append((None, line))
+
+    if not collected:
+        return [], i
+
+    output = []
+    indent = "    "
+
+    # First line: normal dialogue
+    first_speaker, first_text = collected[0]
+    if use_large:
+        output.append(f'{indent}large_narrator {format_dialogue(first_text)}')
+    elif first_speaker:
+        output.append(f'{indent}{first_speaker} {format_dialogue(first_text)}')
+    else:
+        output.append(f'{indent}{format_dialogue(first_text)}')
+
+    # Subsequent lines: use extend to append with newline
+    for speaker, text in collected[1:]:
+        # extend appends to previous text
+        output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + text)}')
+
+    return output, i
+
+
 def convert_route(lines, start_line, end_line, label_name, route_num):
     """Convert a route section with proper branching"""
     output = []
@@ -139,12 +196,28 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
         if not line:
             continue
 
-        # Check for large textbox markers
-        if '大文本框开始' in line:
+        # Check for accumulating block markers (【NVL开始】 or 【NVL大文本框开始】)
+        # These use extend to accumulate text with each click
+        if 'NVL大文本框开始' in line:
+            output.append("    ## NVL大文本框开始 - accumulating large textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'NVL大文本框结束', use_large=True)
+            output.extend(accumulated)
+            output.append("    ## NVL大文本框结束")
+            continue
+
+        if 'NVL开始' in line and 'NVL大文本框' not in line:
+            output.append("    ## NVL开始 - accumulating textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'NVL结束', use_large=False)
+            output.extend(accumulated)
+            output.append("    ## NVL结束")
+            continue
+
+        # Check for large textbox markers (non-combined, single line mode)
+        if '大文本框开始' in line and 'NVL' not in line:
             use_large_textbox = True
             output.append("    ## 大文本框开始")
             continue
-        if '大文本框结束' in line:
+        if '大文本框结束' in line and 'NVL' not in line:
             use_large_textbox = False
             output.append("    ## 大文本框结束")
             continue
@@ -246,14 +319,14 @@ def main():
 
     print(f"Total lines: {len(lines)}")
 
-    # Route 1: lines 45-643 (0-indexed: 44-642)
-    route1 = convert_route(lines, 44, 643, "route1_start", 1)
+    # Route 1: lines 45-716 (0-indexed: 44-715) - ends at 【一周目End】
+    route1 = convert_route(lines, 44, 716, "route1_start", 1)
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route1.rpy', 'w', encoding='utf-8') as f:
         f.write(route1)
     print("Route 1 converted!")
 
-    # Route 2: lines 644-1339 (0-indexed: 643-1338)
-    route2 = convert_route(lines, 643, 1339, "route2_start", 2)
+    # Route 2: lines 717-1339 (0-indexed: 716-1338) - starts at 二周目
+    route2 = convert_route(lines, 716, 1339, "route2_start", 2)
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route2.rpy', 'w', encoding='utf-8') as f:
         f.write(route2)
     print("Route 2 converted!")
