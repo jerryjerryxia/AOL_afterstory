@@ -50,6 +50,7 @@ label route1_start:
     ## 场景背景里的黑暗碎裂，变为完美夏日，金色的沙滩和蔚蓝的海，只是一个人都没有
     ## 场景音乐参考风格1：樹氷の輝き (Shine of Silver Thaw)，夜の向日葵（The sunflower of the night），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，
     ## 场景音乐参考风格2：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
+    $ set_scene_music("route1_scene1")
     wangshuang "你看，太阳。"
     ahe "啊， 太阳。"
     wangshuang "金色的，温暖的，让人舒适而安心的太阳，它就在那里，明白这一点就够了。"
@@ -131,6 +132,7 @@ label route1_start:
     ## 白屏逐渐褪去
     ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Lofi Baking Vibes 🍰 Pompompurin Making Cakes in a Cozy Kitchen | Chill & Study Music - 关键时间戳：从头开始听就行，后面东西都类似, Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
+    $ set_scene_music("route1_scene2")
     ahe "呃...所以我们为什么在这里？"
     wangshuang "你不喜欢？"
     ahe "我要走了。"
@@ -222,12 +224,10 @@ label route1_start:
     wangshuang "你看——"
     ## 蓝色波纹特效，并逐渐加入更多色彩
     ## 场景音乐参考：进入幻视，所以虽然场景没变音乐也要切换https://audionautix.com/Music/Beautiful%20Daughter.mp3 (Jason Shaw)，
+    $ set_scene_music("route1_hallucination")
     ## 大文本框开始
-    large_narrator "你正摸不着头脑，转眼就发现周遭惊人的变故——视野逐渐泛起蓝色、波浪状的纹理，很快侵蚀了整个视野。"
-    large_narrator "你反倒比先前要更加冷静，又低头吃了几口团子。"
-    large_narrator "甜腻腻的滋味在口腔中涟漪般散开，每颗味觉细胞都在欣喜若狂地发送着饱足的信号。甜味的颜色？金黄的莓红的草绿的深棕的，味觉的色彩洪流汇入弥漫整个视觉空间的海蓝色波浪中。你抬头望向王霜，她也望着你，脸上含蓄地挂了一抹邪魅而欣慰的笑，仿佛望着一个迷路的孩子。她略卷的深绿色长发在空间的蓝色波浪中如死掉的海藻般漂浮。你心中对她海啸般的恶意现在已是荡然无存了——你变得几乎有些喜欢她现在的样子，宛如一个母亲，又像是神明，给视野不断抹上温柔的蓝色。每一缕神经都在扩张。"
-    large_narrator "启示性的景象。时间和空间波浪。无孔不入的色彩和甜味。蓝色的。交响。"
-    large_narrator "反复咀嚼伤痛是毫无意义的，即使伤痛让你生出更厚实的血肉。在一切都已结束的当下，连时间都已丧失价值，唯一还能让你睁开双眼的，就只有——"
+    large_narrator "你正摸不着头脑，转眼就发现周遭惊人的变故——视野逐渐泛起蓝色、波浪状的纹理，很快侵蚀了整个视野。你反倒比先前要更加冷静，又低头吃了几口团子。甜腻腻的滋味在口腔中涟漪般散开，每颗味觉细胞都在欣喜若狂地发送着饱足的信号。甜味的颜色？金黄的莓红的草绿的深棕的，味觉的色彩洪流汇入弥漫整个视觉空间的海蓝色波浪中。你抬头望向王霜，她也望着你，脸上含蓄地挂了一抹邪魅而欣慰的笑，仿佛望着一个迷路的孩子。她略卷的深绿色长发在空间的蓝色波浪中如死掉的海藻般漂浮。"
+    large_narrator "你心中对她海啸般的恶意现在已是荡然无存了——你变得几乎有些喜欢她现在的样子，宛如一个母亲，又像是神明，给视野不断抹上温柔的蓝色。每一缕神经都在扩张。启示性的景象。时间和空间波浪。无孔不入的色彩和甜味。蓝色的。交响。反复咀嚼伤痛是毫无意义的，即使伤痛让你生出更厚实的血肉。在一切都已结束的当下，连时间都已丧失价值，唯一还能让你睁开双眼的，就只有——"
     large_narrator "瘾。"
     large_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。成瘾。糖分子使你逐渐成瘾。渴望的源头冲动的源头想往的源头发现了。浪潮般的甜味反复沁进意识。她开始微笑。她停止微笑。目光所及之处就能看见她的微笑。燥热意识模糊，痛苦消减。鼓的声音。恒久的鼓声从背景里逐渐浮现，强烈起来，震耳欲聋，每一击都与心跳同调。在这暧昧混沌里，你感到安逸。"
     large_narrator "这样就够了。"
@@ -268,6 +268,7 @@ label route1_start:
     ahe "有人吗？"
     ahe "..."
     ## 场景音乐参考：https://audionautix.com/Music/DeepSpace.mp3 (Jason Shaw), the pain of recalling memories of an empty life (playlist) - 重要时间戳：3:16（øneheart x reidenshi - snowfall）， 7:50（time slows down），11:07（Broken Air），后面有兴趣可以继续听，风格和配器都类似
+    $ set_scene_music("route1_deepspace")
     "没有人。周身只有一片暧昧的粉红色雾气。试着蜷起手指，只觉得手心传来一阵稍纵即逝的触感，冰凉而虚幻。你挣扎着想要活动身体，却猛然意识到自己的横膈膜停止了张弛。"
     "保持呼吸。"
     ## 呼吸音效
@@ -367,7 +368,8 @@ label route1_start:
 
     ## 沙漠中的脚步声
     ## 银白色沙漠
-    ## 场景音乐参考：Whispers in the Twilight - fullver, What’s Left Feels Light - 怎么说呢，感觉这位 The Muun Lofi 的挺多东西味道都还挺对的，Sanpo - 迷幻电子沙漠风说的就是这个啊
+    ## 场景音乐参考：Whispers in the Twilight - fullver, What's Left Feels Light - 怎么说呢，感觉这位 The Muun Lofi 的挺多东西味道都还挺对的，Sanpo - 迷幻电子沙漠风说的就是这个啊
+    $ set_scene_music("route1_desert")
     wangshuang "到了没啊？"
     ahe "没。"
     wangshuang "那还要走多久？"
@@ -443,6 +445,7 @@ label route1_start:
     ## 高速心跳音效
     ## 屏幕边缘开始随着心跳的节奏震动
     ## 场景音乐参考：https://audionautix.com/Music/BlackFly.mp3 (Jason Shaw) - 这首有点非常过于合适了只能说
+    $ set_scene_music("route1_transition")
     ahe "——么！！！"
     shishou "是你啊，阿鹤，你在害怕什么呢？（到时候把所有尸首的话的音频反过来听一下，空耳进来）"
     ahe "啊...啊啊啊啊...啊啊啊啊啊啊啊啊啊啊——"
@@ -502,6 +505,7 @@ label route1_start:
     ahe "好吧。"
     ## 完美夏日场景
     ## 场景音乐参考风格：樹氷の輝き (岸部真明)，夜の向日葵（素晴日bgm），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu - 同场景不复用配乐的话，换成这首还挺合适的
+    $ set_scene_music("route1_return")
     "你跟在王霜身后，穿过无形的门。"
     "门后是淡金色的细腻沙滩，蔚蓝的海，略带盐味的小风，轻柔起伏的浪声。空无一人的海滩上，完美的夏日正在拉开序幕。你觉得眼前图景似乎触动到了心中的某个隐秘的角落，却怎么也抓不住那感觉，只好作罢。"
     ahe "很舒服。"
@@ -550,9 +554,6 @@ label route1_start:
             ahe "你的灰..."
             wangshuang "仅此而已。怎么样？是不是挺平平无奇的？"
             ahe "可是，等等，那些眼睛——"
-            wangshuang "哦对，见得太多都忘了它们还在了。它们一直都在那儿，不会把你怎么样的。"
-            "确实如此，在包容的灰幕中，你感知不到任何的危险。一切都是安全的，仿佛置身母亲温暖的怀抱之中。"
-            "“比较”不再重要。在灰的抚慰下，事物不再具备它们原本的质地——仅是灰而已，平整、柔软、不加修饰。"
 
 
     ## Route 1 结束

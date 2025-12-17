@@ -49,6 +49,12 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
             title = title_match.group(1)
             return f'{indent}call screen route_title("{title}")'
 
+    # Music trigger markers 【音乐：scene_id】
+    music_match = re.match(r'^【音乐[：:](.+?)】$', line)
+    if music_match:
+        scene_id = music_match.group(1).strip()
+        return f'{indent}$ set_scene_music("{scene_id}")'
+
     # Bad End markers - unlock ending and return to main menu (MUST be before general stage direction check)
     bad_end_match = re.match(r'^【(Bad End \d+[：:].*)】$', line)
     if bad_end_match:
