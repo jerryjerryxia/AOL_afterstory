@@ -168,6 +168,32 @@ style namebox:
     padding (10, 5, 10, 5)
 
 ################################################################################
+## 大文本框界面 - Large Textbox Screen (Full-height narrative text)
+################################################################################
+
+screen large_say(who, what):
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 1520
+        ysize 800
+        padding (80, 80, 80, 80)
+        background Solid("#000000ee")
+
+        text what id "what":
+            xalign 0.5
+            yalign 0.5
+            xsize 1360
+            font gui.text_font
+            size 28
+            color "#ffffff"
+            line_spacing 10
+            text_align 0.0
+
+    ## 快捷按钮
+    use quick_menu
+
+################################################################################
 ## 快捷菜单 - Quick Menu
 ################################################################################
 

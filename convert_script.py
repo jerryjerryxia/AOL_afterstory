@@ -25,7 +25,7 @@ def format_dialogue(text):
         escaped = text.replace('"', '\\"')
         return f'"{escaped}"'
 
-def convert_content_line(line, indent="    "):
+def convert_content_line(line, indent="    ", use_large_textbox=False):
     """Convert a single content line to Ren'Py format"""
     line = line.strip()
 
@@ -34,6 +34,10 @@ def convert_content_line(line, indent="    "):
 
     # Skip convergence marker (handled separately)
     if '选项分线到此结束' in line:
+        return None
+
+    # Skip large textbox markers (handled in convert_route)
+    if '大文本框开始' in line or '大文本框结束' in line:
         return None
 
     # Route transition screens 【展示X周目分屏"标题"】
@@ -80,7 +84,9 @@ def convert_content_line(line, indent="    "):
     if re.match(r'^[一二三四五六七八九十]+周目', line):
         return f"\n## {line}\n"
 
-    # Narrative text
+    # Narrative text - use large_narrator if in large textbox mode
+    if use_large_textbox:
+        return f'{indent}large_narrator {format_dialogue(line)}'
     return f'{indent}{format_dialogue(line)}'
 
 
@@ -118,12 +124,23 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
     i = start_line
     choice_counter = 0
     last_dialogue = None  # Track the last dialogue line for menu caption
+    use_large_textbox = False  # Track large textbox mode
 
     while i < end_line and i < len(lines):
         line = lines[i].strip()
         i += 1
 
         if not line:
+            continue
+
+        # Check for large textbox markers
+        if '大文本框开始' in line:
+            use_large_textbox = True
+            output.append("    ## 大文本框开始")
+            continue
+        if '大文本框结束' in line:
+            use_large_textbox = False
+            output.append("    ## 大文本框结束")
             continue
 
         # Check for choice A - starts a branching block
@@ -199,7 +216,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             continue
 
         # Regular content line (not part of choice)
-        converted = convert_content_line(line)
+        converted = convert_content_line(line, use_large_textbox=use_large_textbox)
         if converted:
             output.append(converted)
             # Track dialogue lines (character dialogue or narration) for menu captions
