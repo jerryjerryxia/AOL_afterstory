@@ -19,8 +19,18 @@ define protag_thought = Character(None, kind=adv, what_prefix='"', what_suffix='
 ## 格式: define 变量名 = Character("显示名称", color="名字颜色")
 
 define wangshuang = Character("王霜", color="#9b59b6")  # 紫色
+define wangshuang_unknown = Character("王霜（？）", color="#9b59b6")  # 紫色，身份存疑
 define ahe = Character("阿鹤", color="#4a90d9")  # 蓝色
 define shishou = Character("尸首", color="#dc143c")  # 深红色
+
+## 配角 - Supporting Characters
+define lurenjia = Character("路人甲", color="#7f8c8d")  # 灰色
+define lurenyi = Character("路人乙", color="#95a5a6")  # 浅灰色
+define lurenbing = Character("路人丙", color="#6c7a89")  # 深灰色
+define lurending = Character("路人丁", color="#a0a0a0")  # 中灰色
+define jieluowa = Character("杰罗瓦", color="#e67e22")  # 橙色
+define mijie = Character("米姐", color="#27ae60")  # 绿色
+define youliya = Character("尤里娅", color="#f1c40f")  # 金色
 
 ## 未知角色（用于角色未揭示身份时）
 define unknown = Character("???", color="#888888")

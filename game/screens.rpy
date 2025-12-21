@@ -1003,7 +1003,7 @@ screen skip_indicator():
     frame:
         hbox:
             spacing 9
-            text _("正在跳过")
+            text _("快进中")
             text "▸" at delayed_blink(0.0, 1.0) style "skip_triangle"
             text "▸" at delayed_blink(0.2, 1.0) style "skip_triangle"
             text "▸" at delayed_blink(0.4, 1.0) style "skip_triangle"

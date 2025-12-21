@@ -11,11 +11,11 @@ init python:
         "prologue_1": {
             "label": "序章 - 深海场景",
             "tracks": [
+                {"id": "gaidankousetsu", "name": "Gaidankousetsu", "file": "Gaidankousetsu.mp3"},
                 {"id": "electric_sea", "name": "Electric Sea", "file": "ElectricSea.mp3"},
                 {"id": "padmasana", "name": "Padmasana", "file": "Padmasana.mp3"},
                 {"id": "doutokutosetsu", "name": "Doutokutosetsu", "file": "Doutokutosetsu.mp3"},
                 {"id": "shinsou_no_reijou", "name": "Shinsou no reijou", "file": "Shinsou_no_reijou.mp3"},
-                {"id": "gaidankousetsu", "name": "Gaidankousetsu", "file": "Gaidankousetsu.mp3"},
             ]
         },
         "route1_scene1": {
@@ -73,6 +73,24 @@ init python:
                 {"id": "shianchu", "name": "Shianchu", "file": "Shianchu.mp3"},
             ]
         },
+        "route2_opening": {
+            "label": "二周目 开场",
+            "tracks": [
+                {"id": "gaidankousetsu", "name": "Gaidankousetsu", "file": "Gaidankousetsu.mp3"},
+                {"id": "electric_sea", "name": "Electric Sea", "file": "ElectricSea.mp3"},
+                {"id": "padmasana", "name": "Padmasana", "file": "Padmasana.mp3"},
+                {"id": "doutokutosetsu", "name": "Doutokutosetsu", "file": "Doutokutosetsu.mp3"},
+                {"id": "shinsou_no_reijou", "name": "Shinsou no reijou", "file": "Shinsou_no_reijou.mp3"},
+            ]
+        },
+        "route2_lofi": {
+            "label": "二周目 Lo-fi对话场景",
+            "tracks": [
+                {"id": "moonlit_reverie", "name": "Moonlit Reverie", "file": "Moonlit_Reverie.mp3"},
+                {"id": "hoyoku", "name": "Hoyoku", "file": "Hoyoku.mp3"},
+                {"id": "sutekimeppou", "name": "Sutekimeppou", "file": "Sutekimeppou.mp3"},
+            ]
+        },
         "route2_battle": {
             "label": "二周目 战斗/紧张场景",
             "tracks": [
@@ -104,10 +122,44 @@ init python:
                 {"id": "tamikurasou", "name": "Tamikurasou", "file": "Tamikurasou.mp3"},
             ]
         },
+        "route3_opening": {
+            "label": "三周目 开场",
+            "tracks": [
+                {"id": "gaidankousetsu", "name": "Gaidankousetsu", "file": "Gaidankousetsu.mp3"},
+                {"id": "electric_sea", "name": "Electric Sea", "file": "ElectricSea.mp3"},
+                {"id": "padmasana", "name": "Padmasana", "file": "Padmasana.mp3"},
+                {"id": "doutokutosetsu", "name": "Doutokutosetsu", "file": "Doutokutosetsu.mp3"},
+                {"id": "shinsou_no_reijou", "name": "Shinsou no reijou", "file": "Shinsou_no_reijou.mp3"},
+            ]
+        },
+        "route3_shiniki": {
+            "label": "三周目 Shiniki场景",
+            "tracks": [
+                {"id": "shiniki", "name": "Shiniki", "file": "Shiniki.mp3"},
+            ]
+        },
+        "route3_chat": {
+            "label": "三周目 唠嗑场景",
+            "tracks": [
+                {"id": "shitagokoro", "name": "Shitagokoro", "file": "Shitagokoro.mp3"},
+            ]
+        },
+        "route3_jellyfish": {
+            "label": "三周目 Jellyfish场景",
+            "tracks": [
+                {"id": "jellyfish", "name": "Jellyfish", "file": "Jellyfish.mp3"},
+            ]
+        },
         "route3_lovely_summer": {
             "label": "三周目 Lovely Summer Time",
             "tracks": [
                 {"id": "lovely_summertime", "name": "Lovely Summer Time", "file": "LovelySummertime.wav"},
+            ]
+        },
+        "route3_final": {
+            "label": "三周目 最终场景",
+            "tracks": [
+                {"id": "doutokutosetsu", "name": "Doutokutosetsu", "file": "Doutokutosetsu.mp3"},
             ]
         },
         "route3_ending": {

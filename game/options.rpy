@@ -52,7 +52,7 @@ define config.end_game_transition = dissolve
 define config.window_title = "AOL Afterstory"
 
 ## 主菜单音乐（可选）
-define config.main_menu_music = None
+define config.main_menu_music = "audio/bgm/Whispers_in_the_Twilight.mp3"
 
 ## 游戏菜单 - ESC/右键打开存档界面
 define config.game_menu_action = ShowMenu("save")

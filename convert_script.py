@@ -55,6 +55,10 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         scene_id = music_match.group(1).strip()
         return f'{indent}$ set_scene_music("{scene_id}")'
 
+    # Music stop markers 【音乐停】 or 【音效和音乐停】
+    if '音乐停' in line:
+        return f'{indent}stop music fadeout 1.0'
+
     # Bad End markers - unlock ending and return to main menu (MUST be before general stage direction check)
     bad_end_match = re.match(r'^【(Bad End \d+[：:].*)】$', line)
     if bad_end_match:
@@ -69,21 +73,40 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if stage_match:
         return f"{indent}## {stage_match.group(1)}"
 
+    # Character name to variable mapping
+    char_var_map = {
+        '王霜': 'wangshuang',
+        '王霜（？）': 'wangshuang_unknown',
+        '阿鹤': 'ahe',
+        '尸首': 'shishou',
+        '路人甲': 'lurenjia',
+        '路人乙': 'lurenyi',
+        '路人丙': 'lurenbing',
+        '路人丁': 'lurending',
+        '杰罗瓦': 'jieluowa',
+        '米姐': 'mijie',
+        '尤里娅': 'youliya',
+    }
+
+    # Build regex pattern from character names (longer names first to avoid partial matches)
+    char_names = sorted(char_var_map.keys(), key=len, reverse=True)
+    char_pattern = '|'.join(re.escape(name) for name in char_names)
+
     # Character dialogue with inline stage direction
-    char_action_match = re.match(r'^(王霜|阿鹤|尸首)【(.+?)】[：:](.*)$', line)
+    char_action_match = re.match(rf'^({char_pattern})【(.+?)】[：:](.*)$', line)
     if char_action_match:
         char_name = char_action_match.group(1)
         action = char_action_match.group(2)
         dialogue = char_action_match.group(3).strip()
-        char_var = {'王霜': 'wangshuang', '阿鹤': 'ahe', '尸首': 'shishou'}[char_name]
+        char_var = char_var_map[char_name]
         return f'{indent}## {action}\n{indent}{char_var} {format_dialogue(dialogue)}'
 
     # Character dialogue (simple)
-    char_match = re.match(r'^(王霜|阿鹤|尸首)[：:](.*)$', line)
+    char_match = re.match(rf'^({char_pattern})[：:](.*)$', line)
     if char_match:
         char_name = char_match.group(1)
         dialogue = char_match.group(2).strip()
-        char_var = {'王霜': 'wangshuang', '阿鹤': 'ahe', '尸首': 'shishou'}[char_name]
+        char_var = char_var_map[char_name]
         return f'{indent}{char_var} {format_dialogue(dialogue)}'
 
     # Section headers
@@ -106,17 +129,31 @@ def is_convergence(line):
     return '选项分线到此结束' in line
 
 def parse_choice(line):
-    """Parse choice line, returns (text, madness_add)"""
+    """Parse choice line, returns (text, madness_add, action)
+    action can be: None, 'continue', or 'return_to_menu'
+    """
     match = re.match(r'^[AB][：:]\s*(.+)$', line.strip())
     if match:
         text = match.group(1).strip()
-        madness_match = re.search(r'[（(]madness\s*\+\s*(\d+)[）)]', text)
         madness_add = 0
+        action = None
+
+        # Check for special action tags
+        if '【游戏继续】' in text:
+            action = 'continue'
+            text = text.replace('【游戏继续】', '').strip()
+        elif '【回到主菜单】' in text:
+            action = 'return_to_menu'
+            text = text.replace('【回到主菜单】', '').strip()
+
+        # Check for madness modifier
+        madness_match = re.search(r'[（(]madness\s*\+\s*(\d+)[）)]', text)
         if madness_match:
             madness_add = int(madness_match.group(1))
             text = re.sub(r'[（(]madness\s*\+\s*\d+[）)]', '', text).strip()
-        return text, madness_add
-    return None, 0
+
+        return text, madness_add, action
+    return None, 0, None
 
 
 def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=False):
@@ -125,6 +162,23 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
     First line is normal dialogue, subsequent lines use extend to append.
     Returns (output_lines, new_index)
     """
+    # Character name to variable mapping (must match convert_content_line)
+    char_var_map = {
+        '王霜': 'wangshuang',
+        '王霜（？）': 'wangshuang_unknown',
+        '阿鹤': 'ahe',
+        '尸首': 'shishou',
+        '路人甲': 'lurenjia',
+        '路人乙': 'lurenyi',
+        '路人丙': 'lurenbing',
+        '路人丁': 'lurending',
+        '杰罗瓦': 'jieluowa',
+        '米姐': 'mijie',
+        '尤里娅': 'youliya',
+    }
+    char_names = sorted(char_var_map.keys(), key=len, reverse=True)
+    char_pattern = '|'.join(re.escape(name) for name in char_names)
+
     collected = []
     i = start_i
 
@@ -140,11 +194,11 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
             break
 
         # Character dialogue
-        char_match = re.match(r'^(王霜|阿鹤|尸首)[：:](.*)$', line)
+        char_match = re.match(rf'^({char_pattern})[：:](.*)$', line)
         if char_match:
             char_name = char_match.group(1)
             dialogue = char_match.group(2).strip()
-            char_var = {'王霜': 'wangshuang', '阿鹤': 'ahe', '尸首': 'shishou'}[char_name]
+            char_var = char_var_map[char_name]
             collected.append((char_var, dialogue))
         else:
             # Stage directions - skip
@@ -225,7 +279,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
         # Check for choice A - starts a branching block
         if is_choice_a(line):
             choice_counter += 1
-            choice_a_text, choice_a_madness = parse_choice(line)
+            choice_a_text, choice_a_madness, choice_a_action = parse_choice(line)
 
             # Collect content for choice A until we hit B:
             choice_a_content = []
@@ -240,10 +294,11 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             # Now at B: line
             choice_b_text = None
             choice_b_madness = 0
+            choice_b_action = None
             choice_b_content = []
 
             if i < end_line and is_choice_b(lines[i].strip()):
-                choice_b_text, choice_b_madness = parse_choice(lines[i].strip())
+                choice_b_text, choice_b_madness, choice_b_action = parse_choice(lines[i].strip())
                 i += 1
 
                 # Collect content for choice B until convergence or next choice
@@ -270,12 +325,16 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             output.append(f'        "{choice_a_text}":')
             if choice_a_madness > 0:
                 output.append(f"            $ madness += {choice_a_madness}")
-            if choice_a_content:
+            # Handle special actions
+            if choice_a_action == 'return_to_menu':
+                output.append("            return")
+            elif choice_a_content:
                 for content_line in choice_a_content:
                     converted = convert_content_line(content_line, "            ")
                     if converted:
                         output.append(converted)
             else:
+                # 'continue' action or no content - need pass for valid Ren'Py
                 output.append("            pass")
 
             # Choice B
@@ -283,12 +342,16 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                 output.append(f'        "{choice_b_text}":')
                 if choice_b_madness > 0:
                     output.append(f"            $ madness += {choice_b_madness}")
-                if choice_b_content:
+                # Handle special actions
+                if choice_b_action == 'return_to_menu':
+                    output.append("            return")
+                elif choice_b_content:
                     for content_line in choice_b_content:
                         converted = convert_content_line(content_line, "            ")
                         if converted:
                             output.append(converted)
                 else:
+                    # 'continue' action or no content - need pass for valid Ren'Py
                     output.append("            pass")
 
             output.append("")
@@ -313,26 +376,66 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
     return '\n'.join(output)
 
 
+def find_route_boundaries(lines):
+    """Dynamically find route boundaries based on markers in the script"""
+    route1_start = None
+    route1_end = None
+    route2_start = None
+    route2_end = None
+    route3_start = None
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        # Route 1 starts at first 一周目 header
+        if route1_start is None and re.match(r'^一周目', stripped):
+            route1_start = i
+        # Route 1 ends at 【一周目End】 or 【一周目end】
+        if re.match(r'^【一周目[Ee]nd】$', stripped):
+            route1_end = i
+        # Route 2 starts at 二周目 header
+        if route2_start is None and re.match(r'^二周目', stripped):
+            route2_start = i
+        # Route 2 ends at 【二周目End】 or 【二周目end】
+        if re.match(r'^【二周目[Ee]nd】$', stripped):
+            route2_end = i
+        # Route 3 starts at 三周目 header
+        if route3_start is None and re.match(r'^三周目', stripped):
+            route3_start = i
+
+    return {
+        'route1': (route1_start, route1_end),
+        'route2': (route2_start, route2_end),
+        'route3': (route3_start, len(lines))
+    }
+
+
 def main():
     with open(r'X:\GameDev\AOL_afterstory\main_script_raw.txt', 'r', encoding='utf-8') as f:
         lines = [line.rstrip('\n') for line in f.readlines()]
 
     print(f"Total lines: {len(lines)}")
 
-    # Route 1: lines 45-716 (0-indexed: 44-715) - ends at 【一周目End】
-    route1 = convert_route(lines, 44, 716, "route1_start", 1)
+    # Dynamically find route boundaries
+    boundaries = find_route_boundaries(lines)
+    print(f"Route boundaries detected:")
+    print(f"  Route 1: lines {boundaries['route1'][0]+1}-{boundaries['route1'][1]+1}")
+    print(f"  Route 2: lines {boundaries['route2'][0]+1}-{boundaries['route2'][1]+1}")
+    print(f"  Route 3: lines {boundaries['route3'][0]+1}-{boundaries['route3'][1]}")
+
+    # Route 1
+    route1 = convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1)
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route1.rpy', 'w', encoding='utf-8') as f:
         f.write(route1)
     print("Route 1 converted!")
 
-    # Route 2: lines 717-1339 (0-indexed: 716-1338) - starts at 二周目
-    route2 = convert_route(lines, 716, 1339, "route2_start", 2)
+    # Route 2
+    route2 = convert_route(lines, boundaries['route2'][0], boundaries['route2'][1], "route2_start", 2)
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route2.rpy', 'w', encoding='utf-8') as f:
         f.write(route2)
     print("Route 2 converted!")
 
-    # Route 3: lines 1340-end (0-indexed: 1339-end)
-    route3 = convert_route(lines, 1339, len(lines), "route3_start", 3)
+    # Route 3
+    route3 = convert_route(lines, boundaries['route3'][0], boundaries['route3'][1], "route3_start", 3)
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route3.rpy', 'w', encoding='utf-8') as f:
         f.write(route3)
     print("Route 3 converted!")
