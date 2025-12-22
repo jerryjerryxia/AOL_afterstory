@@ -128,6 +128,9 @@ screen say(who, what):
     ## 快捷按钮（跳过、自动、菜单等）
     use quick_menu
 
+    ## 开发者场景信息
+    use dev_scene_info
+
     ## 开发者音乐选择器
     use dev_music_selector
 
@@ -193,6 +196,9 @@ screen large_say(who, what):
 
     ## 快捷按钮
     use quick_menu
+
+    ## 开发者场景信息
+    use dev_scene_info
 
     ## 开发者音乐选择器
     use dev_music_selector
@@ -1004,9 +1010,9 @@ screen skip_indicator():
         hbox:
             spacing 9
             text _("快进中")
-            text "▸" at delayed_blink(0.0, 1.0) style "skip_triangle"
-            text "▸" at delayed_blink(0.2, 1.0) style "skip_triangle"
-            text "▸" at delayed_blink(0.4, 1.0) style "skip_triangle"
+            text ">" at delayed_blink(0.0, 1.0) style "skip_triangle"
+            text ">" at delayed_blink(0.2, 1.0) style "skip_triangle"
+            text ">" at delayed_blink(0.4, 1.0) style "skip_triangle"
 
 transform delayed_blink(delay, cycle):
     alpha 0.5
@@ -1100,6 +1106,64 @@ style route_subtitle_text:
     color "#cccccc"
     xalign 0.5
     outlines [(2, "#000000", 0, 0)]
+
+################################################################################
+## 开发者场景信息显示 - Developer Scene Info Display
+################################################################################
+
+## Whether the scene description popup is visible
+default scene_desc_visible = False
+
+screen dev_scene_info():
+    ## Only show if we have a scene name and in developer mode
+    if current_scene_name and config.developer:
+        # Top-left corner panel
+        frame:
+            style "dev_scene_frame"
+            xalign 0.0
+            yalign 0.0
+            xoffset 10
+            yoffset 10
+
+            vbox:
+                spacing 5
+
+                # Scene name button - click to toggle description
+                textbutton current_scene_name:
+                    style "dev_scene_name"
+                    action ToggleVariable("scene_desc_visible")
+
+                # Scene description - shown when clicked
+                if scene_desc_visible and current_scene_desc:
+                    null height 5
+                    frame:
+                        style "dev_scene_desc_frame"
+                        text "[current_scene_desc]":
+                            style "dev_scene_desc_text"
+
+style dev_scene_frame:
+    background Solid("#1a1a2acc")
+    padding (15, 10, 15, 10)
+    xmaximum 500
+
+style dev_scene_name is button:
+    background None
+    hover_background None
+
+style dev_scene_name_text is button_text:
+    size 20
+    color "#00ccff"
+    hover_color "#66ddff"
+
+style dev_scene_desc_frame:
+    background Solid("#222233cc")
+    padding (10, 8, 10, 8)
+    xmaximum 470
+
+style dev_scene_desc_text:
+    size 16
+    color "#cccccc"
+    line_spacing 4
 
 ################################################################################
 ## 开发者音乐选择器 - Developer Music Selector

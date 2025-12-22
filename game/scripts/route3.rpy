@@ -6,7 +6,10 @@ label route3_start:
 ## 三周目：“完美夏日”
 
     ## 头入水，气泡音效
-    ## 黑暗中无色透明多面体场景，但这里看起来像是从水底往上看那样
+    ## 转场：无色透明多面体
+    $ current_scene_name = "无色透明多面体"
+    $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
+    ## 还是无色透明多面体，但这里看起来像是从水底往上看那样
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，DoutokutosetsuShinsou no reijouGaidankousetsu - 物语ost是好文化
     $ set_scene_music("route3_opening")
     ## Extended大文本框开始 - accumulating large textbox
@@ -35,7 +38,9 @@ label route3_start:
     ## 场景逐渐模糊
     call screen route_title("完美夏日")
     ## 场景重新清晰
-    ## 水母
+    ## 转场：灰屏水母
+    $ current_scene_name = "灰屏水母"
+    $ current_scene_desc = "灰屏，中间有一只巨大的水母。"
     ## 场景音乐参考：Shiniki - 神前晓是我爹
     $ set_scene_music("route3_shiniki")
     ## Extended大文本框开始 - accumulating large textbox
@@ -92,9 +97,13 @@ label route3_start:
     extend "\n所以，该醒来了。"
     extend "\n去下一站。"
     ## Extended大文本框结束
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "就是黑屏。"
     ## 风声
-    ## 银白色沙漠背景
+    ## 转场：银白色沙漠
+    $ current_scene_name = "银白色沙漠"
+    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Shitagokoro - 一些非常适合唠嗑的音乐
     $ set_scene_music("route3_chat")
     wangshuang "早上好。"
@@ -204,7 +213,9 @@ label route3_start:
     ahe "你给了很多提示。"
     wangshuang "我累了...我们回去吧。"
     ahe "嗯，走吧。"
-    ## 完美夏日场景
+    ## 转场：完美夏日
+    $ current_scene_name = "完美夏日"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物。"
     ## 非常轻微的嘈杂人声
     ## 场景音乐参考风格：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
     $ set_scene_music("route3_jellyfish")
@@ -251,6 +262,9 @@ label route3_start:
     extend "\n接触到沙滩的一刹，那多面体很快像一滴水珠似的消失得无影无踪，仿佛它从始至终都是液体。"
     ## Extended大文本框结束
     ## 场景逐渐开始变灰
+    ## 转场：灰白夏日1
+    $ current_scene_name = "灰白夏日1"
+    $ current_scene_desc = "完美夏日背景，但黑白配色，且一些地方长着眼睛（完美夏日差分）"
     "你正要开口，却见到王霜从口袋里取出了另一颗一模一样的多面体，略作犹豫后把它也丢在了沙滩上。"
     "之后的一切在无言中展开。王霜在沉默中一颗接一颗地丢弃着无色透明多面体，而你则无声地观看这场盛大且无声的毁灭表演。"
     ahe "其他人不会反对吗？"
@@ -269,15 +283,30 @@ label route3_start:
     wangshuang "你他妈的！"
     "王霜从你手中夺过最后的多面体，振臂一掷，手中那无色透明多面体便朝海的方向飞去。"
     ## 扑通音效
-    ## 店面背景
+    ## 转场：甜品店
+    $ current_scene_name = "甜品店"
+    $ current_scene_desc = None
+    "..."
     ## 扑通音效
-    ## 海底水母背景
+    ## 转场：灰屏水母
+    $ current_scene_name = "灰屏水母"
+    $ current_scene_desc = None
+    "......"
     ## 扑通音效
-    ## 沙漠背景
+    ## 转场：银白色沙漠
+    $ current_scene_name = "银白色沙漠"
+    $ current_scene_desc = None
+    "........."
     ## 扑通音效
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = None
+    "......"
     ## 碎裂声
-    ## 灰色的完美夏日背景
+    ## 转场：灰白夏日1
+    $ current_scene_name = "灰白夏日1"
+    $ current_scene_desc = None
+    "..."
     ahe "你看，又回来了。"
     wangshuang "阿鹤..."
     ahe "怎么了？"
@@ -312,7 +341,9 @@ label route3_start:
             ahe "如果你哪天回心转意的话，你知道去哪儿找我。"
             wangshuang "我们不会再见面了。"
             ahe "这样么...那希望，你也能找到自己的答案。"
-            ## 黑屏
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
             ## Lovely Summer Time背景音乐：https://samply.app/p/zKOVrHFVD1PKSd4AyAhf?si=mhZIQjsjvpeL1K96BgcnRriTvN52
             $ set_scene_music("route3_lovely_summer")
             "熟悉而陌生的音乐，在你睁眼前就萦绕在你脑海。"
@@ -321,7 +352,9 @@ label route3_start:
             "在那梦里，你们上天入地无所不能，还能肆意掌控着成千上万人的意识与命运。"
             "在那梦里，你们排除万难，与邪恶的蜂巢心智斗智斗勇，终于在最后一刻捍卫了人们的自由。"
             "但很快，你完全醒了。"
-            ## 乌云压境的逝乐园背景
+            ## 转场：乌云压境的逝乐园
+            $ current_scene_name = "乌云压境的逝乐园"
+            $ current_scene_desc = "逝乐园是一个高科技支撑的娱乐园区，可参考近未来的拉斯维加斯，这里是白天，且即将下雷雨"
             "逝乐园，大陆西南部半岛上人类智慧与欲望的结晶，此刻正从一场无声的灾变中恢复生机。"
             "天空阴沉沉的，厚重的灰色云层压得很低，一副时刻都要下雨的样子。"
             "但你还是决定披上外衣离开出租屋。你只是想走走。"
@@ -340,7 +373,7 @@ label route3_start:
             ## 雷声音效
             ## Lovely Summer Time和雨声
             ## Normal End：日常
-        "把手中的无色透明多面体装回裤兜里（需要madness大于某个数字）":
+        "把手中的无色透明多面体装回裤兜里【需要madness大于某个数字】":
             stop music fadeout 1.0
             wangshuang "你想干什么？"
             ahe "如你所见。"
@@ -365,8 +398,11 @@ label route3_start:
             wangshuang "在海的最深处，你若执意要做那无用功就随你便吧，反正一切已经结束了。"
             ahe "那一会儿见。"
             ## 落水冒泡泡音效
-            ## 海底背景
-            "你缓缓步入洁白的浪花中，浅海的蔚蓝不消多时便消失得无影无踪。深海的冷冽漆黑将你层层包裹。"
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
+            "你步入洁白的浪花中，不假思索地开始了下潜。"
+            "浅海的蔚蓝不消多时便消失得无影无踪，深海的冷冽漆黑将你层层包裹。"
             "你奋力下潜，没有光源，水母也无影无踪。你很快就沉入完全的黑暗中。"
             "这是死亡的颜色么？"
             "亦或是凝滞的余光？"
@@ -381,8 +417,9 @@ label route3_start:
             "你认命了似的闭上双眼，停下了所有的肢体动作，蜷缩成婴儿的姿势，任由重力将你继续拉进更深的黑暗之中。"
             "一切都融为一体。你在消散。"
             "在彻底的黑暗和寂静中，你任由“王霜”这个概念如冰川般消融，直到意识里只剩下完整的漆黑。"
-            ## 黑屏
-            ## 冰雕中，两人的头像
+            ## 转场：两座冰雕1
+            $ current_scene_name = "两座冰雕1"
+            $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，双眼直视前方"
             ## 场景音乐参考：Doutokutosetsu
             $ set_scene_music("route3_final")
             wangshuang "欢迎。"
@@ -402,6 +439,9 @@ label route3_start:
             "……"
             "………"
             ## Extended文本框结束
+            ## 转场：两座冰雕2
+            $ current_scene_name = "两座冰雕2"
+            $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，双眼试图看向彼此"
             ahe "所以说...就这样了？"
             wangshuang "你觉得呢？"
             ahe "眼珠子能动的话，其他部位总有一天也能动的吧？"
@@ -435,7 +475,9 @@ label route3_start:
             ahe "真他妈无聊？"
             wangshuang "——真他妈无聊！"
             ## 电视关机音效
-            ## 黑屏
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
             ## 场景音乐参考：Go with the Flow - https://samply.app/p/cC53w0C7hcvtXr7sugjc?si=mhZIQjsjvpeL1K96BgcnRriTvN52
             $ set_scene_music("route3_ending")
             ## 无色透明多面体

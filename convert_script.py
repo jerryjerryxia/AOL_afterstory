@@ -59,6 +59,34 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if '音乐停' in line:
         return f'{indent}stop music fadeout 1.0'
 
+    # Scene transition markers 【转场：场景名。场景描述】
+    transition_match = re.match(r'^【转场[：:](.+?)】$', line)
+    if transition_match:
+        content = transition_match.group(1).strip()
+        # Split by first period (Chinese or English)
+        # The scene name is before the first period, description is after
+        period_match = re.search(r'[。.]', content)
+        if period_match:
+            scene_name = content[:period_match.start()].strip()
+            scene_desc = content[period_match.end():].strip()
+        else:
+            # No period - entire content is scene name, no description
+            scene_name = content
+            scene_desc = ""
+
+        # Escape quotes in scene name and description
+        scene_name_escaped = scene_name.replace('"', '\\"')
+        scene_desc_escaped = scene_desc.replace('"', '\\"')
+
+        # Generate both the comment and the variable assignment
+        output_lines = [f'{indent}## 转场：{scene_name}']
+        output_lines.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
+        if scene_desc:
+            output_lines.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
+        else:
+            output_lines.append(f'{indent}$ current_scene_desc = None')
+        return '\n'.join(output_lines)
+
     # Bad End markers - unlock ending and return to main menu (MUST be before general stage direction check)
     bad_end_match = re.match(r'^【(Bad End \d+[：:].*)】$', line)
     if bad_end_match:
@@ -193,6 +221,22 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
         if marker_end in line:
             break
 
+        # Check for scene transition markers - these need to be output before dialogue continues
+        transition_match = re.match(r'^【转场[：:](.+?)】$', line)
+        if transition_match:
+            content = transition_match.group(1).strip()
+            # Split by first period (Chinese or English)
+            period_match = re.search(r'[。.]', content)
+            if period_match:
+                scene_name = content[:period_match.start()].strip()
+                scene_desc = content[period_match.end():].strip()
+            else:
+                scene_name = content
+                scene_desc = ""
+            # Mark as scene transition (special marker)
+            collected.append(('__transition__', (scene_name, scene_desc)))
+            continue
+
         # Character dialogue
         char_match = re.match(rf'^({char_pattern})[：:](.*)$', line)
         if char_match:
@@ -213,19 +257,37 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
     output = []
     indent = "    "
 
-    # First line: normal dialogue
-    first_speaker, first_text = collected[0]
-    if use_large:
-        output.append(f'{indent}large_narrator {format_dialogue(first_text)}')
-    elif first_speaker:
-        output.append(f'{indent}{first_speaker} {format_dialogue(first_text)}')
-    else:
-        output.append(f'{indent}{format_dialogue(first_text)}')
+    # Track whether we need to start fresh (after a scene transition)
+    need_fresh_start = True
 
-    # Subsequent lines: use extend to append with newline
-    for speaker, text in collected[1:]:
-        # extend appends to previous text
-        output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + text)}')
+    for speaker, text in collected:
+        # Handle scene transitions - they break the extend chain
+        if speaker == '__transition__':
+            scene_name, scene_desc = text
+            scene_name_escaped = scene_name.replace('"', '\\"')
+            scene_desc_escaped = scene_desc.replace('"', '\\"')
+            output.append(f'{indent}## 转场：{scene_name}')
+            output.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
+            if scene_desc:
+                output.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
+            else:
+                output.append(f'{indent}$ current_scene_desc = None')
+            # Next dialogue line should start fresh
+            need_fresh_start = True
+            continue
+
+        if need_fresh_start:
+            # First line after start or transition: normal dialogue
+            if use_large:
+                output.append(f'{indent}large_narrator {format_dialogue(text)}')
+            elif speaker:
+                output.append(f'{indent}{speaker} {format_dialogue(text)}')
+            else:
+                output.append(f'{indent}{format_dialogue(text)}')
+            need_fresh_start = False
+        else:
+            # Subsequent lines: use extend to append with newline
+            output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + text)}')
 
     return output, i
 
@@ -376,8 +438,86 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
     return '\n'.join(output)
 
 
+def convert_prologue(lines, start_line, end_line):
+    """Convert the prologue section (before route 1)"""
+    output = []
+    output.append("## prologue.rpy")
+    output.append("## 序章 / Prologue - AUTO-GENERATED")
+    output.append("")
+    output.append("label prologue:")
+    output.append("    ## 根据进度跳转到对应周目")
+    output.append("    $ route = get_current_route()")
+    output.append("")
+    output.append("    if route == 1:")
+    output.append("        jump route1_prologue")
+    output.append("    elif route == 2:")
+    output.append("        jump route2_start")
+    output.append("    else:")
+    output.append("        jump route3_start")
+    output.append("")
+    output.append("################################################################################")
+    output.append("## 一周目序章 - 只在第一次游戏时播放")
+    output.append("################################################################################")
+    output.append("")
+    output.append("label route1_prologue:")
+
+    i = start_line
+    use_large_textbox = False
+
+    while i < end_line and i < len(lines):
+        line = lines[i].strip()
+        i += 1
+
+        if not line:
+            continue
+
+        # Skip title line and music reference comments at the very beginning
+        if i <= 5 and ('疯子的青春期' in line or '场景音乐参考' in line):
+            if '场景音乐参考' in line:
+                output.append(f"    ## {line.strip('【】')}")
+            continue
+
+        # Check for accumulating block markers
+        if 'Extended大文本框开始' in line:
+            output.append("    ## Extended大文本框开始 - accumulating large textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended大文本框结束', use_large=True)
+            output.extend(accumulated)
+            output.append("    ## Extended大文本框结束")
+            continue
+
+        if 'Extended文本框开始' in line and 'Extended大文本框' not in line:
+            output.append("    ## Extended文本框开始 - accumulating textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended文本框结束', use_large=False)
+            output.extend(accumulated)
+            output.append("    ## Extended文本框结束")
+            continue
+
+        # Check for large textbox markers
+        if '大文本框开始' in line and 'Extended' not in line:
+            use_large_textbox = True
+            output.append("    ## 大文本框开始")
+            continue
+        if '大文本框结束' in line and 'Extended' not in line:
+            use_large_textbox = False
+            output.append("    ## 大文本框结束")
+            continue
+
+        # Regular content line
+        converted = convert_content_line(line, use_large_textbox=use_large_textbox)
+        if converted:
+            output.append(converted)
+
+    # End of prologue - jump to route 1
+    output.append("")
+    output.append("    ## 一周目序章结束，跳转到一周目正式开始")
+    output.append("    jump route1_start")
+
+    return '\n'.join(output)
+
+
 def find_route_boundaries(lines):
     """Dynamically find route boundaries based on markers in the script"""
+    prologue_end = None
     route1_start = None
     route1_end = None
     route2_start = None
@@ -386,9 +526,10 @@ def find_route_boundaries(lines):
 
     for i, line in enumerate(lines):
         stripped = line.strip()
-        # Route 1 starts at first 一周目 header
+        # Route 1 starts at first 一周目 header (this also marks end of prologue)
         if route1_start is None and re.match(r'^一周目', stripped):
             route1_start = i
+            prologue_end = i
         # Route 1 ends at 【一周目End】 or 【一周目end】
         if re.match(r'^【一周目[Ee]nd】$', stripped):
             route1_end = i
@@ -403,6 +544,7 @@ def find_route_boundaries(lines):
             route3_start = i
 
     return {
+        'prologue': (0, prologue_end),
         'route1': (route1_start, route1_end),
         'route2': (route2_start, route2_end),
         'route3': (route3_start, len(lines))
@@ -418,9 +560,16 @@ def main():
     # Dynamically find route boundaries
     boundaries = find_route_boundaries(lines)
     print(f"Route boundaries detected:")
+    print(f"  Prologue: lines 1-{boundaries['prologue'][1]}")
     print(f"  Route 1: lines {boundaries['route1'][0]+1}-{boundaries['route1'][1]+1}")
     print(f"  Route 2: lines {boundaries['route2'][0]+1}-{boundaries['route2'][1]+1}")
     print(f"  Route 3: lines {boundaries['route3'][0]+1}-{boundaries['route3'][1]}")
+
+    # Prologue
+    prologue = convert_prologue(lines, boundaries['prologue'][0], boundaries['prologue'][1])
+    with open(r'X:\GameDev\AOL_afterstory\game\scripts\prologue.rpy', 'w', encoding='utf-8') as f:
+        f.write(prologue)
+    print("Prologue converted!")
 
     # Route 1
     route1 = convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1)

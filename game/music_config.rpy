@@ -21,10 +21,11 @@ init python:
         "route1_scene1": {
             "label": "一周目 场景1 - 沙滩",
             "tracks": [
+                {"id": "shianchu", "name": "Shianchu", "file": "Shianchu.mp3"},
+                {"id": "jellyfish", "name": "Jellyfish", "file": "Jellyfish.mp3"},
                 {"id": "shine_of_silver_thaw", "name": "Shine of Silver Thaw", "file": "Shine_of_Silver_Thaw.mp3"},
                 {"id": "sunflower_of_night", "name": "The sunflower of the night", "file": "The_sunflower_of_the_night.mp3"},
                 {"id": "running_waters", "name": "Running Waters", "file": "RunningWaters.mp3"},
-                {"id": "jellyfish", "name": "Jellyfish", "file": "Jellyfish.mp3"},
             ]
         },
         "route1_scene2": {
@@ -44,9 +45,9 @@ init python:
         "route1_deepspace": {
             "label": "一周目 深空场景",
             "tracks": [
+                {"id": "time_slows_down", "name": "time slows down", "file": "time_slows_down.mp3"},
                 {"id": "deepspace", "name": "DeepSpace", "file": "DeepSpace.mp3"},
                 {"id": "snowfall", "name": "snowfall", "file": "øneheart_x_reidenshi_snowfall.mp3"},
-                {"id": "time_slows_down", "name": "time slows down", "file": "time_slows_down.mp3"},
                 {"id": "broken_air", "name": "Broken Air", "file": "Broken_Air.mp3"},
             ]
         },
@@ -67,10 +68,10 @@ init python:
         "route1_return": {
             "label": "一周目 回归场景",
             "tracks": [
+                {"id": "shianchu", "name": "Shianchu", "file": "Shianchu.mp3"},
                 {"id": "shine_of_silver_thaw", "name": "Shine of Silver Thaw", "file": "Shine_of_Silver_Thaw.mp3"},
                 {"id": "sunflower_of_night", "name": "The sunflower of the night", "file": "The_sunflower_of_the_night.mp3"},
                 {"id": "running_waters", "name": "Running Waters", "file": "RunningWaters.mp3"},
-                {"id": "shianchu", "name": "Shianchu", "file": "Shianchu.mp3"},
             ]
         },
         "route2_opening": {

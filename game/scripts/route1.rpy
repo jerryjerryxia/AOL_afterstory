@@ -7,11 +7,13 @@ label route1_start:
 
     call screen route_title("浮潜")
     ## 脸入水后冒泡泡的音效
-    ## 背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡
-    wangshuang "欢迎回来。"
+    ## 转场：虚空对视
+    $ current_scene_name = "虚空对视"
+    $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
+    wangshuang "欢迎回来，阿鹤。"
     ahe "倒不如去死。"
-    wangshuang "哦？为什么呢？"
-    ahe "不好意思...我觉得我有点..."
+    wangshuang "哦？有趣的提议，为什么呢？"
+    ahe "啊...不好意思...我觉得我有点..."
 
     menu:
         extend ""
@@ -21,21 +23,24 @@ label route1_start:
             $ madness += 1
             pass
 
-    wangshuang "说来听听。"
+    wangshuang "嗯，从之前的病历来看，你总是在这两个状态之间反复，但具体是什么感觉，说来听听。"
     ahe "我感觉...有某种暴戾的东西在我耳边一直说个不停，它想我去做一些非常恶毒的事情..."
-    wangshuang "那可再正常不过了呀，阿鹤。要我说，你现在就像太阳一样稳定。"
-    ahe "太阳？哪里有太阳？"
-    wangshuang "那儿。"
+    wangshuang "那可再正常不过了，阿鹤。要我说，你现在就像太阳一样稳定。"
+    ahe "太阳？"
+    wangshuang "哦，不好意思，太阳在那儿。"
     ## 玻璃破碎音效
+    ## 转场：夏日对视
+    $ current_scene_name = "夏日对视"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜。"
     ## 场景背景里的黑暗碎裂，变为完美夏日，金色的沙滩和蔚蓝的海，只是一个人都没有
     ## 场景音乐参考风格1：樹氷の輝き (Shine of Silver Thaw)，夜の向日葵（The sunflower of the night），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu
     ## 场景音乐参考风格2：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
     $ set_scene_music("route1_scene1")
     wangshuang "你看，太阳。"
-    ahe "啊， 太阳。"
+    ahe "嗯， 太阳。"
     wangshuang "金色的，温暖的，让人舒适而安心的太阳，它就在那里，明白这一点就够了。"
     ahe "可那太阳分明是我视野里最暴烈而盛气凌人的造物。"
-    wangshuang "那就闭上双眼，这样你的问题就迎刃而解了。"
+    wangshuang "那就闭上眼睛，你的问题就迎刃而解了。"
     ahe "可我还是我觉得我快要..."
 
     menu:
@@ -46,46 +51,48 @@ label route1_start:
             $ madness += 1
             pass
 
-    wangshuang "我不这么觉得。"
+    wangshuang "我不这么认为。"
     ahe "那不重——"
     wangshuang "重要的，阿鹤。这是你的心理咨询，你是来访者，我是咨询师，我的想法当然重要。"
     ahe "所以我该怎样才能好起来？"
     wangshuang "修补本就完整的东西，那自然是做不到的。"
-    ahe "求求你不要再浪费我的时间了！"
-    wangshuang "时间么...你要那东西有什么用？"
+    ahe "求求你不要再浪费我的时间了..."
+    wangshuang "时间么，你要那东西有什么用？"
     ahe "我还要——我还得..."
-    wangshuang "——我在听。"
+    wangshuang "我在听。"
     ahe "我还..."
     wangshuang "想不起来了？"
     ahe "这...这肯定又是你的把戏吧！"
     wangshuang "老是向外归因可解决不了问题啊，我的朋友。"
-    ahe "能不能说点我没听过的？我按你的建议向内归因归了半天，最后毁掉了整个逝乐园。"
-    wangshuang "所以一来二去，你的意思是你的病是我导致的。"
-    ahe "难道不是么？！"
-    wangshuang "阿鹤，你知道为什么太阳会死吗？"
+    wangshuang "你这病虽然此前认为已经根治，但以你的心理条件来讲，任何时候复发我都不意外啊。"
+    ahe "可我按你的建议向内归因之后，间接毁掉了整个逝乐园。"
+    wangshuang "不要谦虚，阿鹤，这一成就的功劳簿上肯定是少不了你的。"
+    wangshuang "过度谦虚只会让你更想逃避，可又能逃到哪里去呢？"
+    ahe "我..."
+    wangshuang "阿鹤，你知道太阳为什么会死吗？"
     ahe "因为它想死。"
     ## Extended文本框开始 - accumulating textbox
-    wangshuang "错——太阳自出生起就动了想死的念头，但它还是在天上烧了四十多亿年。"
+    wangshuang "错——太阳自出生的那一刻就动了死的念头，但它还是在天上烧了四十多亿年。"
     extend "\n它会死不是因为它想死，而是因为在它真正的将死之时，它的使命早就已经结束了。"
     ## Extended文本框结束
-    ahe "非自然死亡。"
-    wangshuang "当然。"
-    ahe "可这也是一种外因，全宇宙都齐心协力地想它死。"
-    wangshuang "恰恰相反，想法比起使命显得轻薄得多，是可以轻易受外界影响的。"
+    ahe "我不明白..."
+    wangshuang "你当然不明白，你肯定在想‘可这明明也是一种外因，毕竟全宇宙都齐心协力地想它死’。"
+    ahe "..."
+    wangshuang "然而现实恰恰相反——想法比起使命要显得轻薄得多，一坨烂泥一样谁都可以捏一把。"
     wangshuang "而使命则是彻头彻尾、由内而外的——只有在‘使命’松手的时间里，‘想法’才真正拥有自由。"
-    ahe "这和我们又有什么关系？"
+    ahe "和我们又有什么关系？"
     wangshuang "当然有关系了。不然你怎么会出现在这里？"
-    ahe "我出现在这里与我无关。"
-    wangshuang "确实与你无关，毕竟你一刻也没有想过再见到我。"
-    ahe "所以看来你不是继续来给我看病的。"
+    ahe "我从来没有想过要出现在这儿..."
+    wangshuang "嗯，你当然不想，毕竟你一刻也没有想过再见到我。"
+    ahe "所以，你不是继续来给我看病的。"
     wangshuang "当然不是。"
-    ahe "所以呢？我们在这里做什么？"
-    wangshuang "这个么，你不用多久自然就会明白的。"
-    ahe "OK，一切都无需解释，我只能在这里和你开瞪眼大赛，而你觉得这是又不是一场心理咨询。"
+    ahe "所以我们在这里做什么？"
+    wangshuang "你不用多久自然就会明白。"
+    ahe "好吧，阿霜，总之一切都无需解释，而你觉得这是又不是一场心理咨询，那我就只能在这里和你开瞪眼大赛了。"
     wangshuang "你也可以认为这只是一种较为朴素的过程而已。"
-    ahe "啊？"
-    wangshuang "嗯，就是那样，过多的言语会污染概念。你还是不要再探究了。"
-    ahe "哦。懂了。就有鬼了。"
+    ahe "...？"
+    wangshuang "嗯，就是那样，过多的言语会污染概念。你还是不要再探究为好啊。"
+    ahe "哦...对对对...懂了..."
     wangshuang "但瞪眼大赛我愿意接受挑战。"
     ahe "没说真要来啊！"
     wangshuang "盯——"
@@ -94,7 +101,7 @@ label route1_start:
     ahe "..."
     wangshuang "噗——"
     ahe "..."
-    wangshuang "——哈哈——啊哈哈啊啊啊——我败了..."
+    wangshuang "——噗噗呃啊——我败了..."
     ahe "自取其辱啊...阿霜。"
     wangshuang "你还有脸得意！能盯着你那张臭脸看还不笑的就只有他妈死人了！"
     ahe "嗯...所以我每天刷牙的时候都要死一次..."
@@ -104,6 +111,9 @@ label route1_start:
     ## 屏幕缩放，显得王霜近了很多
     ahe "是什么东西？"
     wangshuang "你看就是了。"
+    ## 转场：张目对日pt1
+    $ current_scene_name = "张目对日pt1"
+    $ current_scene_desc = "王霜右手对着太阳比出OK的姿势，阳光透过拇指和食指构成的细小的孔洞透了过来"
     ## 王霜右手轻轻握拳，阳光透过其中细小的孔洞透了过来
     ahe "什么都看不到。"
     wangshuang "凑近啊你，看仔细点！"
@@ -111,7 +121,13 @@ label route1_start:
     wangshuang "对准了。"
     ahe "呃...嗯？——啊啊啊啊啊啊啊啊啊啊啊！"
     ## 背景开始旋转，白屏逐渐溢满了整个屏幕
+    ## 转场：白屏
+    $ current_scene_name = "白屏"
+    $ current_scene_desc = "就是白屏。"
     ## 白屏逐渐褪去
+    ## 转场：甜品店对视
+    $ current_scene_name = "甜品店对视"
+    $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面"
     ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route1_scene2")
@@ -166,24 +182,23 @@ label route1_start:
     ahe "闭嘴——我再来点。"
     ## 把玩无色透明多面体差分3
     wangshuang "哦，千万别客气，要多少有多少，请吧——"
-    ahe "谢谢...谢谢..."
     wangshuang "认输并不是一件可耻的事情，失败了却自欺欺人才是。"
     ahe "好吧...我认输还不行吗。所以我们要在这里待到什么时候？"
     wangshuang "等时机到了，自然就能离开。"
     ahe "这也是一种较为朴素的过程？"
     wangshuang "哦？如此简明且精确的定义，谁教你的？"
     ahe "一个傻逼。"
-    wangshuang "啊，这么刻薄又是为什么？"
-    ahe "当一个人经历过我们之间发生的事情后，不论是谁都会变得刻薄起来的。"
-    wangshuang "真的不能和好了吗？"
+    wangshuang "好刻薄。！"
+    ahe "经历过我们之间发生的事情后，不论是谁都会变得刻薄起来的。"
+    wangshuang "所以没法和好了吗？"
     ahe "你让我走，我就考虑一下。"
-    wangshuang "真急啊你。"
+    wangshuang "真急啊你。那我也考虑一下。"
+    ahe "..."
     ahe "话说你手里拿的是什么？"
     ## 递过无色透明多面体
     wangshuang "这个？不是什么重要的东西，但你可以尝尝看。"
     ahe "尝尝看？"
     wangshuang "对啊，吃的。要不要试试？"
-    ahe ""
 
     menu:
         extend ""
@@ -269,9 +284,14 @@ label route1_start:
     extend "\n直到如同一副缺乏保养的老旧油画那样一片片剥落。"
     extend "\n王霜还是没有回来。"
     ## Extended大文本框结束
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "就是黑屏"
     ## 剥落完成后，黑屏
     ## 水底泡泡上浮音效
-    ## 粉红屏
+    ## 转场：粉红屏
+    $ current_scene_name = "粉红屏"
+    $ current_scene_desc = "就是粉红屏。"
     ## Extended文本框开始 - accumulating textbox
     ahe "阿霜？"
     extend "\n你在吗？"
@@ -404,7 +424,9 @@ label route1_start:
             "更多的毒液渗入血管，血液在沸腾，内脏在沸腾的血液里燃烧，但你只能看见你执意选择的灰。"
             "继续呼吸，因为你必须活下去，在无止境的灰幕里像你不存在的爱人那样活下去。"
             ## 电视机关机音效
-            ## 黑屏
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
         "放弃。":
             $ madness += 1
             ## 呼吸音效停止
@@ -413,7 +435,9 @@ label route1_start:
             ## 黑屏
 
     ## 沙漠中的脚步声
-    ## 银白色沙漠
+    ## 转场：银白色沙漠
+    $ current_scene_name = "银白色沙漠"
+    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Whispers in the Twilight - fullver, What's Left Feels Light - 怎么说呢，感觉这位 The Muun Lofi 的挺多东西味道都还挺对的，Sanpo - 迷幻电子沙漠风说的就是这个啊
     $ set_scene_music("route1_desert")
     wangshuang "喂，到了没啊？"
@@ -529,6 +553,9 @@ label route1_start:
     extend "\n满眼都是沙砾。但只消稍稍细看，那些一颗颗的，分明就不是沙砾。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
+    ## 转场：眼珠背景
+    $ current_scene_name = "眼珠背景"
+    $ current_scene_desc = "全屏眼珠，表现方式：手拿一颗眼珠的特写"
     large_narrator "每颗沙砾都是一颗无色透明多面体。"
     extend "\n每颗多面体里，都有一颗泛着血丝的眼珠。"
     ## Extended大文本框结束
@@ -553,10 +580,13 @@ label route1_start:
     extend "\n黑暗，一切都坠入黑暗，你的视野，你的身躯，你无际的意识。"
     extend "\n黑暗。"
     ## Extended大文本框结束
+    stop music fadeout 1.0
     ## 黑屏
     ## 电视机关闭音效
     ## 脸入水后冒泡泡的音效
-    ## 背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡
+    ## 转场：虚空对视
+    $ current_scene_name = "虚空对视"
+    $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来。"
     ahe "倒不如去死。"
     wangshuang "此话怎讲？"
@@ -565,7 +595,9 @@ label route1_start:
     ahe "那样就能好起来吗？"
     wangshuang "上次还是有效的。"
     ahe "好吧，我们走。"
-    ## 完美夏日场景
+    ## 转场：完美夏日
+    $ current_scene_name = "完美夏日"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物。"
     ## 场景音乐参考风格：樹氷の輝き (岸部真明)，夜の向日葵（素晴日bgm），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu - 同场景不复用配乐的话，换成这首还挺合适的
     $ set_scene_music("route1_return")
     ## Extended文本框开始 - accumulating textbox
@@ -609,10 +641,14 @@ label route1_start:
             ahe "我说了，我必须知道。"
             wangshuang "哈。行啊，那你闭上眼睛。"
             ahe "..."
-            ## 黑屏
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
             ## 水中探头出水的音效
             wangshuang "可以睁眼了。"
-            ## 完美夏日，但一切都是灰白的，一些地方长着眼睛
+            ## 转场：灰白夏日1
+            $ current_scene_name = "灰白夏日1"
+            $ current_scene_desc = "完美夏日背景，但黑白配色，且一些地方长着眼睛（完美夏日差分）"
             ahe "这..."
             wangshuang "我眼中的世界——或者说，在我们来到这完美的夏日海滩之前，我眼中的世界。"
             ahe "你的灰..."
@@ -636,7 +672,9 @@ label route1_start:
             wangshuang "移开目光可帮不到你哦。"
             ahe "我们回去吧。"
             wangshuang "当然，回头就行。"
-            ## 更多的灰白色海滩，回去的路已经消失了
+            ## 转场：灰白夏日2
+            $ current_scene_name = "灰白夏日2"
+            $ current_scene_desc = "灰白夏日的第二版，整体构图可以类似，但因为是主角180度转身后看到的场景，所以要就旋转做出相应调整"
             ahe "门呢？"
             wangshuang "没了。"
             ahe "这...难道就是试图同理的代价？"
@@ -663,7 +701,9 @@ label route1_start:
     ## 灰幕开始冒泡泡，屏幕四周开始被黑色侵蚀
     ## 最后只剩下一片纯黑幕和一块无色透明多面体
     ## 从水中探头+大口吸气音效
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = None
 
     ## Route 1 结束
     $ unlock_route(1)

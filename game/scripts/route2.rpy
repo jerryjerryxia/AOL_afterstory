@@ -5,7 +5,9 @@ label route2_start:
 
 ## 二周目：水底捞月
 
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "仔细一想，黑屏可以试着搞出深海漆黑的感觉...就不是纯黑更接近非常非常深的深蓝这样，然后有一些不太明显的质感。"
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，DoutokutosetsuShinsou no reijouGaidankousetsu - 物语ost是好文化
     $ set_scene_music("route2_opening")
     ## 脸入水后冒泡泡的音效
@@ -53,7 +55,9 @@ label route2_start:
     large_narrator "真他妈无聊啊。"
     ## 大文本框结束
     call screen route_title("水底捞月")
-    ## 完美夏日背景，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡
+    ## 转场：夏日对视
+    $ current_scene_name = "夏日对视"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜"
     wangshuang "欢迎回来。"
     ahe "又来？"
     wangshuang "哦？"
@@ -79,6 +83,9 @@ label route2_start:
     wangshuang "理解什么？你需要理解的一切都已经装在你脑壳里了，去慢慢理解吧。再见。"
     ahe "阿霜！"
     ## Extended大文本框开始 - accumulating large textbox
+    ## 转场：完美夏日
+    $ current_scene_name = "完美夏日"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物"
     large_narrator "丢下残酷的告别后，王霜便如同青烟般消散了。完美的夏日光景里只留下孤零零的你。"
     extend "\n这幅场景也似曾相识——你回想起了某件重要的事情，却又抓不住任何具体的画面。"
     extend "\n只记得你曾做过一个长久而模糊的、关于忍耐与空虚的梦。"
@@ -87,7 +94,9 @@ label route2_start:
     large_narrator "但你决定做些什么。"
     extend "\n你循着回忆里模糊的画面，用手指蜷成小孔，试图透过那微小的空间来窥探钉在天顶的太阳。"
     ## Extended大文本框结束
-    ## 白屏
+    ## 转场：白屏
+    $ current_scene_name = "白屏"
+    $ current_scene_desc = "就是白屏。"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "强光刺目，你的全身都颤抖着抗议你无意义的自毁行为。"
     extend "\n眼角注满了泪水，眼球如烈火灼烧般压迫着你的视神经。"
@@ -96,7 +105,9 @@ label route2_start:
     extend "\n火辣的光线丛中心，是一颗熊熊燃烧的火球，给予世间万物以生命的神圣火球。"
     extend "\n而在那火球的中心，你看见了一件似曾相识的事物。"
     ## Extended大文本框结束
-    ## 白屏，中心出现无色透明多面体
+    ## 转场：无色透明多面体2
+    $ current_scene_name = "无色透明多面体2"
+    $ current_scene_desc = "白屏，中间有无色透明多面体"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "那东西看似球体，却又好似有无数细小的平面，看似无色透明，却又从中散发出数不胜数的光。"
     extend "\n你进一步缩小手指间的空隙，直到视野中只剩下那神秘的多面体。"
@@ -109,7 +120,9 @@ label route2_start:
     extend "\n你不明就里，但还是伸出了手。"
     ## Extended大文本框结束
     ## 捂住音效
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "就是黑屏。"
     wangshuang "别。"
     ahe "阿霜？"
     wangshuang "别随便碰别人的东西。"
@@ -130,7 +143,9 @@ label route2_start:
         "可是——":
             wangshuang "我！说！闭！嘴！"
             ## 电视机关闭音效
-            ## 黑屏
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
             ## Bad End 2：好奇害死猫
             $ unlock_ending("bad_end_2")
             return
@@ -149,12 +164,16 @@ label route2_start:
             "一些模糊的冲动在你心里逐渐成型，一如自深海逐渐上浮的泡沫。"
             "但过量的思索终究使你劳累。某一刹那，困意压过了一切思绪，于是你若无其事地闭上双眼——"
             ## 电视机关闭音效
-            ## 黑屏
+            ## 转场：黑屏
+            $ current_scene_name = "黑屏"
+            $ current_scene_desc = "就是黑屏。"
             ## 水底冒泡泡音效
 
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route2_lofi")
-    ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
+    ## 转场：甜品店对视
+    $ current_scene_name = "甜品店对视"
+    $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面。"
     ahe "你好，我要这个团子。"
     wangshuang "嗯，你很懂嘛。"
     ahe "总觉得...什么时候来过这里。"
@@ -245,7 +264,9 @@ label route2_start:
     wangshuang "...不要担心，药马上就到了，我一定会帮助你——"
     ## 扑倒音效
     ## 扼颈音效
-    ## 红屏
+    ## 转场：红屏
+    $ current_scene_name = "红屏"
+    $ current_scene_desc = "就是红屏。"
     ## 场景音乐参考：Sensou - 众所周知物语是战斗番，Gehou - 这个感觉也不错
     $ set_scene_music("route2_battle")
     ahe "这就是你想要的？"
@@ -286,14 +307,18 @@ label route2_start:
     extend "\n你身边。"
     ## Extended大文本框结束
     ## 脚步声
-    ## 一家疑似餐厅的背景，但对面没有任何人
+    ## 转场：甜品店
+    $ current_scene_name = "甜品店"
+    $ current_scene_desc = "甜品店对视但拿掉王霜。"
     wangshuang_unknown "阿鹤？"
     "听见背后人声，早些时候肆意膨胀的不明情绪已经泾渭分明地裂成了两股，但此刻你只有心思去感知其中之一——"
 
     menu:
         extend ""
         "深入骨髓的恐惧":
-            ## 正常的王霜站在阿鹤身后
+            ## 转场：身后的王霜1
+            $ current_scene_name = "身后的王霜1"
+            $ current_scene_desc = "王霜站在主角身后，居高临下地看着主角。"
             ahe "阿霜...我想...走了..."
             wangshuang "玩得还开心？"
             ahe "一点也不..."
@@ -308,7 +333,9 @@ label route2_start:
             ## 电视关机音效
             ## 黑屏
         "如沐春风的安详":
-            ## 血肉模糊尸体王霜站在阿鹤身后
+            ## 转场：身后的王霜2
+            $ current_scene_name = "身后的王霜2"
+            $ current_scene_desc = "血肉模糊的王霜站在主角身后，双目无神地看着主角。"
             "哈哈哈哈哈哈哈哈当然如此！这有什么可意外的呢，对吧，阿霜？如果这是你的愿望，那我当然全盘接受。"
             "除了全盘接受之外我还有什么选择呢？"
             "如果你想要反反复复地去死，那我就一次又一次地杀了你，直到你厌倦为止。"
@@ -323,13 +350,17 @@ label route2_start:
             "用你最熟悉的方式去死。"
             "直到你不再无聊为止。"
             "所以说，阿霜，你准备好了么？"
-            ## 红屏
+            ## 转场：红屏
+            $ current_scene_name = "红屏"
+            $ current_scene_desc = "就是红屏。"
             ## Bad End 3：平等杀戮
             $ unlock_ending("bad_end_3")
             return
 
     ## 冒泡泡音效
-    ## 粉红屏
+    ## 转场：粉红屏
+    $ current_scene_name = "粉红屏"
+    $ current_scene_desc = "就是粉红屏。"
     ## 场景音乐参考：Shiniki - 神前晓是我爹
     $ set_scene_music("route2_shiniki")
     ## Extended大文本框开始 - accumulating large textbox
@@ -395,7 +426,9 @@ label route2_start:
     extend "\n成为了毒之后，你手中甚至连自我终结的决定权也不复存在了。"
     extend "\n透过毒，你与水母融为一体。"
     ## Extended大文本框结束
-    ## 灰屏，水母
+    ## 转场：灰屏水母
+    $ current_scene_name = "灰屏水母"
+    $ current_scene_desc = "灰屏，中间有一只巨大的水母"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "视野终于清晰了——灰。"
     extend "\n充斥着世界上每一个角落的，不是海水，而是绵延不绝的灰幕。"
@@ -449,9 +482,13 @@ label route2_start:
     extend "\n于是，你在沉默中闭上双眼，任由身躯彻底陷入无垠的黑暗里去。"
     ## Extended大文本框结束
     ## 冒泡泡音效
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "就是黑屏。"
     ## 沙漠中的风声
-    ## 银白色沙漠
+    ## 转场：银白色沙漠
+    $ current_scene_name = "银白色沙漠"
+    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Shitagokoro - 一些非常适合唠嗑的音乐
     $ set_scene_music("route2_chat")
     wangshuang "只用沙子硬烧的话，等你搭完一个头骨黄花菜都凉了。"
@@ -487,7 +524,9 @@ label route2_start:
     extend "\n阿霜？"
     extend "\n哎，逃走又有什么用？"
     ## Extended文本框结束
-    ## 银白色沙漠，门
+    ## 转场：银白色沙漠+门
+    $ current_scene_name = "银白色沙漠+门"
+    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨，且视角中心有一扇凭空出现的洞开的门"
     stop music fadeout 1.0
     ## Extended文本框开始 - accumulating textbox
     "眼前沉默的王霜烟消云散。"
@@ -533,15 +572,21 @@ label route2_start:
     ahe "可这里什么都没有。"
     shishou "有的啊，你看——"
     ## 人工场景变换的神秘音效
-    ## 逝乐园
+    ## 转场：乌云压境的逝乐园
+    $ current_scene_name = "乌云压境的逝乐园"
+    $ current_scene_desc = "逝乐园是一个高科技支撑的娱乐园区，可参考近未来的拉斯维加斯，这里是白天，且即将下雷雨"
     ahe "诶？"
     shishou "说了嘛，想去哪儿就去哪儿。"
     ## 人工场景变换的神秘音效
-    ## 完美夏日
+    ## 转场：完美夏日
+    $ current_scene_name = "完美夏日"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物"
     ahe "这里还是不要久留为好..."
     shishou "哦，那就回去吧。"
     ## 人工场景变换的神秘音效
-    ## 银白色沙漠，门
+    ## 转场：银白色沙漠+门
+    $ current_scene_name = "银白色沙漠+门"
+    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨，且视角中心有一扇凭空出现的洞开的门"
     ahe "这...是怎么做到的？"
     shishou "我也不知道。有一天在沙子里埋得太久了，心里不舒服，然后睁开眼就已经在另一个世界了。后来王霜说，只要在这里待得够久，迟早会学会的。"
     ahe "那我是不是也能学会？"
@@ -580,7 +625,9 @@ label route2_start:
     shishou "不必客气，阿鹤。我们就此别过。"
     ahe "诶——？"
     ## 推搡音效
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "就是黑屏。"
     stop music fadeout 1.0
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "你正试图厘清眼前无头尸最后那句意义不明的言语，根本无暇顾及她向前伸出的双手。"
@@ -625,7 +672,9 @@ label route2_start:
     ## Extended大文本框结束
     ## 人工场景变换的神秘音效
     ## 海浪声
-    ## 完美夏日场景
+    ## 转场：完美夏日
+    $ current_scene_name = "完美夏日"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物"
     wangshuang "哟。你来了。"
     ahe "我来了，阿霜。"
     wangshuang "所以我们故事的主人公找到他想要的答案了吗？"
@@ -647,6 +696,9 @@ label route2_start:
     ahe "但这我们早就见过了。"
     wangshuang "别急，还没完。"
     ## 场景由外到内逐渐变黑，中心是无色透明多面体
+    ## 转场：无色透明多面体
+    $ current_scene_name = "无色透明多面体"
+    $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光"
     ahe "这也是老熟人了。"
     wangshuang "别光看，听。"
     ## 音效停
@@ -786,8 +838,9 @@ label route2_start:
     "…"
     "…"
     stop music fadeout 1.0
-    ## 完美夏日，王霜第一视角，俯视，看到自己的着装
-    ## 完美夏日，王霜第一视角，正视，看到对面双目无神的阿鹤
+    ## 转场：夏日对视2
+    $ current_scene_name = "夏日对视2"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里只有双目紧闭的阿鹤，玩家以王霜为第一视角和阿鹤对视"
     ## Extended文本框开始 - accumulating textbox
     wangshuang "阿鹤？"
     extend "\n我们成功了呀，阿鹤！"
@@ -803,6 +856,9 @@ label route2_start:
     extend "\n阿鹤..."
     extend "\n阿鹤...哈哈哈...原来如此，原来如此，这才是代价么？"
     ## Extended文本框结束
+    ## 转场：完美夏日
+    $ current_scene_name = "完美夏日"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物。"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "你感到怅然若失，但远没有体验到预想中的巨大悲伤。"
     extend "\n都说悲伤才是前进的食量，而你竟连这份动力都失去了。"
@@ -818,7 +874,9 @@ label route2_start:
     extend "\n永远也不会有人看了。"
     extend "\n和消失的阿鹤一样，你也闭上双眼，在踏足你理想乡的五分钟后开始仔细思索,事到如今，你为了你的理想究竟失去了什么。"
     ## Extended大文本框结束
-    ## 黑屏
+    ## 转场：黑屏
+    $ current_scene_name = "黑屏"
+    $ current_scene_desc = "就是黑屏。"
 
     ## Route 2 结束
     $ unlock_route(2)
