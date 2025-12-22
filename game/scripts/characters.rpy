@@ -12,6 +12,12 @@ define narrator = Character(None, kind=adv)
 ## 大文本框旁白（用于长篇背景叙述）
 define large_narrator = Character(None, kind=adv, screen="large_say")
 
+## 居中文本框旁白（用于戏剧性的单行文字）
+define centered_narrator = Character(None, kind=adv, screen="centered_say")
+
+## 居中大字文本框旁白（用于戏剧性的单行大字）
+define centered_large_narrator = Character(None, kind=adv, screen="centered_large_say")
+
 ## 主角内心独白
 define protag_thought = Character(None, kind=adv, what_prefix='"', what_suffix='"', what_italic=True)
 

@@ -329,13 +329,41 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             continue
 
         # Check for large textbox markers (non-combined, single line mode)
-        if '大文本框开始' in line and 'Extended' not in line:
+        if '大文本框开始' in line and 'Extended' not in line and '居中' not in line:
             use_large_textbox = True
             output.append("    ## 大文本框开始")
             continue
-        if '大文本框结束' in line and 'Extended' not in line:
+        if '大文本框结束' in line and 'Extended' not in line and '居中' not in line:
             use_large_textbox = False
             output.append("    ## 大文本框结束")
+            continue
+
+        # Check for centered textbox markers 【居中文本框开始】【居中文本框结束】
+        if '居中文本框开始' in line and '大字' not in line:
+            output.append("    ## 居中文本框开始 - centered textbox")
+            # Collect all lines until end marker
+            while i < end_line and i < len(lines):
+                next_line = lines[i].strip()
+                i += 1
+                if '居中文本框结束' in next_line:
+                    output.append("    ## 居中文本框结束")
+                    break
+                if next_line:
+                    output.append(f'    centered_narrator {format_dialogue(next_line)}')
+            continue
+
+        # Check for centered large font textbox markers 【居中大字文本框开始】【居中大字文本框结束】
+        if '居中大字文本框开始' in line:
+            output.append("    ## 居中大字文本框开始 - centered large font textbox")
+            # Collect all lines until end marker
+            while i < end_line and i < len(lines):
+                next_line = lines[i].strip()
+                i += 1
+                if '居中大字文本框结束' in next_line:
+                    output.append("    ## 居中大字文本框结束")
+                    break
+                if next_line:
+                    output.append(f'    centered_large_narrator {format_dialogue(next_line)}')
             continue
 
         # Check for choice A - starts a branching block
@@ -493,13 +521,41 @@ def convert_prologue(lines, start_line, end_line):
             continue
 
         # Check for large textbox markers
-        if '大文本框开始' in line and 'Extended' not in line:
+        if '大文本框开始' in line and 'Extended' not in line and '居中' not in line:
             use_large_textbox = True
             output.append("    ## 大文本框开始")
             continue
-        if '大文本框结束' in line and 'Extended' not in line:
+        if '大文本框结束' in line and 'Extended' not in line and '居中' not in line:
             use_large_textbox = False
             output.append("    ## 大文本框结束")
+            continue
+
+        # Check for centered textbox markers 【居中文本框开始】【居中文本框结束】
+        if '居中文本框开始' in line and '大字' not in line:
+            output.append("    ## 居中文本框开始 - centered textbox")
+            # Collect all lines until end marker
+            while i < end_line and i < len(lines):
+                next_line = lines[i].strip()
+                i += 1
+                if '居中文本框结束' in next_line:
+                    output.append("    ## 居中文本框结束")
+                    break
+                if next_line:
+                    output.append(f'    centered_narrator {format_dialogue(next_line)}')
+            continue
+
+        # Check for centered large font textbox markers 【居中大字文本框开始】【居中大字文本框结束】
+        if '居中大字文本框开始' in line:
+            output.append("    ## 居中大字文本框开始 - centered large font textbox")
+            # Collect all lines until end marker
+            while i < end_line and i < len(lines):
+                next_line = lines[i].strip()
+                i += 1
+                if '居中大字文本框结束' in next_line:
+                    output.append("    ## 居中大字文本框结束")
+                    break
+                if next_line:
+                    output.append(f'    centered_large_narrator {format_dialogue(next_line)}')
             continue
 
         # Regular content line

@@ -185,14 +185,81 @@ screen large_say(who, what):
         background Solid("#000000ee")
 
         text what id "what":
-            xalign 0.5
-            yalign 0.5
+            ## Fixed top-left position for consistent reading experience
+            xalign 0.0
+            yalign 0.0
+            text_align 0.0
             xsize 1360
             font gui.text_font
             size gui.text_size
             color "#ffffff"
             line_spacing 10
-            text_align 0.0
+
+    ## 快捷按钮
+    use quick_menu
+
+    ## 开发者场景信息
+    use dev_scene_info
+
+    ## 开发者音乐选择器
+    use dev_music_selector
+
+################################################################################
+## 居中文本框界面 - Centered Textbox Screen (for striking single lines)
+################################################################################
+
+screen centered_say(who, what):
+    frame:
+        xpos 200
+        ypos 140
+        xsize 1520
+        ysize 800
+        padding (80, 80, 80, 80)
+        background Solid("#000000ee")
+
+        text what id "what":
+            ## Centered for dramatic effect
+            xalign 0.5
+            yalign 0.5
+            text_align 0.5
+            xsize 1360
+            font gui.text_font
+            size gui.text_size
+            color "#ffffff"
+            line_spacing 10
+
+    ## 快捷按钮
+    use quick_menu
+
+    ## 开发者场景信息
+    use dev_scene_info
+
+    ## 开发者音乐选择器
+    use dev_music_selector
+
+################################################################################
+## 居中大字文本框界面 - Centered Large Font Textbox Screen
+################################################################################
+
+screen centered_large_say(who, what):
+    frame:
+        xpos 200
+        ypos 140
+        xsize 1520
+        ysize 800
+        padding (80, 80, 80, 80)
+        background Solid("#000000ee")
+
+        text what id "what":
+            ## Centered with larger font for dramatic effect
+            xalign 0.5
+            yalign 0.5
+            text_align 0.5
+            xsize 1360
+            font gui.text_font
+            size gui.text_size + 6
+            color "#ffffff"
+            line_spacing 10
 
     ## 快捷按钮
     use quick_menu

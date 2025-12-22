@@ -125,6 +125,9 @@ label route2_start:
     $ current_scene_desc = "就是黑屏。"
     wangshuang "别。"
     ahe "阿霜？"
+    ## 转场：夏日对视
+    $ current_scene_name = "夏日对视"
+    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜"
     wangshuang "别随便碰别人的东西。"
     ahe "可我没想碰——"
     wangshuang "不用狡辩了，你做到了，你把我逼回来了，现在你开心了么？"
@@ -456,9 +459,9 @@ label route2_start:
     large_narrator "触手在你体表继续游移，其中一根顺着你的手臂一圈圈缠绕上来，直到尖端刚好落在你手掌附近。你感到前所未有的剧痛，仿佛整条手臂的肌肉被削去，骨骼也粉碎了。但你极力维持着意识，死死盯着那摇曳的透明触手。"
     extend "\n它的尖端在离你手心不远不近的地方飘荡着，像是一场挑逗，又像是某种邀请。"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "相容吧。"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "相容吧。"
+    ## 居中大字文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "似乎在发出这样简单的邀请。"
     extend "\n既然肉体与神经都已融为一体，为何不让意识也容纳彼此？"
@@ -787,9 +790,9 @@ label route2_start:
     extend "\n但正如王霜所说，你在这个世界的存在于某种程度上讲与神明无异。"
     extend "\n方才已经做到切换世界了，所以自由延长手臂这样的事情可谓轻而易举。"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "延长。"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "延长。"
+    ## 居中大字文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "伸出手后不久，手掌就消失不见。"
     extend "\n你的手臂像糯米团子那样无止境地朝幽暗的空间深处延长，试图抓住仅存的光。"

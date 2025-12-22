@@ -34,9 +34,9 @@ label route1_prologue:
     extend "\n很久很久以前。"
     extend "\n是当太阳还只是一团翩翩起舞的灰烬与气体时？"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "疯子。"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "疯子。"
+    ## 居中大字文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "你只记得这个字眼。"
     extend "\n它既关于你，也关于别人，关于所有人。"

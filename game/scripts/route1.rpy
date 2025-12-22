@@ -233,9 +233,9 @@ label route1_start:
     extend "\n每一缕神经都在扩张。启示性的景象。时间和空间波浪。无孔不入的色彩和甜味。蓝色的。交响。"
     extend "\n反复咀嚼伤痛是毫无意义的，即使伤痛让你生出更厚实的血肉。在一切都已结束的当下，连时间都已丧失价值，唯一还能让你睁开双眼的，就只有——"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "瘾。"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "瘾。"
+    ## 居中大字文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。"
     extend "\n成瘾。糖分子使你逐渐成瘾。"
@@ -552,10 +552,10 @@ label route1_start:
     extend "\n沙砾。"
     extend "\n满眼都是沙砾。但只消稍稍细看，那些一颗颗的，分明就不是沙砾。"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
     ## 转场：眼珠背景
     $ current_scene_name = "眼珠背景"
     $ current_scene_desc = "全屏眼珠，表现方式：手拿一颗眼珠的特写"
+    ## Extended大文本框开始 - accumulating large textbox
     large_narrator "每颗沙砾都是一颗无色透明多面体。"
     extend "\n每颗多面体里，都有一颗泛着血丝的眼珠。"
     ## Extended大文本框结束
@@ -568,9 +568,9 @@ label route1_start:
     large_narrator "它们一颗颗地在你眼前爆裂开来，里面飞出浑浊的玻璃体与血液的混合物飞溅到你脸上，冰凉而粘稠。"
     extend "\n你极力控制着呕吐欲，但那想法很快就被另一种思绪所覆盖了。"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "你想死。"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "你想死。"
+    ## 居中大字文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "那是唯一的解决方案。"
     extend "\n事到如今只有这么一条路了。"
@@ -628,7 +628,9 @@ label route1_start:
             wangshuang "那就继续想吧。眼前风景足够你继续想一阵子了，等你想明白了，你自然知道来什么地方找我。"
             "丢下这句话，阿霜便化作一阵轻烟消散了，只在完美夏日光景里留下孤零零的你。"
             "你其实早就下定决心要弄明白阿霜心里的空洞，但一时的迟疑终究遭致长久的败北。"
+            ## 居中文本框开始
             "王霜永远地消失了。"
+            ## 居中文本框结束
             "而你则在她留给你的完美夏日中，徒劳地坐守着取之不尽用之不竭的欢欣。"
             "淡金色的细腻沙滩，蔚蓝的海，略带盐味的小风，轻柔起伏的浪声。"
             "在空无一人的海滩上，你感到有些怅然若失。"
@@ -660,9 +662,9 @@ label route1_start:
             "“比较”不再重要。在灰的抚慰下，事物不再具备它们原本的质地——仅是灰而已，平整、柔软、不加修饰。"
             "“边界”不复存在。在灰的调剂下，事物之间的隔阂分崩离析，相互流进彼此，在同一张灰色的网下成为同样的事物。"
             ## Extended文本框结束
-            ## Extended文本框开始
+            ## 居中文本框开始
             "但这一切都与你无关。"
-            ## Extended文本框结束
+            ## 居中文本框结束
             ## Extended文本框开始
             "远处沙滩椅上的眼睛并不是你的眼睛。它维持着距离，幽幽地盯着你的一举一动。"
             "你与事物的隔阂一如既往地高耸。你迫切想要融入灰，但这愿望越是强烈，你就越感到身处深灰色的海底。"
