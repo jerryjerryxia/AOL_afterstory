@@ -21,6 +21,15 @@ init python:
             deleted_count += 1
         renpy.notify("已删除 {} 个存档".format(deleted_count))
 
+    def delete_persistent_data():
+        """Delete all persistent data (route progress, endings, etc.)."""
+        # Clear all persistent data using Ren'Py's built-in function
+        renpy.clear_persistent()
+        # Notify the user
+        renpy.notify("已清除所有持久化数据，请重启游戏")
+        # Restart the game to apply changes
+        renpy.utter_restart()
+
 ################################################################################
 ## GUI 变量定义（填补缺失的变量）
 ################################################################################
@@ -520,6 +529,7 @@ screen navigation():
             textbutton _("开始游戏") action Start()
             textbutton _("读取存档") action ShowMenu("load")
             textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None)
+            textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None)
             textbutton _("音乐鉴赏") action ShowMenu("music_room")
         else:
             textbutton _("历史记录") action ShowMenu("history")
