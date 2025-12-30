@@ -169,4 +169,10 @@ init python:
                 {"id": "go_with_flow", "name": "Go with the Flow", "file": "GoWithTheFlow.wav"},
             ]
         },
+        "route3_normal_end": {
+            "label": "三周目 Normal End",
+            "tracks": [
+                {"id": "summer_will_end", "name": "Because The Summer Will Soon End", "file": "BecauseTheSummerWillSoonEnd.mp3"},
+            ]
+        },
     }

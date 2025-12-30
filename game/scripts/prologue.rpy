@@ -60,21 +60,25 @@ label route1_prologue:
     extend "\n……"
     extend "\n………"
     ## Extended大文本框结束
-    "没想到，这么快就找到你了。"
-    "我以为这种事对于现在的你来说易如反掌。"
-    "当然。只是一想到又要见到你那臭脸，我就下意识地多做了点心理准备。"
-    "心理准备？你？"
-    "毕竟做了对不起你的事情。"
-    "哦。歉意，你能感受到那种东西？"
-    "是学习的成果啦。"
-    "哦。看来你也挺无聊。"
-    "是咯，所以想不想出去溜达溜达？"
-    "向一个不具备意志的人征求认可又是何苦？彰显你那虚伪的开明？"
-    "那就当你同意了。"
-    "请自便吧。"
-    "…"
-    "……"
-    "………"
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "——没想到，这么快就找到你了。"
+    extend "\n——我以为这种事对于现在的你来说易如反掌。"
+    extend "\n——当然。只是一想到又要见到你那臭脸，我就下意识地多做了点心理准备。"
+    extend "\n——心理准备？你？"
+    extend "\n——毕竟做了“伤天害理”的事情。"
+    extend "\n——哦。歉意，你能感受到那种东西？"
+    extend "\n——不能。但能演给你看，要看吗？"
+    extend "\n——看来你也挺无聊。"
+    extend "\n——是咯。所以想不想出去溜达溜达？"
+    extend "\n——向一个不具备意志的人征求认可又是何苦？彰显你那虚伪的开明？"
+    extend "\n——那就当你同意了。"
+    extend "\n——请自便吧。"
+    ## Extended大文本框结束
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "…"
+    extend "\n……"
+    extend "\n………"
+    ## Extended大文本框结束
     ## 转场：黑屏
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
@@ -94,13 +98,20 @@ label route1_prologue:
     ## 水底泡泡上浮音效
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "都说远道而来的友人要以热情相迎。"
-    extend "\n——本该是这样的。"
-    extend "\n但你累了，实在是太累了。长久不动竟是一件如此令人疲惫的事情。"
+    extend "\n本该是这样的。"
+    extend "\n但你累了，实在是太累了。长时间保持不动竟是一件如此令人疲惫的事。"
+    extend "\n每一寸肌肉都从黑夜中啜饮势能，苦苦等待爆发的那一刻——遥遥无期的那一刻。"
+    extend "\n你在永恒的凝滞中被倦意填满。"
     extend "\n然而来者终归要到来——应你之邀而来。"
     extend "\n自己种下了树，就必要咽下它结的果。"
-    extend "\n——逃避吧。"
-    extend "\n虽然早就无路可逃，但移开目光就能解燃眉之急，如此便利之事又有什么推脱的借口？"
-    extend "\n于是你就这样像一片朽木般漂浮着，在闪着微光的海面上，不发出一丝动静。"
+    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "逃避吧！"
+    ## 居中大字文本框结束
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "虽然早就无路可逃，但移开目光就能解燃眉之急，如此便利之事又有什么推脱的借口？"
+    extend "\n于是就这样，你纹丝不动地在闪着微光的海面上漂浮，宛如一段朽木。"
+    extend "\n假装一切都没有发生。"
     ## Extended大文本框结束
 
     ## 一周目序章结束，跳转到一周目正式开始
