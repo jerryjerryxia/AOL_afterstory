@@ -51,9 +51,9 @@ label route2_start:
         "下潜":
             pass
 
-    ## 大文本框开始
-    large_narrator "真他妈无聊啊。"
-    ## 大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "真他妈无聊啊。"
+    ## 居中大字文本框结束
     call screen route_title("水底捞月")
     ## 转场：夏日对视
     $ current_scene_name = "夏日对视"
@@ -833,7 +833,9 @@ label route2_start:
     extend "\n使命？"
     extend "\n可使命究竟是水里的那轮明月，还是天上的？"
     extend "\n抑或是水底的？"
-    extend "\n…"
+    ## Extended大文本框结束
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "…"
     extend "\n……"
     extend "\n………"
     extend "\n幻觉。"

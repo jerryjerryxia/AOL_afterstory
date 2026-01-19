@@ -163,17 +163,4 @@ init python:
                 {"id": "doutokutosetsu", "name": "Doutokutosetsu", "file": "Doutokutosetsu.mp3"},
             ]
         },
-        "route3_true_end": {
-            "label": "三周目 True End",
-            "tracks": [
-                {"id": "scenery_drowning", "name": "Scenery Drowning In Summer", "file": "SceneryDrowningInSummer.mp3"},
-                {"id": "go_with_flow", "name": "Go with the Flow", "file": "GoWithTheFlow.wav"},
-            ]
-        },
-        "route3_normal_end": {
-            "label": "三周目 Normal End",
-            "tracks": [
-                {"id": "summer_will_end", "name": "Because The Summer Will Soon End", "file": "BecauseTheSummerWillSoonEnd.mp3"},
-            ]
-        },
     }
