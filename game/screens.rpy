@@ -23,8 +23,8 @@ init python:
 
     def delete_persistent_data():
         """Delete all persistent data (route progress, endings, etc.)."""
-        # Clear all persistent data using Ren'Py's built-in function
-        renpy.clear_persistent()
+        # Clear all persistent data by resetting to defaults
+        persistent._clear(progress=True)
         # Notify the user
         renpy.notify("已清除所有持久化数据，请重启游戏")
         # Restart the game to apply changes

@@ -257,8 +257,8 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
     output = []
     indent = "    "
 
-    # Track whether we need to start fresh (after a scene transition)
-    need_fresh_start = True
+    # Track whether this is the first content line (after which we use extend)
+    first_line = True
 
     for speaker, text in collected:
         # Handle scene transitions - they break the extend chain
@@ -273,23 +273,172 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
             else:
                 output.append(f'{indent}$ current_scene_desc = None')
             # Next dialogue line should start fresh
-            need_fresh_start = True
+            first_line = True
             continue
 
-        if need_fresh_start:
-            # First line after start or transition: normal dialogue
-            if use_large:
-                output.append(f'{indent}large_narrator {format_dialogue(text)}')
-            elif speaker:
+        # First line outputs normally, all subsequent lines use extend
+        if first_line:
+            if speaker:
+                # Character dialogue
                 output.append(f'{indent}{speaker} {format_dialogue(text)}')
             else:
-                output.append(f'{indent}{format_dialogue(text)}')
-            need_fresh_start = False
+                # Narration
+                if use_large:
+                    output.append(f'{indent}large_narrator {format_dialogue(text)}')
+                else:
+                    output.append(f'{indent}{format_dialogue(text)}')
+            first_line = False
         else:
-            # Subsequent lines: use extend to append with newline
+            # All subsequent lines use extend
             output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + text)}')
 
     return output, i
+
+
+def process_choice_content(content_lines, indent="            "):
+    """
+    Process content lines within a choice branch, handling Extended textbox markers.
+    Returns list of output lines.
+    """
+    output = []
+    i = 0
+
+    while i < len(content_lines):
+        line = content_lines[i].strip()
+        i += 1
+
+        if not line:
+            continue
+
+        # Check for Extended大文本框 markers
+        if 'Extended大文本框开始' in line:
+            output.append(f"{indent}## Extended大文本框开始 - accumulating large textbox")
+            # Collect lines until end marker
+            first_line = True
+            while i < len(content_lines):
+                next_line = content_lines[i].strip()
+                i += 1
+                if 'Extended大文本框结束' in next_line:
+                    output.append(f"{indent}## Extended大文本框结束")
+                    break
+                if not next_line:
+                    continue
+                # Skip stage directions
+                if next_line.startswith('【') and next_line.endswith('】'):
+                    continue
+                if first_line:
+                    output.append(f'{indent}large_narrator {format_dialogue(next_line)}')
+                    first_line = False
+                else:
+                    output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + next_line)}')
+            continue
+
+        # Check for Extended文本框 markers (non-large)
+        # All lines accumulate with extend after the first
+        if 'Extended文本框开始' in line and 'Extended大文本框' not in line:
+            output.append(f"{indent}## Extended文本框开始 - accumulating textbox")
+            # Character name to variable mapping
+            char_var_map = {
+                '王霜': 'wangshuang',
+                '王霜（？）': 'wangshuang_unknown',
+                '阿鹤': 'ahe',
+                '尸首': 'shishou',
+                '路人甲': 'lurenjia',
+                '路人乙': 'lurenyi',
+                '路人丙': 'lurenbing',
+                '路人丁': 'lurending',
+                '杰罗瓦': 'jieluowa',
+                '米姐': 'mijie',
+                '尤里娅': 'youliya',
+            }
+            char_names = sorted(char_var_map.keys(), key=len, reverse=True)
+            char_pattern = '|'.join(re.escape(name) for name in char_names)
+
+            first_line = True
+            while i < len(content_lines):
+                next_line = content_lines[i].strip()
+                i += 1
+                if 'Extended文本框结束' in next_line:
+                    output.append(f"{indent}## Extended文本框结束")
+                    break
+                if not next_line:
+                    continue
+                if next_line.startswith('【') and next_line.endswith('】'):
+                    continue
+                # Check for character dialogue
+                char_match = re.match(rf'^({char_pattern})[：:](.*)$', next_line)
+                if char_match:
+                    char_name = char_match.group(1)
+                    dialogue = char_match.group(2).strip()
+                    char_var = char_var_map[char_name]
+                    if first_line:
+                        output.append(f'{indent}{char_var} {format_dialogue(dialogue)}')
+                        first_line = False
+                    else:
+                        output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + dialogue)}')
+                else:
+                    # Narration
+                    if first_line:
+                        output.append(f'{indent}{format_dialogue(next_line)}')
+                        first_line = False
+                    else:
+                        output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + next_line)}')
+            continue
+
+        # Check for 居中文本框 markers
+        if '居中文本框开始' in line and '大字' not in line:
+            output.append(f"{indent}## 居中文本框开始 - centered textbox")
+            while i < len(content_lines):
+                next_line = content_lines[i].strip()
+                i += 1
+                if '居中文本框结束' in next_line:
+                    output.append(f"{indent}## 居中文本框结束")
+                    break
+                if not next_line:
+                    continue
+                output.append(f'{indent}centered_narrator {format_dialogue(next_line)}')
+            continue
+
+        # Check for 居中大字文本框 markers
+        if '居中大字文本框开始' in line:
+            output.append(f"{indent}## 居中大字文本框开始 - centered large font textbox")
+            while i < len(content_lines):
+                next_line = content_lines[i].strip()
+                i += 1
+                if '居中大字文本框结束' in next_line:
+                    output.append(f"{indent}## 居中大字文本框结束")
+                    break
+                if not next_line:
+                    continue
+                output.append(f'{indent}centered_large_narrator {format_dialogue(next_line)}')
+            continue
+
+        # Check for 大文本框 markers (non-Extended, single line mode)
+        if '大文本框开始' in line and 'Extended' not in line and '居中' not in line:
+            output.append(f"{indent}## 大文本框开始")
+            while i < len(content_lines):
+                next_line = content_lines[i].strip()
+                i += 1
+                if '大文本框结束' in next_line and 'Extended' not in next_line and '居中' not in next_line:
+                    output.append(f"{indent}## 大文本框结束")
+                    break
+                if not next_line:
+                    continue
+                # Skip stage directions
+                if next_line.startswith('【') and next_line.endswith('】'):
+                    converted = convert_content_line(next_line, indent)
+                    if converted:
+                        output.append(converted)
+                    continue
+                output.append(f'{indent}large_narrator {format_dialogue(next_line)}')
+            continue
+
+        # Regular content line
+        converted = convert_content_line(line, indent)
+        if converted:
+            output.append(converted)
+
+    return output
 
 
 def convert_route(lines, start_line, end_line, label_name, route_num):
@@ -419,10 +568,9 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             if choice_a_action == 'return_to_menu':
                 output.append("            return")
             elif choice_a_content:
-                for content_line in choice_a_content:
-                    converted = convert_content_line(content_line, "            ")
-                    if converted:
-                        output.append(converted)
+                # Use process_choice_content to handle Extended textbox markers
+                processed = process_choice_content(choice_a_content, "            ")
+                output.extend(processed)
             else:
                 # 'continue' action or no content - need pass for valid Ren'Py
                 output.append("            pass")
@@ -436,10 +584,9 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                 if choice_b_action == 'return_to_menu':
                     output.append("            return")
                 elif choice_b_content:
-                    for content_line in choice_b_content:
-                        converted = convert_content_line(content_line, "            ")
-                        if converted:
-                            output.append(converted)
+                    # Use process_choice_content to handle Extended textbox markers
+                    processed = process_choice_content(choice_b_content, "            ")
+                    output.extend(processed)
                 else:
                     # 'continue' action or no content - need pass for valid Ren'Py
                     output.append("            pass")
