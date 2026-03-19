@@ -669,7 +669,8 @@ label route1_start:
     wangshuang "嗯...但是我站累了，所以让我来告诉你吧——你要找的头骨是不存在的。"
     ahe "啊？你怎么知道的？"
     wangshuang "喏——"
-    ## 播放阴森音乐，具体待定
+    $ current_music_scene = None
+    stop music fadeout 1.0
     ## 原本王霜的位置闪过尸首的黑影
     ahe "啊——！"
     ## 王霜说话时播放glitchy音效
@@ -696,7 +697,7 @@ label route1_start:
     ## 浑身伤痕累累仿佛由尸块缝纫而成的无头尸首登场
     ## 高速心跳音效
     ## 屏幕边缘开始随着心跳的节奏震动
-    ## 场景音乐参考：https://audionautix.com/Music/BlackFly.mp3 (Jason Shaw) - 这首有点非常过于合适了只能说
+    ## 场景音乐参考：N2-07,N2-14
     $ set_scene_music("route1_transition")
     ahe "——么！！！"
     shishou "是你啊，阿鹤，你在害怕什么呢？（到时候把所有尸首的话的音频反过来听一下，空耳进来）"
