@@ -16,6 +16,8 @@ def has_curly_quotes(text):
 
 def format_dialogue(text):
     """Format dialogue string, using single quotes if curly quotes present"""
+    # Escape square brackets for Ren'Py text interpolation: [ -> [[
+    text = text.replace('[', '[[')
     if has_curly_quotes(text):
         # Use single quotes as delimiter, escape any single quotes in text
         escaped = text.replace("'", "\\'")
@@ -34,6 +36,10 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
 
     # Skip convergence marker (handled separately)
     if '选项分线到此结束' in line:
+        return None
+
+    # Skip conditional C choice marker (handled in convert_route)
+    if is_conditional_c_marker(line):
         return None
 
     # Skip large textbox markers (handled in convert_route)
@@ -57,7 +63,7 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
 
     # Music stop markers 【音乐停】 or 【音效和音乐停】
     if '音乐停' in line:
-        return f'{indent}stop music fadeout 1.0'
+        return f'{indent}$ current_music_scene = None\n{indent}stop music fadeout 1.0'
 
     # Scene transition markers 【转场：场景名。场景描述】
     transition_match = re.match(r'^【转场[：:](.+?)】$', line)
@@ -95,6 +101,18 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         num_match = re.search(r'Bad End (\d+)', end_text)
         end_num = num_match.group(1) if num_match else "1"
         return f"{indent}## {end_text}\n{indent}$ unlock_ending(\"bad_end_{end_num}\")\n{indent}return"
+
+    # Normal End marker - unlock and return to main menu
+    if re.match(r'^【Normal End[：:：](.*)】$', line) or line.strip() == '【Normal End】':
+        return f"{indent}## Normal End\n{indent}$ unlock_ending(\"normal_end\")\n{indent}return"
+
+    # Happy End marker - unlock and return to main menu
+    if re.match(r'^【Happy End[?？]?】$', line):
+        return f"{indent}## Happy End\n{indent}$ unlock_ending(\"happy_end\")\n{indent}return"
+
+    # True End marker - unlock and return to main menu
+    if re.match(r'^【True End[：:：]?(.*)】$', line) or line.strip() == '【True End】':
+        return f"{indent}## True End\n{indent}$ unlock_ending(\"true_end\")\n{indent}return"
 
     # Stage direction (standalone) -> comment
     stage_match = re.match(r'^【(.+?)】$', line)
@@ -153,6 +171,13 @@ def is_choice_a(line):
 def is_choice_b(line):
     return bool(re.match(r'^B[：:]\s*.+$', line.strip()))
 
+def is_choice_c(line):
+    return bool(re.match(r'^C[：:]\s*.+$', line.strip()))
+
+def is_conditional_c_marker(line):
+    """Check for the conditional C choice marker"""
+    return '当 Normal End 和 Happy End' in line and '出现选项C' in line
+
 def is_convergence(line):
     return '选项分线到此结束' in line
 
@@ -160,7 +185,7 @@ def parse_choice(line):
     """Parse choice line, returns (text, madness_add, action)
     action can be: None, 'continue', or 'return_to_menu'
     """
-    match = re.match(r'^[AB][：:]\s*(.+)$', line.strip())
+    match = re.match(r'^[ABC][：:]\s*(.+)$', line.strip())
     if match:
         text = match.group(1).strip()
         madness_add = 0
@@ -540,7 +565,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                 choice_b_text, choice_b_madness, choice_b_action = parse_choice(lines[i].strip())
                 i += 1
 
-                # Collect content for choice B until convergence or next choice
+                # Collect content for choice B until convergence, next choice A, or conditional C marker
                 while i < end_line and i < len(lines):
                     next_line = lines[i].strip()
                     if is_convergence(next_line):
@@ -549,8 +574,38 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                     if is_choice_a(next_line):
                         # Another choice block without convergence - B leads to ending?
                         break
+                    if is_conditional_c_marker(next_line):
+                        # Conditional C choice follows - stop B content here
+                        i += 1  # Skip the conditional marker
+                        break
                     if next_line:
                         choice_b_content.append(next_line)
+                    i += 1
+
+            # Check for conditional choice C
+            choice_c_text = None
+            choice_c_madness = 0
+            choice_c_action = None
+            choice_c_content = []
+
+            # Skip empty lines to find C:
+            while i < end_line and i < len(lines) and not lines[i].strip():
+                i += 1
+
+            if i < end_line and is_choice_c(lines[i].strip()):
+                choice_c_text, choice_c_madness, choice_c_action = parse_choice(lines[i].strip())
+                i += 1
+
+                # Collect content for choice C until convergence or end of route
+                while i < end_line and i < len(lines):
+                    next_line = lines[i].strip()
+                    if is_convergence(next_line):
+                        i += 1
+                        break
+                    if is_choice_a(next_line):
+                        break
+                    if next_line:
+                        choice_c_content.append(next_line)
                     i += 1
 
             # Generate menu structure
@@ -589,6 +644,19 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                     output.extend(processed)
                 else:
                     # 'continue' action or no content - need pass for valid Ren'Py
+                    output.append("            pass")
+
+            # Choice C (conditional - only shows when both Normal End and Happy End are unlocked)
+            if choice_c_text:
+                output.append(f'        "{choice_c_text}" if persistent.normal_end_unlocked and persistent.happy_end_unlocked:')
+                if choice_c_madness > 0:
+                    output.append(f"            $ madness += {choice_c_madness}")
+                if choice_c_action == 'return_to_menu':
+                    output.append("            return")
+                elif choice_c_content:
+                    processed = process_choice_content(choice_c_content, "            ")
+                    output.extend(processed)
+                else:
                     output.append("            pass")
 
             output.append("")

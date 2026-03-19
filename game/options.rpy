@@ -3,7 +3,7 @@
 
 ## 游戏基本信息
 define config.name = _("AOL Afterstory")
-define config.version = "0.1.0"
+define config.version = "0.1.2"
 define build.name = "AOLAfterstory"
 
 ## 是否显示游戏名称在主菜单

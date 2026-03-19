@@ -59,7 +59,7 @@ define gui.title_text_size = 75
 
 ## 对话框位置和大小
 define gui.textbox_height = 278
-define gui.textbox_yalign = 1.0
+define gui.textbox_yalign = 0.97
 
 ## 角色名字位置
 define gui.name_xpos = 360

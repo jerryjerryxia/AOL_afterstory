@@ -25,6 +25,7 @@ default persistent.bad_end_2_unlocked = False  # 好奇害死猫
 default persistent.bad_end_3_unlocked = False  # 平等杀戮
 default persistent.normal_end_unlocked = False  # 日常
 default persistent.happy_end_unlocked = False  # Happy End?
+default persistent.true_end_unlocked = False  # True End
 
 ## 周目进度追踪
 default persistent.route1_complete = False  # 一周目完成
@@ -55,6 +56,15 @@ default current_scene_name = None  # 场景名称，如 "两座冰雕2"
 default current_scene_desc = None  # 场景描述
 
 ################################################################################
+## 存档加载后恢复音乐
+################################################################################
+
+label after_load:
+    if current_music_scene is not None:
+        $ set_scene_music(current_music_scene)
+    return
+
+################################################################################
 ## 辅助函数
 ################################################################################
 
@@ -80,6 +90,8 @@ init python:
             persistent.normal_end_unlocked = True
         elif ending_id == "happy_end":
             persistent.happy_end_unlocked = True
+        elif ending_id == "true_end":
+            persistent.true_end_unlocked = True
 
     def unlock_route(route_num):
         """标记周目完成"""
@@ -111,6 +123,8 @@ init python:
         if persistent.normal_end_unlocked:
             count += 1
         if persistent.happy_end_unlocked:
+            count += 1
+        if persistent.true_end_unlocked:
             count += 1
         return count
 
