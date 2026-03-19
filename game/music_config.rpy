@@ -62,7 +62,8 @@ init python:
         "route1_transition": {
             "label": "一周目 场景过渡",
             "tracks": [
-                {"id": "blackfly", "name": "BlackFly", "file": "BlackFly.mp3"},
+                {"id": "n2_07", "name": "N2-07", "file": "N2-07.mp3"},
+                {"id": "n2_14", "name": "N2-14", "file": "N2-14.mp3"},
             ]
         },
         "route1_return": {
