@@ -1,78 +1,104 @@
 # -*- coding: utf-8 -*-
 """
-Rebuilds game/SourceHanSansLite.ttf as a compact subset of the full
-Noto Sans CJK SC / Source Han Sans (Light weight), containing only the
-characters this game actually uses.
+Rebuilds the bundled game fonts as compact subsets containing only the
+characters this game uses:
 
-Run after editing main_script_raw.txt or adding new Chinese UI text:
+  game/SourceHanSerif.ttf  <-  Noto Serif CJK SC Light  (body + UI text)
+  game/SmileySans.ttf      <-  Smiley Sans              (route-title cards)
+
+Run after editing main_script_raw.txt or adding new Chinese text:
     python generate_font_subset.py
 
-The full source font (~16 MB) is downloaded once into tools/ and cached
-there. tools/ is gitignored, so it is not committed; only the small
-subset in game/ ships with the game.
+The full source fonts (tens of MB) are downloaded once into tools/ and
+cached there. tools/ is gitignored, so only the small subsets in game/
+ship with the game.
 """
 import glob
 import os
 import urllib.request
+import zipfile
 
 from fontTools.subset import Options, Subsetter
 from fontTools.ttLib import TTFont
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-SRC_FONT = os.path.join(ROOT, "tools", "NotoSansCJKsc-Light.otf")
-SRC_URL = ("https://raw.githubusercontent.com/notofonts/noto-cjk/main/"
-           "Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Light.otf")
-OUT_FONT = os.path.join(ROOT, "game", "SourceHanSansLite.ttf")
+TOOLS = os.path.join(ROOT, "tools")
+
+# output font  ->  (cached source name, download URL, zip member or None)
+FONTS = {
+    os.path.join(ROOT, "game", "SourceHanSerif.ttf"): (
+        "NotoSerifCJKsc-Light.otf",
+        "https://raw.githubusercontent.com/notofonts/noto-cjk/main/"
+        "Serif/OTF/SimplifiedChinese/NotoSerifCJKsc-Light.otf",
+        None,
+    ),
+    os.path.join(ROOT, "game", "SmileySans.ttf"): (
+        "SmileySans-Oblique.ttf",
+        "https://github.com/atelier-anchor/smiley-sans/releases/download/"
+        "v2.0.1/smiley-sans-v2.0.1.zip",
+        "SmileySans-Oblique.ttf",
+    ),
+}
 
 
-def ensure_source():
-    """Download the full source font into tools/ if it is not cached yet."""
-    if os.path.exists(SRC_FONT):
-        return
-    os.makedirs(os.path.dirname(SRC_FONT), exist_ok=True)
-    print(f"Source font not cached - downloading:\n  {SRC_URL}")
-    urllib.request.urlretrieve(SRC_URL, SRC_FONT)
-    print("  done.")
+def ensure_source(cache_name, url, zip_member):
+    """Return the cached source-font path, downloading it if missing."""
+    path = os.path.join(TOOLS, cache_name)
+    if os.path.exists(path):
+        return path
+    os.makedirs(TOOLS, exist_ok=True)
+    print(f"Downloading {url}")
+    if zip_member:
+        zpath = os.path.join(TOOLS, "_download.zip")
+        urllib.request.urlretrieve(url, zpath)
+        with zipfile.ZipFile(zpath) as zf:
+            member = next(n for n in zf.namelist() if n.endswith(zip_member))
+            with zf.open(member) as src, open(path, "wb") as dst:
+                dst.write(src.read())
+        os.remove(zpath)
+    else:
+        urllib.request.urlretrieve(url, path)
+    return path
 
 
 def collect_chars():
     """Every character that may need rendering: the story script, all .rpy
-    UI/text files, and whatever the current subset already covers (so a
-    rebuild never drops coverage)."""
+    files, and whatever the fonts already in game/ cover (so a rebuild
+    never drops coverage)."""
     chars = set()
-
     with open(os.path.join(ROOT, "main_script_raw.txt"), encoding="utf-8") as f:
         chars |= set(f.read())
-
     for path in glob.glob(os.path.join(ROOT, "game", "**", "*.rpy"), recursive=True):
         with open(path, encoding="utf-8") as f:
             chars |= set(f.read())
-
-    if os.path.exists(OUT_FONT):
-        for cp in TTFont(OUT_FONT).getBestCmap():
-            chars.add(chr(cp))
-
+    for fp in (glob.glob(os.path.join(ROOT, "game", "*.ttf"))
+               + glob.glob(os.path.join(ROOT, "game", "*.otf"))):
+        try:
+            for cp in TTFont(fp).getBestCmap():
+                chars.add(chr(cp))
+        except Exception:
+            pass
     for ws in "\n\r\t":
         chars.discard(ws)
     return chars
 
 
 def main():
-    ensure_source()
-    chars = collect_chars()
-    print(f"Subsetting to {len(chars)} characters...")
+    text = "".join(sorted(collect_chars()))
+    print(f"Subsetting to {len(text)} characters...")
 
-    font = TTFont(SRC_FONT)
-    options = Options()
-    options.glyph_names = False      # drop glyph names (use glyphNNNN)
-    options.hinting = False          # VN text is large; hinting not needed
-    options.layout_features = []     # no GSUB/GPOS shaping for horizontal CJK
-    sub = Subsetter(options=options)
-    sub.populate(text="".join(sorted(chars)))
-    sub.subset(font)
-    font.save(OUT_FONT)
-
-    print(f"Wrote {OUT_FONT}  ({os.path.getsize(OUT_FONT):,} bytes)")
+    for out, (cache_name, url, zip_member) in FONTS.items():
+        src = ensure_source(cache_name, url, zip_member)
+        font = TTFont(src)
+        options = Options()
+        options.glyph_names = False      # drop glyph names
+        options.hinting = False          # VN text is large; hinting not needed
+        options.layout_features = []     # no GSUB/GPOS shaping for horizontal CJK
+        sub = Subsetter(options=options)
+        sub.populate(text=text)          # chars absent from a font are skipped
+        sub.subset(font)
+        font.save(out)
+        print(f"  {os.path.basename(out)}  ({os.path.getsize(out):,} bytes)")
 
 
 if __name__ == "__main__":

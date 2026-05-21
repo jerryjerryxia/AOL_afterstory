@@ -1176,14 +1176,14 @@ transform route_title_fadeout:
     ease 0.8 alpha 0.0
 
 style route_title_text:
-    font gui.text_font
+    font gui.title_card_font
     size 120
     color "#ffffff"
     xalign 0.5
     outlines [(4, "#000000", 0, 0)]
 
 style route_subtitle_text:
-    font gui.text_font
+    font gui.title_card_font
     size 48
     color "#cccccc"
     xalign 0.5

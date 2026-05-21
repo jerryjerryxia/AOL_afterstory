@@ -31,11 +31,14 @@ define gui.hover_muted_color = '#999999'
 ## 字体配置
 ################################################################################
 
-## 中文字体 - 使用 Ren'Py SDK 内置的思源黑体
-## SourceHanSansLite.ttf 支持简体中文
-define gui.text_font = "SourceHanSansLite.ttf"
-define gui.name_text_font = "SourceHanSansLite.ttf"
-define gui.interface_text_font = "SourceHanSansLite.ttf"
+## 正文/界面字体 - 思源宋体（简体中文衬线体）
+## SourceHanSerif.ttf 由 generate_font_subset.py 生成
+define gui.text_font = "SourceHanSerif.ttf"
+define gui.name_text_font = "SourceHanSerif.ttf"
+define gui.interface_text_font = "SourceHanSerif.ttf"
+
+## 周目标题卡片字体 - 得意黑（展示体）
+define gui.title_card_font = "SmileySans.ttf"
 
 ################################################################################
 ## 字体大小
