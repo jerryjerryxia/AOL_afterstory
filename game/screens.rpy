@@ -167,7 +167,7 @@ style say_dialogue:
 
 style window:
     xalign 0.5
-    xfill True
+    xsize 1520
     yalign gui.textbox_yalign
     ysize gui.textbox_height
     background Solid("#000000aa")
