@@ -36,6 +36,9 @@ game/audio/
 *.zip
 *.tar.gz
 
+# Font subsetting source (downloaded + cached by generate_font_subset.py)
+tools/
+
 # Logs
 log.txt
 traceback.txt
