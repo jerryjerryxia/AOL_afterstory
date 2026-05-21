@@ -31,14 +31,14 @@ define gui.hover_muted_color = '#999999'
 ## 字体配置
 ################################################################################
 
-## 正文/界面字体 - 霞鹜文楷 Regular（简体中文楷体）
-## body.ttf / title.ttf 由 generate_font_subset.py 生成
+## 正文/界面/标题字体 - 思源宋体 Medium（简体中文衬线体）
+## body.ttf 由 generate_font_subset.py 生成
 define gui.text_font = "body.ttf"
 define gui.name_text_font = "body.ttf"
 define gui.interface_text_font = "body.ttf"
 
-## 周目标题卡片字体 - 霞鹜文楷 Medium（较粗）
-define gui.title_card_font = "title.ttf"
+## 周目标题卡片沿用正文字体
+define gui.title_card_font = gui.text_font
 
 ################################################################################
 ## 字体大小
