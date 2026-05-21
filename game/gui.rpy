@@ -61,13 +61,13 @@ define gui.title_text_size = 75
 define gui.textbox_height = 340
 define gui.textbox_yalign = 1.0
 
-## 角色名字位置（相对于对话框窗口，窗口宽 1520 居中）
-define gui.name_xpos = 160
+## 角色名字位置（相对于对话框窗口，窗口宽 1400 居中）
+define gui.name_xpos = 100
 define gui.name_ypos = 15
 define gui.name_xalign = 0.0
 
 ## 对话文字位置（相对于对话框窗口）
-define gui.dialogue_xpos = 202
+define gui.dialogue_xpos = 142
 define gui.dialogue_ypos = 75
 define gui.dialogue_width = 1116
 define gui.dialogue_text_xalign = 0.0
