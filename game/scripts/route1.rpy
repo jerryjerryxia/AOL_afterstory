@@ -8,6 +8,7 @@ label route1_start:
     call screen route_title("浮潜")
     ## 脸入水后冒泡泡的音效
     ## 转场：虚空对视
+    scene black with dissolve
     $ current_scene_name = "虚空对视"
     $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来，阿鹤。"
@@ -35,6 +36,7 @@ label route1_start:
     wangshuang "哦，不好意思，太阳在那儿。"
     ## 玻璃破碎音效
     ## 转场：夏日对视
+    scene bg_summergaze with dissolve
     $ current_scene_name = "夏日对视"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜。"
     ## 场景背景里的黑暗碎裂，变为完美夏日，金色的沙滩和蔚蓝的海，只是一个人都没有
@@ -136,6 +138,7 @@ label route1_start:
     ahe "是什么东西？"
     wangshuang "你看就是了。"
     ## 转场：张目对日pt1
+    scene bg_sungaze with dissolve
     $ current_scene_name = "张目对日pt1"
     $ current_scene_desc = "王霜右手对着太阳比出OK的姿势，阳光透过拇指和食指构成的细小的孔洞透了过来"
     ## 王霜右手轻轻握拳，阳光透过其中细小的孔洞透了过来
@@ -154,6 +157,7 @@ label route1_start:
     extend "\n你想立刻去死，那是缓解疼痛的唯一方法，但你非常清楚，此刻死亡就和使命一样遥不可及。"
     ## Extended大文本框结束
     ## 转场：白屏
+    scene black with dissolve
     $ current_scene_name = "白屏"
     $ current_scene_desc = "就是白屏。"
     ## Extended大文本框开始 - accumulating large textbox
@@ -172,6 +176,7 @@ label route1_start:
     extend "\n......."
     ## Extended大文本框结束
     ## 转场：甜品店对视
+    scene bg_dessertgaze with dissolve
     $ current_scene_name = "甜品店对视"
     $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面"
     ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
@@ -376,11 +381,13 @@ label route1_start:
     extend "\n即使如此，王霜依旧没有回来。"
     ## Extended大文本框结束
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏"
     ## 剥落完成后，黑屏
     ## 水底泡泡上浮音效
     ## 转场：粉红屏
+    scene black with dissolve
     $ current_scene_name = "粉红屏"
     $ current_scene_desc = "就是粉红屏。"
     $ current_music_scene = None
@@ -490,6 +497,7 @@ label route1_start:
     ## 呼吸音效
     ## Extended大文本框开始 - accumulating large textbox
     ## 转场：灰屏
+    scene black with dissolve
     $ current_scene_name = "灰屏"
     $ current_scene_desc = "就是灰屏。"
     large_narrator "仅此而已，仅此而已。"
@@ -522,6 +530,7 @@ label route1_start:
             ## Extended大文本框结束
             ## 电视机关机音效
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## Extended大文本框开始 - accumulating large textbox
@@ -551,6 +560,7 @@ label route1_start:
 
     ## 沙漠中的脚步声
     ## 转场：银白色沙漠
+    scene bg_desert with dissolve
     $ current_scene_name = "银白色沙漠"
     $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Whispers in the Twilight - fullver, What's Left Feels Light - 怎么说呢，感觉这位 The Muun Lofi 的挺多东西味道都还挺对的，Sanpo - 迷幻电子沙漠风说的就是这个啊
@@ -739,6 +749,7 @@ label route1_start:
     extend "\n满眼都是沙砾。但只消稍稍细看，那一颗颗的，分明就不是沙砾。"
     ## Extended大文本框结束
     ## 转场：眼珠背景
+    scene black with dissolve
     $ current_scene_name = "眼珠背景"
     $ current_scene_desc = "全屏眼珠，表现方式：手拿一颗眼珠的特写"
     ## Extended大文本框开始 - accumulating large textbox
@@ -784,6 +795,7 @@ label route1_start:
     ## Extended大文本框结束
     ## 脸入水后冒泡泡的音效
     ## 转场：虚空对视
+    scene black with dissolve
     $ current_scene_name = "虚空对视"
     $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来。"
@@ -796,6 +808,7 @@ label route1_start:
     ahe "好吧...听你的...总没错的...对吧..."
     wangshuang "当然，我们走吧。"
     ## 转场：完美夏日
+    scene black with dissolve
     $ current_scene_name = "完美夏日"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物。"
     ## 场景音乐参考风格：樹氷の輝き (岸部真明)，夜の向日葵（素晴日bgm），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu - 同场景不复用配乐的话，换成这首还挺合适的
@@ -855,11 +868,13 @@ label route1_start:
             wangshuang "哈。行啊，那你闭上眼睛。"
             ahe "..."
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## 水中探头出水的音效
             wangshuang "可以睁眼了。"
             ## 转场：灰白夏日1
+            scene black with dissolve
             $ current_scene_name = "灰白夏日1"
             $ current_scene_desc = "完美夏日背景，但黑白配色，且一些地方长着眼睛（完美夏日差分）"
             ahe "这..."
@@ -886,6 +901,7 @@ label route1_start:
             ahe "我们回去吧。"
             wangshuang "当然，回头就行。"
             ## 转场：灰白夏日2
+            scene black with dissolve
             $ current_scene_name = "灰白夏日2"
             $ current_scene_desc = "灰白夏日的第二版，整体构图可以类似，但因为是主角180度转身后看到的场景，所以要就旋转做出相应调整"
             ahe "门呢？"
@@ -932,6 +948,7 @@ label route1_start:
     ## 最后只剩下一片纯黑幕和一块无色透明多面体
     ## 从水中探头+大口吸气音效
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = None
 

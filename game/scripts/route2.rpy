@@ -6,6 +6,7 @@ label route2_start:
 ## 二周目：水底捞月
 
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "仔细一想，黑屏可以试着搞出深海漆黑的感觉...就不是纯黑更接近非常非常深的深蓝这样，然后有一些不太明显的质感。"
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，Doutokutosetsu，Shinsou no reijou，Gaidankousetsu - 物语ost是好文化
@@ -56,6 +57,7 @@ label route2_start:
     ## 居中大字文本框结束
     call screen route_title("水底捞月")
     ## 转场：夏日对视
+    scene bg_summergaze with dissolve
     $ current_scene_name = "夏日对视"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜"
     wangshuang "你来了。"
@@ -102,6 +104,7 @@ label route2_start:
     ahe "喂...阿霜！"
     ## Extended大文本框开始 - accumulating large textbox
     ## 转场：完美夏日
+    scene black with dissolve
     $ current_scene_name = "完美夏日"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物"
     large_narrator "随着她丢下不温不火的告别，王霜便如一股青烟般消散了。完美的夏日光景里再次只留下孤零零的你。"
@@ -113,6 +116,7 @@ label route2_start:
     extend "\n你循着回忆里模糊的画面，用手指蜷成小孔，试图透过那微小的空隙来窥探钉在天顶的那轮烈日。"
     ## Extended大文本框结束
     ## 转场：白屏
+    scene black with dissolve
     $ current_scene_name = "白屏"
     $ current_scene_desc = "就是白屏。"
     ## Extended大文本框开始 - accumulating large textbox
@@ -124,6 +128,7 @@ label route2_start:
     extend "\n而在那火球的中心，你看见了一件似曾相识的事物。"
     ## Extended大文本框结束
     ## 转场：无色透明多面体2
+    scene black with dissolve
     $ current_scene_name = "无色透明多面体2"
     $ current_scene_desc = "白屏，中间有无色透明多面体"
     ## Extended大文本框开始 - accumulating large textbox
@@ -139,11 +144,13 @@ label route2_start:
     ## Extended大文本框结束
     ## 电视关机音效
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     wangshuang "别。"
     ahe "阿霜？"
     ## 转场：夏日对视
+    scene bg_summergaze with dissolve
     $ current_scene_name = "夏日对视"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜"
     wangshuang "别随便碰别人的东西。"
@@ -165,6 +172,7 @@ label route2_start:
             wangshuang "我！说！闭！嘴！"
             ## 电视机关闭音效
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## Bad End 2：好奇害死猫
@@ -193,6 +201,7 @@ label route2_start:
             ## Extended大文本框结束
             ## 电视机关闭音效
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## 水底冒泡泡音效
@@ -200,6 +209,7 @@ label route2_start:
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route2_lofi")
     ## 转场：甜品店对视
+    scene bg_dessertgaze with dissolve
     $ current_scene_name = "甜品店对视"
     $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面。"
     ahe "你好，我要这个团子。"
@@ -294,6 +304,7 @@ label route2_start:
     ahe "...我要走了。"
     wangshuang "阿鹤！你当然可以走，但能等吃了药症状稳定下来再走吗？为了你，也为了我【“伪”字背景闪过】，请你让我继续为你治疗...可以吗？"
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     ## Extended大文本框开始 - accumulating large textbox
@@ -341,6 +352,7 @@ label route2_start:
     ## Extended大文本框结束
     ## 玻璃逐渐碎裂音效
     ## 转场：甜品店对视
+    scene bg_dessertgaze with dissolve
     $ current_scene_name = "甜品店对视"
     $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面。"
     ahe "原来如此..."
@@ -354,6 +366,7 @@ label route2_start:
     ## 扑倒音效
     ## 扼颈音效
     ## 转场：红屏
+    scene black with dissolve
     $ current_scene_name = "红屏"
     $ current_scene_desc = "就是红屏。"
     ## 场景音乐参考：Sensou - 众所周知物语是战斗番，Gehou - 这个感觉也不错
@@ -406,6 +419,7 @@ label route2_start:
     ## Extended大文本框结束
     ## 脚步声
     ## 转场：甜品店
+    scene black with dissolve
     $ current_scene_name = "甜品店"
     $ current_scene_desc = "甜品店对视但拿掉王霜。"
     wangshuang_unknown "阿鹤？"
@@ -415,6 +429,7 @@ label route2_start:
         extend ""
         "深入骨髓的恐惧":
             ## 转场：身后的王霜1
+            scene black with dissolve
             $ current_scene_name = "身后的王霜1"
             $ current_scene_desc = "王霜站在主角身后，居高临下地看着主角。"
             $ current_music_scene = None
@@ -434,6 +449,7 @@ label route2_start:
             ## 黑屏
         "如沐春风的安详":
             ## 转场：身后的王霜2
+            scene black with dissolve
             $ current_scene_name = "身后的王霜2"
             $ current_scene_desc = "血肉模糊的王霜站在主角身后，双目无神地看着主角。"
             ## Extended大文本框开始 - accumulating large textbox
@@ -450,6 +466,7 @@ label route2_start:
             extend "\n所以说，阿霜，你准备好了么？"
             ## Extended大文本框结束
             ## 转场：红屏
+            scene black with dissolve
             $ current_scene_name = "红屏"
             $ current_scene_desc = "就是红屏。"
             ## Bad End 3：平等杀戮
@@ -458,6 +475,7 @@ label route2_start:
 
     ## 冒泡泡音效
     ## 转场：粉红屏
+    scene black with dissolve
     $ current_scene_name = "粉红屏"
     $ current_scene_desc = "就是粉红屏。"
     ## 场景音乐参考：Shiniki - 神前晓是我爹
@@ -530,6 +548,7 @@ label route2_start:
     extend "\n透过毒，你与水母融为一体。"
     ## Extended大文本框结束
     ## 转场：灰屏水母
+    scene black with dissolve
     $ current_scene_name = "灰屏水母"
     $ current_scene_desc = "灰屏，中间有一只巨大的水母"
     ## Extended大文本框开始 - accumulating large textbox
@@ -599,10 +618,12 @@ label route2_start:
     ## Extended大文本框结束
     ## 冒泡泡音效
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     ## 沙漠中的风声
     ## 转场：银白色沙漠
+    scene bg_desert with dissolve
     $ current_scene_name = "银白色沙漠"
     $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Shitagokoro - 一些非常适合唠嗑的音乐
@@ -649,6 +670,7 @@ label route2_start:
     extend "\n哎，逃走又有什么用？"
     ## Extended文本框结束
     ## 转场：银白色沙漠+门
+    scene black with dissolve
     $ current_scene_name = "银白色沙漠+门"
     $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨，且视角中心有一扇凭空出现的洞开的门"
     $ current_music_scene = None
@@ -698,18 +720,21 @@ label route2_start:
     shishou "有的啊，你看——"
     ## 人工场景变换的神秘音效
     ## 转场：乌云压境的逝乐园
+    scene black with dissolve
     $ current_scene_name = "乌云压境的逝乐园"
     $ current_scene_desc = "逝乐园是一个高科技支撑的娱乐园区，可参考近未来的拉斯维加斯，这里是白天，且即将下雷雨"
     ahe "诶？"
     shishou "说了嘛，想去哪儿就去哪儿。"
     ## 人工场景变换的神秘音效
     ## 转场：完美夏日
+    scene black with dissolve
     $ current_scene_name = "完美夏日"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物"
     ahe "这里还是不要久留为好..."
     shishou "哦，那就回去吧。"
     ## 人工场景变换的神秘音效
     ## 转场：银白色沙漠+门
+    scene black with dissolve
     $ current_scene_name = "银白色沙漠+门"
     $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨，且视角中心有一扇凭空出现的洞开的门"
     ahe "这...是怎么做到的？"
@@ -755,6 +780,7 @@ label route2_start:
     ahe "——诶？"
     ## 扑倒音效
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     $ current_music_scene = None
@@ -922,6 +948,7 @@ label route2_start:
     ## 人工场景变换的神秘音效
     ## 海浪声
     ## 转场：完美夏日
+    scene black with dissolve
     $ current_scene_name = "完美夏日"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物"
     wangshuang "哟，你来了。"
@@ -946,6 +973,7 @@ label route2_start:
     wangshuang "别急，还没完。"
     ## 场景由外到内逐渐变黑，中心是无色透明多面体
     ## 转场：无色透明多面体
+    scene black with dissolve
     $ current_scene_name = "无色透明多面体"
     $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光"
     ahe "这也是老熟人了。"
@@ -1107,6 +1135,7 @@ label route2_start:
     $ current_music_scene = None
     stop music fadeout 1.0
     ## 转场：夏日对视2
+    scene black with dissolve
     $ current_scene_name = "夏日对视2"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里只有双目紧闭的阿鹤，玩家以王霜为第一视角和阿鹤对视"
     ## Extended文本框开始 - accumulating textbox
@@ -1125,6 +1154,7 @@ label route2_start:
     extend "\n阿鹤...哈哈哈...原来如此，原来如此，这就是代价么？"
     ## Extended文本框结束
     ## 转场：完美夏日
+    scene black with dissolve
     $ current_scene_name = "完美夏日"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物。"
     ## Extended大文本框开始 - accumulating large textbox
@@ -1143,6 +1173,7 @@ label route2_start:
     extend "\n和消失的阿鹤一样，你也闭上双眼，在踏足你理想乡的五分钟后开始仔细思索，事到如今，你为了你的理想究竟失去了什么。"
     ## Extended大文本框结束
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
 

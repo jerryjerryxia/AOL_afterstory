@@ -6,6 +6,17 @@ Handles branching with A:/B: options and 【选项分线到此结束】 converge
 
 import re
 
+# Scene names (the part before the first period in 【转场：场景名。描述】) that
+# have a real background image. Maps the scene name to its Ren'Py image name,
+# defined in game/images/bg/placeholder.rpy. When a transition uses one of
+# these names, the converter emits a `scene ... with dissolve` line.
+SCENE_BG_MAP = {
+    '夏日对视': 'bg_summergaze',
+    '张目对日pt1': 'bg_sungaze',
+    '甜品店对视': 'bg_dessertgaze',
+    '银白色沙漠': 'bg_desert',
+}
+
 def escape_quotes(text):
     """Escape straight double quotes for Ren'Py"""
     return text.replace('"', '\\"')
@@ -84,8 +95,11 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         scene_name_escaped = scene_name.replace('"', '\\"')
         scene_desc_escaped = scene_desc.replace('"', '\\"')
 
-        # Generate both the comment and the variable assignment
+        # Generate the comment, the background scene, and the variables.
+        # Scenes without dedicated art fall back to a plain black background.
         output_lines = [f'{indent}## 转场：{scene_name}']
+        bg_image = SCENE_BG_MAP.get(scene_name, 'black')
+        output_lines.append(f'{indent}scene {bg_image} with dissolve')
         output_lines.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
         if scene_desc:
             output_lines.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
@@ -292,6 +306,8 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
             scene_name_escaped = scene_name.replace('"', '\\"')
             scene_desc_escaped = scene_desc.replace('"', '\\"')
             output.append(f'{indent}## 转场：{scene_name}')
+            bg_image = SCENE_BG_MAP.get(scene_name, 'black')
+            output.append(f'{indent}scene {bg_image} with dissolve')
             output.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
             if scene_desc:
                 output.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')

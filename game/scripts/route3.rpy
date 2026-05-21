@@ -7,6 +7,7 @@ label route3_start:
 
     ## 头入水，气泡音效
     ## 转场：无色透明多面体
+    scene black with dissolve
     $ current_scene_name = "无色透明多面体"
     $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
     ## 还是无色透明多面体，但这里看起来像是从水底往上看那样
@@ -39,6 +40,7 @@ label route3_start:
     call screen route_title("完美夏日")
     ## 场景重新清晰
     ## 转场：灰屏水母
+    scene black with dissolve
     $ current_scene_name = "灰屏水母"
     $ current_scene_desc = "灰屏，中间有一只巨大的水母。"
     ## 场景音乐参考：Shiniki - 神前晓是我爹
@@ -103,10 +105,12 @@ label route3_start:
     extend "\n........"
     ## Extended大文本框结束
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     ## 风声
     ## 转场：银白色沙漠
+    scene bg_desert with dissolve
     $ current_scene_name = "银白色沙漠"
     $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Shitagokoro - 一些非常适合唠嗑的音乐
@@ -220,6 +224,7 @@ label route3_start:
     wangshuang "哈哈...真是的..."
     wangshuang "阿鹤...我累了...我们回去吧。"
     ## 转场：完美夏日
+    scene black with dissolve
     $ current_scene_name = "完美夏日"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，王霜在场景里。"
     ## 非常轻微的嘈杂人声
@@ -273,6 +278,7 @@ label route3_start:
     ## Extended大文本框结束
     ## 场景逐渐开始变灰
     ## 转场：灰白夏日1
+    scene black with dissolve
     $ current_scene_name = "灰白夏日1"
     $ current_scene_desc = "完美夏日背景，但黑白配色，且一些地方长着眼睛（完美夏日差分）"
     "你正要开口，却见王霜从口袋里取出了另一颗一模一样的多面体，略作犹豫后把它也丢在了沙滩上。"
@@ -294,26 +300,31 @@ label route3_start:
     "王霜从你手中夺过最后的多面体，振臂一掷，手中那无色透明多面体便朝海的方向飞去。"
     ## 扑通音效
     ## 转场：甜品店
+    scene black with dissolve
     $ current_scene_name = "甜品店"
     $ current_scene_desc = None
     "..."
     ## 扑通音效
     ## 转场：灰屏水母
+    scene black with dissolve
     $ current_scene_name = "灰屏水母"
     $ current_scene_desc = None
     "......"
     ## 扑通音效
     ## 转场：银白色沙漠
+    scene bg_desert with dissolve
     $ current_scene_name = "银白色沙漠"
     $ current_scene_desc = None
     "........."
     ## 扑通音效
     ## 转场：黑屏
+    scene black with dissolve
     $ current_scene_name = "黑屏"
     $ current_scene_desc = None
     "......"
     ## 碎裂声
     ## 转场：灰白夏日1
+    scene black with dissolve
     $ current_scene_name = "灰白夏日1"
     $ current_scene_desc = None
     "..."
@@ -352,6 +363,7 @@ label route3_start:
             wangshuang "我们不会再见面了。"
             ahe "这样么...那希望，你也能找到自己的答案。"
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## Lovely Summer Time背景音乐：https://samply.app/p/zKOVrHFVD1PKSd4AyAhf?si=mhZIQjsjvpeL1K96BgcnRriTvN52
@@ -365,6 +377,7 @@ label route3_start:
             extend "\n但很快，你完全醒了。"
             ## Extended大文本框结束
             ## 转场：乌云压境的逝乐园
+            scene black with dissolve
             $ current_scene_name = "乌云压境的逝乐园"
             $ current_scene_desc = "逝乐园是一个高科技支撑的娱乐园区，可参考近未来的拉斯维加斯，这里是白天，且即将下雷雨"
             ## Extended大文本框开始 - accumulating large textbox
@@ -433,6 +446,7 @@ label route3_start:
             ahe "嗯，那一会儿见。"
             ## 落水冒泡泡音效
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## Extended大文本框开始 - accumulating large textbox
@@ -469,6 +483,7 @@ label route3_start:
             extend "\n………"
             ## Extended大文本框结束
             ## 转场：白屏
+            scene black with dissolve
             $ current_scene_name = "白屏"
             $ current_scene_desc = "就是白屏"
             ## Extended大文本框开始 - accumulating large textbox
@@ -480,6 +495,7 @@ label route3_start:
             extend "\n欢呼吧，你来对地方了。"
             ## Extended大文本框结束
             ## 转场：两座冰雕1
+            scene black with dissolve
             $ current_scene_name = "两座冰雕1"
             $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，双眼直视前方"
             ## 场景音乐参考：Doutokutosetsu
@@ -504,6 +520,7 @@ label route3_start:
             extend "\n………"
             ## Extended文本框结束
             ## 转场：两座冰雕2
+            scene black with dissolve
             $ current_scene_name = "两座冰雕2"
             $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，王霜要突出死人微活感"
             ahe "所以说...就这样了？"
@@ -552,6 +569,7 @@ label route3_start:
             wangshuang "——真他妈无聊！"
             ## 电视关机音效
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## 无色透明多面体
@@ -576,20 +594,24 @@ label route3_start:
             wangshuang "随你便，如果你觉得你能从水底捞到真正的月亮，尽管尝试便是...我会偶尔醒来看看你的。"
             ahe "嗯，我明白。"
             ## 转场：逝乐园/深海
+            scene black with dissolve
             $ current_scene_name = "逝乐园/深海"
             $ current_scene_desc = "用逝乐园和深海背景各自剪一半拼成一张背景，用来表示阿鹤正式开始认知草拟，同时存在于“现实”和“深海”两个场景中"
             ahe "所以请你耐心地等待吧。"
             ahe "会花很长很长的时间的...大概..."
             ## 现实扭曲音效渐强
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "更多黑屏。"
             "..."
             ## 转场：白屏
+            scene black with dissolve
             $ current_scene_name = "白屏"
             $ current_scene_desc = "还是白屏。"
             "......"
             ## 转场：两座冰雕2
+            scene black with dissolve
             $ current_scene_name = "两座冰雕2"
             $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，王霜要突出死人微活感"
             "........."
@@ -623,6 +645,7 @@ label route3_start:
             wangshuang "哦？这么自信？那我等你的坏消息。晚安。"
             ahe "好梦。"
             ## 转场：逝乐园
+            scene black with dissolve
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = "就是逝乐园。"
             ## Extended大文本框开始 - accumulating large textbox
@@ -642,6 +665,7 @@ label route3_start:
             extend "\n读取CheckPoint10495——"
             ## Extended大文本框结束
             ## 转场：无色透明多面体
+            scene black with dissolve
             $ current_scene_name = "无色透明多面体"
             $ current_scene_desc = None
             ## 很多奇怪的人声叠加在一起音效
@@ -652,6 +676,7 @@ label route3_start:
             extend "\n你也知道，抹除我是不可能的，而我在实现的也是阿霜的愿望，所以我们到底在争什么？"
             ## Extended大文本框结束
             ## 转场：灰白夏日
+            scene black with dissolve
             $ current_scene_name = "灰白夏日"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -661,6 +686,7 @@ label route3_start:
             extend "\n嗯，还是不要在别人潜心学习的时候一直打扰为好啊。"
             ## Extended大文本框结束
             ## 转场：逝乐园
+            scene black with dissolve
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -672,6 +698,7 @@ label route3_start:
             extend "\n但我们有得是时间，不是么？"
             ## Extended大文本框结束
             ## 转场：银白色沙漠
+            scene bg_desert with dissolve
             $ current_scene_name = "银白色沙漠"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -683,6 +710,7 @@ label route3_start:
             extend "\n你也没怎么惯着我吧，我的朋友，你除了添乱之外有帮我做过任何事吗？"
             ## Extended大文本框结束
             ## 转场：逝乐园
+            scene black with dissolve
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -695,6 +723,7 @@ label route3_start:
             extend "\n还嘴硬？你明明也想让她出去，我早就看明白了，毕竟这里一共三个人，两个都想让她离开。你这么喜欢民主来民主去的，肯定心里偷偷接受了，是不是？"
             ## Extended大文本框结束
             ## 转场：无色透明多面体
+            scene black with dissolve
             $ current_scene_name = "无色透明多面体"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -746,6 +775,7 @@ label route3_start:
             extend "\n总之，我们另一边见。"
             ## Extended大文本框结束
             ## 转场：两座冰雕3
+            scene black with dissolve
             $ current_scene_name = "两座冰雕3"
             $ current_scene_desc = "但是冰已经融化了。"
             ## 电火花音效
@@ -776,6 +806,7 @@ label route3_start:
             wangshuang "交给我吧。不过你要不要先管管你自己的手？"
             ## 冰封音效
             ## 转场：两座冰雕2
+            scene black with dissolve
             $ current_scene_name = "两座冰雕2"
             $ current_scene_desc = "我超，冰。"
             ahe "哦，动手很迅速啊，我的蜂哥。"
@@ -792,6 +823,7 @@ label route3_start:
             wangshuang "你可以猜猜。"
             wangshuang "不过...还是先关心关心你自己吧，阿鹤。"
             ## 转场：两座冰雕4
+            scene black with dissolve
             $ current_scene_name = "两座冰雕4"
             $ current_scene_desc = "阿鹤看起来正在迅速失温，肤色发青。"
             ahe "嗯...你说得对。"
@@ -799,6 +831,7 @@ label route3_start:
             ahe "一旦被这冰彻底冻住身体的话，无论是谁都会立刻陷入永无止境的美梦吧。"
             ahe "但不幸的是，我现在正好能很好地应付这一招。"
             ## 转场：两座冰雕5
+            scene black with dissolve
             $ current_scene_name = "两座冰雕5"
             $ current_scene_desc = "阿鹤全身散发出光芒，整个人亮了起来，身边的冰再次融化了。"
             wangshuang "喔，好亮。"
@@ -812,6 +845,7 @@ label route3_start:
             ahe "你可承诺过我了，什么都不会做的，你务必要记得这一点。"
             wangshuang "喂——"
             ## 转场：超新星
+            scene black with dissolve
             $ current_scene_name = "超新星"
             $ current_scene_desc = "阿鹤全身散发出如同太阳般的光芒，视野内的冰全部消融，只剩王霜浮在空中。"
             wangshuang "啊！好亮！"
@@ -832,6 +866,7 @@ label route3_start:
             ## Extended大文本框结束
             ## 冰封音效
             ## 转场：两座冰雕5
+            scene black with dissolve
             $ current_scene_name = "两座冰雕5"
             $ current_scene_desc = "俩人又被冻上了，王霜最开始表情非常吃惊，但马上就冷静了。阿鹤身上还是略微发光。"
             wangshuang "诶？"
@@ -866,6 +901,7 @@ label route3_start:
             extend "\n——重启中——"
             ## Extended大文本框结束
             ## 转场：黑屏
+            scene black with dissolve
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏"
             ## Extended大文本框开始 - accumulating large textbox
@@ -886,6 +922,7 @@ label route3_start:
             extend "\n——草拟重启中——"
             ## Extended大文本框结束
             ## 转场：超新星
+            scene black with dissolve
             $ current_scene_name = "超新星"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -936,6 +973,7 @@ label route3_start:
             extend "\n直到最后一刻也读不懂..."
             ## Extended大文本框结束
             ## 转场：崩解
+            scene black with dissolve
             $ current_scene_name = "崩解"
             $ current_scene_desc = "用超新星为基础，展现整个草拟世界逐渐崩溃的场景。"
             ## 警报音效
@@ -985,6 +1023,7 @@ label route3_start:
             ## 爆鸣音效
             ## 白噪音
             ## 转场：白屏
+            scene black with dissolve
             $ current_scene_name = "白屏"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -994,6 +1033,7 @@ label route3_start:
             ## Extended大文本框结束
             ## 冰封音效
             ## 转场：无色透明多面体1
+            scene black with dissolve
             $ current_scene_name = "无色透明多面体1"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox
@@ -1007,6 +1047,7 @@ label route3_start:
             ## Extended大文本框结束
             ## 电视关机音效
             ## 转场：逝乐园
+            scene black with dissolve
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox

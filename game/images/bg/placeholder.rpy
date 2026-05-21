@@ -19,6 +19,20 @@ image bg_outdoor = Solid("#2a3a2a", xsize=1920, ysize=1080)
 image bg_night = Solid("#1a1a2a", xsize=1920, ysize=1080)
 
 ################################################################################
+## 正式背景图 / Real background images
+##
+## 源图为 4K (3840x2160)，游戏虚拟分辨率为 1920x1080。
+## 用 Transform 把图缩放到虚拟分辨率；全屏运行在 4K 显示器上时，
+## Ren'Py 会以显示器原生分辨率渲染，因此这些背景会以完整 4K 细节显示。
+## convert_script.py 中的 SCENE_BG_MAP 把 【转场：场景名】 映射到这些 image 名。
+################################################################################
+
+image bg_summergaze = Transform("images/bg/summergaze.png", xysize=(1920, 1080), fit="cover")
+image bg_sungaze = Transform("images/bg/sungaze.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze = Transform("images/bg/dessertgaze.png", xysize=(1920, 1080), fit="cover")
+image bg_desert = Transform("images/bg/desert.png", xysize=(1920, 1080), fit="cover")
+
+################################################################################
 ## 资源替换说明
 ##
 ## 当美术资源准备好后，将此文件中的 Solid() 替换为实际图片路径：
