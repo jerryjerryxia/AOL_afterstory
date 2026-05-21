@@ -170,7 +170,7 @@ style window:
     xsize 1400
     yalign gui.textbox_yalign
     ysize gui.textbox_height
-    background Solid("#000000aa")
+    background Frame("gui/box_dark.png", 20, 20)
 
 style namebox:
     xpos gui.name_xpos
@@ -191,7 +191,7 @@ screen large_say(who, what):
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
-        background Solid("#000000aa")
+        background Frame("gui/box_dark.png", 20, 20)
 
         text what id "what":
             ## Fixed top-left position for consistent reading experience
@@ -224,7 +224,7 @@ screen centered_say(who, what):
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
-        background Solid("#000000aa")
+        background Frame("gui/box_dark.png", 20, 20)
 
         text what id "what":
             ## Centered for dramatic effect
@@ -257,7 +257,7 @@ screen centered_large_say(who, what):
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
-        background Solid("#000000aa")
+        background Frame("gui/box_dark.png", 20, 20)
 
         text what id "what":
             ## Centered with larger font for dramatic effect
@@ -341,8 +341,8 @@ style choice_vbox:
 
 style choice_button is default:
     xsize gui.choice_button_width
-    idle_background Solid("#333333cc")
-    hover_background Solid("#555555cc")
+    idle_background Frame("gui/choice_idle.png", 20, 20)
+    hover_background Frame("gui/choice_hover.png", 20, 20)
     padding (150, 8, 150, 8)
 
 style choice_button_text is default:
