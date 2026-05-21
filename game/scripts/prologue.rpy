@@ -20,7 +20,7 @@ label route1_prologue:
     $ set_scene_music("prologue_1")
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，Doutokutosetsu，Shinsou no reijou，Gaidankousetsu
     ## 转场：无色透明多面体
-    scene black with dissolve
+    scene black with scene_soft
     $ current_scene_name = "无色透明多面体"
     $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
     ## Extended大文本框开始 - accumulating large textbox
@@ -81,7 +81,7 @@ label route1_prologue:
     extend "\n………"
     ## Extended大文本框结束
     ## 转场：黑屏
-    scene black with dissolve
+    scene black with scene_soft
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     ## 头出水面后大吸一口气音效

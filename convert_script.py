@@ -9,13 +9,26 @@ import re
 # Scene names (the part before the first period in 【转场：场景名。描述】) that
 # have a real background image. Maps the scene name to its Ren'Py image name,
 # defined in game/images/bg/placeholder.rpy. When a transition uses one of
-# these names, the converter emits a `scene ... with dissolve` line.
+# these names, the converter emits a `scene ... with scene_soft` line.
 SCENE_BG_MAP = {
     '夏日对视': 'bg_summergaze',
     '张目对日pt1': 'bg_sungaze',
     '甜品店对视': 'bg_dessertgaze',
     '银白色沙漠': 'bg_desert',
 }
+
+# Standalone stage-direction keyword -> FX transition emitted right after
+# the comment, for dramatic beats. The transitions are defined in
+# game/scripts/transitions.rpy.
+SPECIAL_FX = [
+    ('glitch', 'fx_glitch'),
+    ('黑影', 'fx_shock'),
+    ('jump scare', 'fx_shock'),
+    ('炸裂', 'fx_shock'),
+    ('爆鸣', 'fx_shock'),
+    ('碎裂', 'fx_glitch'),
+    ('破碎', 'fx_glitch'),
+]
 
 def escape_quotes(text):
     """Escape straight double quotes for Ren'Py"""
@@ -99,7 +112,7 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         # Scenes without dedicated art fall back to a plain black background.
         output_lines = [f'{indent}## 转场：{scene_name}']
         bg_image = SCENE_BG_MAP.get(scene_name, 'black')
-        output_lines.append(f'{indent}scene {bg_image} with dissolve')
+        output_lines.append(f'{indent}scene {bg_image} with scene_soft')
         output_lines.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
         if scene_desc:
             output_lines.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
@@ -128,10 +141,15 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if re.match(r'^【True End[：:：]?(.*)】$', line) or line.strip() == '【True End】':
         return f"{indent}## True End\n{indent}$ unlock_ending(\"true_end\")\n{indent}return"
 
-    # Stage direction (standalone) -> comment
+    # Stage direction (standalone) -> comment, plus an FX transition when
+    # the cue is a dramatic beat (glitch, shadow flash, jump scare, ...)
     stage_match = re.match(r'^【(.+?)】$', line)
     if stage_match:
-        return f"{indent}## {stage_match.group(1)}"
+        text = stage_match.group(1)
+        for keyword, fx in SPECIAL_FX:
+            if keyword in text:
+                return f"{indent}## {text}\n{indent}with {fx}"
+        return f"{indent}## {text}"
 
     # Character name to variable mapping
     char_var_map = {
@@ -307,7 +325,7 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
             scene_desc_escaped = scene_desc.replace('"', '\\"')
             output.append(f'{indent}## 转场：{scene_name}')
             bg_image = SCENE_BG_MAP.get(scene_name, 'black')
-            output.append(f'{indent}scene {bg_image} with dissolve')
+            output.append(f'{indent}scene {bg_image} with scene_soft')
             output.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
             if scene_desc:
                 output.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
