@@ -372,7 +372,7 @@ screen main_menu():
         xalign 0.5
         yalign 0.3
 
-        text _("AOL Afterstory"):
+        text _("无休夏日综合症"):
             size 80
             xalign 0.5
             color "#ffffff"

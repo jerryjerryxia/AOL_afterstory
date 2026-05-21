@@ -2,7 +2,7 @@
 ## 游戏基本配置 / Basic game configuration
 
 ## 游戏基本信息
-define config.name = _("AOL Afterstory")
+define config.name = _("无休夏日综合症")
 define config.version = "0.1.2"
 define build.name = "AOLAfterstory"
 
@@ -49,7 +49,7 @@ define config.after_load_transition = dissolve
 define config.end_game_transition = dissolve
 
 ## 窗口标题
-define config.window_title = "AOL Afterstory"
+define config.window_title = "无休夏日综合症"
 
 ## 主菜单音乐（可选）
 define config.main_menu_music = "audio/bgm/Whispers_in_the_Twilight.mp3"
