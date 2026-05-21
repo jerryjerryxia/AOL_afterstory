@@ -351,7 +351,6 @@ label route2_start:
     extend "\n——..."
     ## Extended大文本框结束
     ## 玻璃逐渐碎裂音效
-    with fx_glitch
     ## 转场：甜品店对视
     scene bg_dessertgaze with scene_soft
     $ current_scene_name = "甜品店对视"

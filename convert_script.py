@@ -18,16 +18,12 @@ SCENE_BG_MAP = {
 }
 
 # Standalone stage-direction keyword -> FX transition emitted right after
-# the comment, for dramatic beats. The transitions are defined in
+# the comment, for genuine *visual* dramatic beats only. Audio-only cues
+# (containing 音效) are skipped. Transitions are defined in
 # game/scripts/transitions.rpy.
 SPECIAL_FX = [
     ('glitch', 'fx_glitch'),
     ('黑影', 'fx_shock'),
-    ('jump scare', 'fx_shock'),
-    ('炸裂', 'fx_shock'),
-    ('爆鸣', 'fx_shock'),
-    ('碎裂', 'fx_glitch'),
-    ('破碎', 'fx_glitch'),
 ]
 
 def escape_quotes(text):
@@ -142,13 +138,15 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         return f"{indent}## True End\n{indent}$ unlock_ending(\"true_end\")\n{indent}return"
 
     # Stage direction (standalone) -> comment, plus an FX transition when
-    # the cue is a dramatic beat (glitch, shadow flash, jump scare, ...)
+    # the cue is a genuine visual dramatic beat. Audio cues (音效) are
+    # comment-only - a sound effect should not shake the screen.
     stage_match = re.match(r'^【(.+?)】$', line)
     if stage_match:
         text = stage_match.group(1)
-        for keyword, fx in SPECIAL_FX:
-            if keyword in text:
-                return f"{indent}## {text}\n{indent}with {fx}"
+        if '音效' not in text:
+            for keyword, fx in SPECIAL_FX:
+                if keyword in text:
+                    return f"{indent}## {text}\n{indent}with {fx}"
         return f"{indent}## {text}"
 
     # Character name to variable mapping

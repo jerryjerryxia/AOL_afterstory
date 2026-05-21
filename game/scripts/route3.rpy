@@ -339,7 +339,6 @@ label route3_start:
     $ current_scene_desc = None
     "......"
     ## 碎裂声
-    with fx_glitch
     ## 转场：灰白夏日1
     scene black with scene_soft
     $ current_scene_name = "灰白夏日1"
@@ -1042,7 +1041,6 @@ label route3_start:
             extend "\n[[SYS] TERMINATING"
             ## Extended大文本框结束
             ## 爆鸣音效
-            with fx_shock
             ## 白噪音
             ## 转场：白屏
             scene black with scene_soft

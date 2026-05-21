@@ -36,13 +36,11 @@ label route1_start:
     ## 小吃惊
     wangshuang "哦，不好意思，太阳在那儿。"
     ## 玻璃破碎音效
-    with fx_glitch
     ## 转场：夏日对视
     scene bg_summergaze with scene_soft
     $ current_scene_name = "夏日对视"
     $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜。"
     ## 场景背景里的黑暗碎裂，变为完美夏日，金色的沙滩和蔚蓝的海，只是一个人都没有
-    with fx_glitch
     ## 场景音乐参考风格1：樹氷の輝き (Shine of Silver Thaw)，夜の向日葵（The sunflower of the night），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu
     ## 场景音乐参考风格2：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
     $ set_scene_music("route1_scene1")
@@ -701,7 +699,6 @@ label route1_start:
     with fx_shock
     ahe "啊——！"
     ## 王霜说话时播放glitchy音效
-    with fx_glitch
     wangshuang "因为——欧按物——咽——"
     ahe "阿...霜？"
     ## 王霜面部开始出现glitch
@@ -727,7 +724,6 @@ label route1_start:
     wangshuang "你看，你的“作品”从各种意义上已经完成了。"
     ahe "什——"
     ## 炸裂jump scare音效
-    with fx_shock
     ## 浑身伤痕累累仿佛由尸块缝纫而成的无头尸首登场
     ## 高速心跳音效
     ## 屏幕边缘开始随着心跳的节奏震动
