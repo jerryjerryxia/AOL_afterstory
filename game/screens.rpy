@@ -725,6 +725,11 @@ screen preferences():
                     textbutton _("选项后继续") action Preference("after choices", "toggle")
                     textbutton _("过场后继续") action Preference("skip", "toggle")
 
+                vbox:
+                    style_prefix "check"
+                    label _("开发者模式")
+                    textbutton _("显示场景与音乐参考") action ToggleField(persistent, "dev_mode")
+
             null height 30
 
             hbox:
@@ -1192,8 +1197,8 @@ style route_subtitle_text:
 default scene_desc_visible = False
 
 screen dev_scene_info():
-    ## Only show if we have a scene name and in developer mode
-    if current_scene_name and config.developer:
+    ## Only show if we have a scene name and developer mode is enabled
+    if current_scene_name and persistent.dev_mode:
         # Top-left corner panel
         frame:
             style "dev_scene_frame"
@@ -1253,8 +1258,8 @@ default current_music_scene = None
 default dev_music_expanded = False
 
 screen dev_music_selector():
-    ## Only show if we have a valid scene and in developer mode
-    if current_music_scene and current_music_scene in scene_music and config.developer:
+    ## Only show if we have a valid scene and developer mode is enabled
+    if current_music_scene and current_music_scene in scene_music and persistent.dev_mode:
         $ scene_data = scene_music[current_music_scene]
         $ tracks = scene_data["tracks"]
         $ scene_label = scene_data["label"]

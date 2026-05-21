@@ -8,6 +8,7 @@
 
 define config.developer = True  # 启用开发者模式
 default persistent.test_mode = True  # 测试模式开关
+default persistent.dev_mode = config.developer  # 开发者模式：显示左上角场景参考和右上角音乐菜单
 
 init python:
     # 测试模式：允许跳过未读文本
