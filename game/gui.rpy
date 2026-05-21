@@ -63,7 +63,7 @@ define gui.textbox_yalign = 1.0
 
 ## 角色名字位置（相对于对话框窗口，窗口宽 1520 居中）
 define gui.name_xpos = 160
-define gui.name_ypos = 0
+define gui.name_ypos = 15
 define gui.name_xalign = 0.0
 
 ## 对话文字位置（相对于对话框窗口）

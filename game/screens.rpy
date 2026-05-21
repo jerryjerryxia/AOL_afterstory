@@ -224,7 +224,7 @@ screen centered_say(who, what):
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
-        background Solid("#000000ee")
+        background Solid("#000000aa")
 
         text what id "what":
             ## Centered for dramatic effect
@@ -257,7 +257,7 @@ screen centered_large_say(who, what):
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
-        background Solid("#000000ee")
+        background Solid("#000000aa")
 
         text what id "what":
             ## Centered with larger font for dramatic effect
