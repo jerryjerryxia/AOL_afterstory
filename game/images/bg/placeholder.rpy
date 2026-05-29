@@ -27,10 +27,31 @@ image bg_night = Solid("#1a1a2a", xsize=1920, ysize=1080)
 ## convert_script.py 中的 SCENE_BG_MAP 把 【转场：场景名】 映射到这些 image 名。
 ################################################################################
 
+## 无色透明多面体：WebM (VP9) 循环视频。
+## 关键：不写 play=，而是从 channel 取帧。channel 在 game/scripts/videos.rpy 注册，
+## 在 splashscreen 启动后一直跑。所有引用 bg_polyhedron_video 的地方（主菜单、序章首场景）
+## 都从同一个 channel 取当前帧 —— 切场景不重置帧位置，做到无缝衔接。
+## 暂时只在 prologue 的"无色透明多面体动画"场景使用；后续如要全局生效，把 SCENE_BG_MAP
+## 里的 '无色透明多面体动画' 改成 '无色透明多面体'，并把 main_script_raw.txt 里的临时改名改回。
+image bg_polyhedron_video = Movie(
+    channel="polyhedron_video",
+    size=(1920, 1080)
+)
+
 image bg_summergaze = Transform("images/bg/summergaze.png", xysize=(1920, 1080), fit="cover")
 image bg_sungaze = Transform("images/bg/sungaze.png", xysize=(1920, 1080), fit="cover")
 image bg_dessertgaze = Transform("images/bg/dessertgaze.png", xysize=(1920, 1080), fit="cover")
 image bg_desert = Transform("images/bg/desert.png", xysize=(1920, 1080), fit="cover")
+
+## 甜品店：内嵌水面波纹 shader，让画面持续流动。
+## shader 注册和 _ripple_tick callback 见 game/scripts/shaders.rpy。
+image bg_dessertshop:
+    Transform("images/bg/甜品店6.50.png", xysize=(1920, 1080), fit="cover")
+    shader "game.water_ripple"
+    u_ripple_strength 1.5
+    u_ripple_speed 1.0
+    u_ripple_scale 12.0
+    function _ripple_tick
 
 ################################################################################
 ## 资源替换说明

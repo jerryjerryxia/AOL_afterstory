@@ -360,8 +360,9 @@ screen main_menu():
 
     style_prefix "main_menu"
 
-    ## 占位符背景 - 全屏覆盖
-    add Solid("#1a1a2a")
+    ## 背景：无色透明多面体循环视频（mp4 母版见 game/images/bg/_video_masters/polyhedron.mp4，
+    ## 由 convert_videos.py 转为 webm）。Movie 在 Ren'Py 里只在被显示时播放，菜单离开就会停。
+    add "bg_polyhedron_video"
 
     ## 暗化效果
     frame:

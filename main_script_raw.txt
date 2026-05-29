@@ -3,7 +3,7 @@
 【音乐：prologue_1】
 【场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，Doutokutosetsu，Shinsou no reijou，Gaidankousetsu】
 
-【转场：无色透明多面体。一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。】
+【转场：无色透明多面体动画。一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。视频背景，临时只在 prologue 用，后续可扩展到其他无色透明多面体场景。】
 
 【Extended大文本框开始】
 
@@ -447,6 +447,8 @@ B: 接受。（madness+1）
 瘾。
 
 【居中大字文本框结束】
+
+【转场：甜品店幻视。波纹幻视开始：背景切换到带水面波纹shader的甜品店幻象画面】
 
 【Extended大文本框开始】
 

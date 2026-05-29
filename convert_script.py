@@ -14,7 +14,20 @@ SCENE_BG_MAP = {
     '夏日对视': 'bg_summergaze',
     '张目对日pt1': 'bg_sungaze',
     '甜品店对视': 'bg_dessertgaze',
+    '甜品店幻视': 'bg_dessertshop',
     '银白色沙漠': 'bg_desert',
+    # 暂时只有 prologue 的第一处用视频。要扩展到其他"无色透明多面体"场景时，
+    # 把下行改成 '无色透明多面体': 'bg_polyhedron_video'，并去掉 raw script 里的"动画"后缀。
+    '无色透明多面体动画': 'bg_polyhedron_video',
+}
+
+# Scenes that should NOT emit the default fade-through-black transition.
+# Used when the same background is already visible (e.g., main menu's video
+# bg carries into the prologue's first scene), so a black-fade would break
+# the continuity. These scenes emit `scene X with None` instead of
+# `scene X with scene_soft`.
+NO_TRANSITION_SCENES = {
+    '无色透明多面体动画',
 }
 
 # Standalone stage-direction keyword -> FX transition emitted right after
@@ -108,7 +121,8 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         # Scenes without dedicated art fall back to a plain black background.
         output_lines = [f'{indent}## 转场：{scene_name}']
         bg_image = SCENE_BG_MAP.get(scene_name, 'black')
-        output_lines.append(f'{indent}scene {bg_image} with scene_soft')
+        transition = 'None' if scene_name in NO_TRANSITION_SCENES else 'scene_soft'
+        output_lines.append(f'{indent}scene {bg_image} with {transition}')
         output_lines.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
         if scene_desc:
             output_lines.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')

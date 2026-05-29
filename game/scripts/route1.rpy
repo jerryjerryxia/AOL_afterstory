@@ -325,6 +325,10 @@ label route1_start:
     ## 居中大字文本框开始 - centered large font textbox
     centered_large_narrator "瘾。"
     ## 居中大字文本框结束
+    ## 转场：甜品店幻视
+    scene bg_dessertshop with scene_soft
+    $ current_scene_name = "甜品店幻视"
+    $ current_scene_desc = "波纹幻视开始：背景切换到带水面波纹shader的甜品店幻象画面"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。"
     extend "\n成瘾。糖分子的洪流只消一个浪头就使你深深染上了挥之不去的瘾。"
