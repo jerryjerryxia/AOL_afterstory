@@ -104,6 +104,11 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if pause_match:
         return f'{indent}pause {pause_match.group(1)}'
 
+    # (Removed 【文本框淡入】 marker — `window show TRANSITION` does not affect
+    # custom say screens, which is what this project uses. Fade-in is now
+    # handled by transforms on large_say/centered_say/centered_large_say
+    # directly, so every time those screens first appear they ease in.)
+
     # Scene transition markers 【转场：场景名。场景描述】
     transition_match = re.match(r'^【转场[：:](.+?)】$', line)
     if transition_match:

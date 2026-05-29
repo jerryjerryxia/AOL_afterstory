@@ -180,12 +180,39 @@ style namebox:
     padding (10, 5, 10, 5)
 
 ################################################################################
+## 一次性"序章首文本框淡入"机制
+## ----------------------------------------------------------------
+## 只在主菜单退场后的第一条 large_say 对话上播放一次淡入；其它所有对话都瞬出。
+##
+## 用法：主菜单 timer 在 Start() 之前 SetVariable("_intro_fade_pending", True)。
+## 下一条 large_say mount 时：
+##   - flag=True  → 重置 flag，alpha 从 0 ease-in 到 1（淡入）
+##   - flag=False → alpha 立刻设为 1 并把 ATL 永久"挂起"（无任何动画/影响）
+## 由于 flag 在 first call 就被消费掉，后续所有 large_say 都走 False 分支。
+default _intro_fade_pending = False
+
+init python:
+    def _say_intro_fade_or_halt(trans, st, at):
+        if renpy.store._intro_fade_pending:
+            renpy.store._intro_fade_pending = False
+            return None  # 推进到下一行的 easein
+        # 不淡入：直接显示，挂起 ATL（return 一个超大值，效果上=永不再唤醒）
+        trans.alpha = 1.0
+        return 999999.0
+
+transform say_intro_fade:
+    alpha 0.0
+    function _say_intro_fade_or_halt
+    easein 0.6 alpha 1.0
+
+################################################################################
 ## 大文本框界面 - Large Textbox Screen (Full-height narrative text)
 ## 居中在屏幕正中央 (1920-1520)/2=200, (1080-800)/2=140
 ################################################################################
 
 screen large_say(who, what):
     frame:
+        at say_intro_fade
         xpos 200
         ypos 140
         xsize 1520
@@ -438,7 +465,8 @@ screen main_menu():
     ##   标题:        0.5s 完成（更早）
     ## 再加 ~0.5s 让玩家看到纯背景视频"喘口气"，文本框再进。
     if _main_menu_starting:
-        timer 1.25 action [SetVariable("_main_menu_starting", False), Start()]
+        ## 进游戏前先武装 intro 淡入标志，下一条 large_say（序章首句）会消费它一次。
+        timer 1.25 action [SetVariable("_main_menu_starting", False), SetVariable("_intro_fade_pending", True), Start()]
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
