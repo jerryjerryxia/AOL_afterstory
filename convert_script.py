@@ -4,7 +4,16 @@ Script converter: Converts raw script to Ren'Py format
 Handles branching with A:/B: options and 【选项分线到此结束】 convergence markers
 """
 
+import argparse
 import re
+import sys
+
+# Force UTF-8 stdout so 中文 prints correctly on Windows consoles (the default
+# cp936/cp1252 codepage mangles it). Safe no-op on POSIX. Python 3.7+.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except AttributeError:
+    pass
 
 # Scene names (the part before the first period in 【转场：场景名。描述】) that
 # have a real background image. Maps the scene name to its Ren'Py image name,
@@ -13,12 +22,20 @@ import re
 SCENE_BG_MAP = {
     '夏日对视': 'bg_summergaze',
     '张目对日pt1': 'bg_sungaze',
-    '甜品店对视': 'bg_dessertgaze',
-    '甜品店幻视': 'bg_dessertshop',
     '银白色沙漠': 'bg_desert',
-    # 暂时只有 prologue 的第一处用视频。要扩展到其他"无色透明多面体"场景时，
-    # 把下行改成 '无色透明多面体': 'bg_polyhedron_video'，并去掉 raw script 里的"动画"后缀。
-    '无色透明多面体动画': 'bg_polyhedron_video',
+    # 无色透明多面体：循环视频。剧本里所有引用此名的场景都用同一个 channel，
+    # 主菜单和序章首场景共享帧位置。
+    '无色透明多面体': 'bg_polyhedron_video',
+    # 甜品店对视 1-7 + 6.51：场景渐进，详见 placeholder.rpy 里的注释。
+    '甜品店对视1': 'bg_dessertgaze1',
+    '甜品店对视2': 'bg_dessertgaze2',
+    '甜品店对视3': 'bg_dessertgaze3',
+    '甜品店对视4': 'bg_dessertgaze4',
+    '甜品店对视5': 'bg_dessertgaze5',
+    '甜品店对视6': 'bg_dessertgaze6',
+    '甜品店对视6.51': 'bg_dessertgaze6_51',
+    '甜品店对视7': 'bg_dessertgaze7',
+    '甜品店对视8': 'bg_dessertgaze8',
 }
 
 # Scenes that should NOT emit the default fade-through-black transition.
@@ -26,9 +43,32 @@ SCENE_BG_MAP = {
 # bg carries into the prologue's first scene), so a black-fade would break
 # the continuity. These scenes emit `scene X with None` instead of
 # `scene X with scene_soft`.
-NO_TRANSITION_SCENES = {
-    '无色透明多面体动画',
+NO_TRANSITION_SCENES = set()
+
+# Scenes that should cross-dissolve into view rather than fade through black.
+# Use for visual evolution within the same location/moment — e.g., the dessert
+# shop sequence (1 → 2 → 3 → ... → 7) where each scene is the same dining
+# table at successive beats. A black-fade between them feels like "cut away
+# and come back"; a dissolve reads as "time slipping forward in place."
+# Note: 甜品店对视1 is NOT in here — that's the *entry* into the sequence,
+# so it should use the standard fade-through-black from whatever preceded it.
+CROSS_DISSOLVE_SCENES = {
+    '甜品店对视2',
+    '甜品店对视3',
+    '甜品店对视4',
+    '甜品店对视5',
+    '甜品店对视6',
+    '甜品店对视6.51',
+    '甜品店对视7',
+    '甜品店对视8',
 }
+
+# Tracks whether the prologue's first 【转场：...】 still needs to be emitted
+# without a transition (with None). The main menu's polyhedron video bg
+# already shows what the prologue is about to scene to, so a fade-through-black
+# would break the seamless handoff. convert_prologue() sets this to True at
+# its start; convert_content_line()'s transition branch consumes it once.
+_PROLOGUE_FIRST_TRANSITION_PENDING = False
 
 # Standalone stage-direction keyword -> FX transition emitted right after
 # the comment, for genuine *visual* dramatic beats only. Audio-only cues
@@ -113,9 +153,11 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     transition_match = re.match(r'^【转场[：:](.+?)】$', line)
     if transition_match:
         content = transition_match.group(1).strip()
-        # Split by first period (Chinese or English)
-        # The scene name is before the first period, description is after
-        period_match = re.search(r'[。.]', content)
+        # Split by first Chinese period only (。). Not ASCII period, because
+        # scene names may legitimately contain `.` (e.g., 甜品店对视6.51).
+        # Convention in the raw script is to always use 。 as the name/description
+        # separator, so this is safe.
+        period_match = re.search(r'。', content)
         if period_match:
             scene_name = content[:period_match.start()].strip()
             scene_desc = content[period_match.end():].strip()
@@ -132,7 +174,17 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         # Scenes without dedicated art fall back to a plain black background.
         output_lines = [f'{indent}## 转场：{scene_name}']
         bg_image = SCENE_BG_MAP.get(scene_name, 'black')
-        transition = 'None' if scene_name in NO_TRANSITION_SCENES else 'scene_soft'
+        global _PROLOGUE_FIRST_TRANSITION_PENDING
+        if _PROLOGUE_FIRST_TRANSITION_PENDING:
+            # Main menu's bg is already what we're scening to; skip the fade.
+            transition = 'None'
+            _PROLOGUE_FIRST_TRANSITION_PENDING = False
+        elif scene_name in NO_TRANSITION_SCENES:
+            transition = 'None'
+        elif scene_name in CROSS_DISSOLVE_SCENES:
+            transition = 'scene_dissolve'
+        else:
+            transition = 'scene_soft'
         output_lines.append(f'{indent}scene {bg_image} with {transition}')
         output_lines.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
         if scene_desc:
@@ -305,8 +357,8 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
         transition_match = re.match(r'^【转场[：:](.+?)】$', line)
         if transition_match:
             content = transition_match.group(1).strip()
-            # Split by first period (Chinese or English)
-            period_match = re.search(r'[。.]', content)
+            # Split on Chinese period only (same convention as convert_content_line)
+            period_match = re.search(r'。', content)
             if period_match:
                 scene_name = content[:period_match.start()].strip()
                 scene_desc = content[period_match.end():].strip()
@@ -348,7 +400,17 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
             scene_desc_escaped = scene_desc.replace('"', '\\"')
             output.append(f'{indent}## 转场：{scene_name}')
             bg_image = SCENE_BG_MAP.get(scene_name, 'black')
-            output.append(f'{indent}scene {bg_image} with scene_soft')
+            # Same transition-choice logic as convert_content_line.
+            # (We don't touch _PROLOGUE_FIRST_TRANSITION_PENDING here because
+            # the prologue's first 转场 is at the top of the file, never inside
+            # an accumulating textbox block.)
+            if scene_name in NO_TRANSITION_SCENES:
+                transition = 'None'
+            elif scene_name in CROSS_DISSOLVE_SCENES:
+                transition = 'scene_dissolve'
+            else:
+                transition = 'scene_soft'
+            output.append(f'{indent}scene {bg_image} with {transition}')
             output.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
             if scene_desc:
                 output.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
@@ -740,6 +802,12 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
 
 def convert_prologue(lines, start_line, end_line):
     """Convert the prologue section (before route 1)"""
+    # Arm the seamless-handoff flag; the first 【转场：...】 we see in this
+    # section will emit `with None` to avoid a fade-through-black on the
+    # main-menu→prologue boundary (where the bg is already the same video).
+    global _PROLOGUE_FIRST_TRANSITION_PENDING
+    _PROLOGUE_FIRST_TRANSITION_PENDING = True
+
     output = []
     output.append("## prologue.rpy")
     output.append("## 序章 / Prologue - AUTO-GENERATED")
@@ -879,9 +947,57 @@ def find_route_boundaries(lines):
     }
 
 
+def find_unmapped_scenes(lines):
+    """Return sorted list of 转场 scene names not in SCENE_BG_MAP.
+    These currently fall back to a black background — usually a signal that
+    a new marker was added to the raw script but the image registration in
+    placeholder.rpy / SCENE_BG_MAP is missing.
+
+    Scenes that intentionally use a solid-color fallback (e.g. 黑屏, 白屏,
+    红屏...) will also appear; filter those out manually if they're false
+    positives for your workflow.
+    """
+    seen = set()
+    for line in lines:
+        m = re.match(r'^【转场[：:](.+?)】$', line.strip())
+        if not m:
+            continue
+        content = m.group(1).strip()
+        period_match = re.search(r'。', content)
+        scene_name = content[:period_match.start()].strip() if period_match else content
+        if scene_name:
+            seen.add(scene_name)
+    return sorted(seen - set(SCENE_BG_MAP))
+
+
+def report_unmapped(lines, prefix=""):
+    """Print a warning block listing unmapped 转场 scene names."""
+    unmapped = find_unmapped_scenes(lines)
+    if not unmapped:
+        print(f"{prefix}All 转场 scenes are mapped.")
+        return 0
+    print(f"{prefix}WARNING: {len(unmapped)} unmapped 转场 scene(s) (will fall back to black):")
+    for name in unmapped:
+        print(f"{prefix}  - {name}")
+    return len(unmapped)
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check-unmapped", action="store_true",
+        help="Only scan main_script_raw.txt for 转场 scene names that aren't "
+             "in SCENE_BG_MAP. No conversion. Useful after editing the raw "
+             "script to catch new scenes you forgot to register.",
+    )
+    args = parser.parse_args()
+
     with open(r'X:\GameDev\AOL_afterstory\main_script_raw.txt', 'r', encoding='utf-8') as f:
         lines = [line.rstrip('\n') for line in f.readlines()]
+
+    if args.check_unmapped:
+        report_unmapped(lines)
+        return
 
     print(f"Total lines: {len(lines)}")
 
@@ -918,6 +1034,8 @@ def main():
     print("Route 3 converted!")
 
     print("All routes converted successfully!")
+    print()
+    report_unmapped(lines)
 
 
 if __name__ == "__main__":

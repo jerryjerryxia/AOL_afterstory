@@ -29,10 +29,8 @@ image bg_night = Solid("#1a1a2a", xsize=1920, ysize=1080)
 
 ## 无色透明多面体：WebM (VP9) 循环视频。
 ## 关键：不写 play=，而是从 channel 取帧。channel 在 game/scripts/videos.rpy 注册，
-## 在 splashscreen 启动后一直跑。所有引用 bg_polyhedron_video 的地方（主菜单、序章首场景）
-## 都从同一个 channel 取当前帧 —— 切场景不重置帧位置，做到无缝衔接。
-## 暂时只在 prologue 的"无色透明多面体动画"场景使用；后续如要全局生效，把 SCENE_BG_MAP
-## 里的 '无色透明多面体动画' 改成 '无色透明多面体'，并把 main_script_raw.txt 里的临时改名改回。
+## 在 splashscreen 启动后一直跑。所有引用 bg_polyhedron_video 的地方（主菜单、序章首场景、
+## 以及剧本中其它所有 无色透明多面体 场景）都从同一个 channel 取当前帧。
 image bg_polyhedron_video = Movie(
     channel="polyhedron_video",
     size=(1920, 1080)
@@ -40,13 +38,27 @@ image bg_polyhedron_video = Movie(
 
 image bg_summergaze = Transform("images/bg/summergaze.png", xysize=(1920, 1080), fit="cover")
 image bg_sungaze = Transform("images/bg/sungaze.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze = Transform("images/bg/dessertgaze.png", xysize=(1920, 1080), fit="cover")
 image bg_desert = Transform("images/bg/desert.png", xysize=(1920, 1080), fit="cover")
 
-## 甜品店：内嵌水面波纹 shader，让画面持续流动。
+## 甜品店对视 1-7 + 6.51：场景渐进。1-3 暖色（团子吃法递进），4-6 转入蓝色调
+## 幻视（波纹由弱到强、王霜由实体到融入背景），6.51 过渡，7 阿鹤呕吐导致色彩复原。
+## 源图均已 resize 到 3840x2160 以避开 GPU 4096 像素纹理限制（否则会被分块渲染、
+## 中间出现接缝；见 git 历史里 甜品店6.50.png 的资料）。
+image bg_dessertgaze1 = Transform("images/bg/甜品店对视1.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze2 = Transform("images/bg/甜品店对视2.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze3 = Transform("images/bg/甜品店对视3.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze4 = Transform("images/bg/甜品店对视4.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze5 = Transform("images/bg/甜品店对视5.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze6 = Transform("images/bg/甜品店对视6.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze6_51 = Transform("images/bg/甜品店对视6.51.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze7 = Transform("images/bg/甜品店对视7.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze8 = Transform("images/bg/甜品店对视8.png", xysize=(1920, 1080), fit="cover")
+
+## 旧资源：之前实验用的甜品店 + 水面波纹 shader。剧本里已经没有 甜品店幻视 场景
+## 引用它了，留着以备后续如果要给某一帧加 shader 动画时直接复用。
 ## shader 注册和 _ripple_tick callback 见 game/scripts/shaders.rpy。
 image bg_dessertshop:
-    Transform("images/bg/甜品店6.50.png", xysize=(1920, 1080), fit="cover")
+    Transform("images/bg/甜品店对视6.50.png", xysize=(1920, 1080), fit="cover")
     shader "game.water_ripple"
     u_ripple_strength 1.5
     u_ripple_speed 1.0

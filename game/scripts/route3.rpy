@@ -7,7 +7,7 @@ label route3_start:
 
     ## 头入水，气泡音效
     ## 转场：无色透明多面体
-    scene black with scene_soft
+    scene bg_polyhedron_video with scene_soft
     $ current_scene_name = "无色透明多面体"
     $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
     ## 还是无色透明多面体，但这里看起来像是从水底往上看那样
@@ -680,7 +680,7 @@ label route3_start:
             extend "\n读取CheckPoint10495——"
             ## Extended大文本框结束
             ## 转场：无色透明多面体
-            scene black with scene_soft
+            scene bg_polyhedron_video with scene_soft
             $ current_scene_name = "无色透明多面体"
             $ current_scene_desc = None
             ## 很多奇怪的人声叠加在一起音效
@@ -738,7 +738,7 @@ label route3_start:
             extend "\n还嘴硬？你明明也想让她出去，我早就看明白了，毕竟这里一共三个人，两个都想让她离开。你这么喜欢民主来民主去的，肯定心里偷偷接受了，是不是？"
             ## Extended大文本框结束
             ## 转场：无色透明多面体
-            scene black with scene_soft
+            scene bg_polyhedron_video with scene_soft
             $ current_scene_name = "无色透明多面体"
             $ current_scene_desc = None
             ## Extended大文本框开始 - accumulating large textbox

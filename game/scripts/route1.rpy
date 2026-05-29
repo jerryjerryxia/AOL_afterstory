@@ -175,10 +175,10 @@ label route1_start:
     extend "\n去找吧。"
     ## Extended大文本框结束
     ## 白屏逐渐褪去
-    ## 转场：甜品店对视
-    scene bg_dessertgaze with scene_soft
-    $ current_scene_name = "甜品店对视"
-    $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面"
+    ## 转场：甜品店对视1
+    scene bg_dessertgaze1 with scene_soft
+    $ current_scene_name = "甜品店对视1"
+    $ current_scene_desc = "基础款，暖色，桌上没有团子，背景完全正常"
     ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route1_scene2")
@@ -222,6 +222,10 @@ label route1_start:
     wangshuang "我闭嘴了又有什么用？难道你那苍白的“理想”就不需要人来陪葬了？"
     wangshuang "你为了尤里娅那小姑娘折断了多少人的骨头？阿鹤，狡辩是没有意义的，无论如何我们都是逝乐园覆灭的共犯。"
     ahe "..."
+    ## 转场：甜品店对视2
+    scene bg_dessertgaze2 with scene_dissolve
+    $ current_scene_name = "甜品店对视2"
+    $ current_scene_desc = "暖色，桌上出现了团子，背景完全正常"
     ## 默认
     wangshuang "所以不如放下成见，吃点团子，如何？"
     ## 默默吃一口
@@ -243,6 +247,10 @@ label route1_start:
     wangshuang "连这都分不清，以后可是要吃大亏哦。"
     ## 手中出现无色透明多面体，多面体形状略微改变2
     wangshuang "哦，对，团子有得是，千万别客气，请吧——"
+    ## 转场：甜品店对视3
+    scene bg_dessertgaze3 with scene_dissolve
+    $ current_scene_name = "甜品店对视3"
+    $ current_scene_desc = "暖色，桌上的团子被吃了几口，背景完全正常"
     ahe "明明刚说完不想我染上。"
     wangshuang "KAS生理上确实不怎么成瘾啊。"
     wangshuang "但太多人会陷进它能让人看到的那些东西，最后心里离不开了，所以你才能在安息地见到那么多活死人。"
@@ -306,6 +314,10 @@ label route1_start:
 
     ahe "蓝色啊，怎么了？"
     wangshuang "你看——"
+    ## 转场：甜品店对视4
+    scene bg_dessertgaze4 with scene_dissolve
+    $ current_scene_name = "甜品店对视4"
+    $ current_scene_desc = "背景变成了蓝色调，桌上团子吃了几口，背景有微弱的波纹纹理"
     ## 蓝色波纹特效，并逐渐加入更多色彩
     ## 场景音乐参考：进入幻视，所以虽然场景没变音乐也要切换https://audionautix.com/Music/Beautiful%20Daughter.mp3 (Jason Shaw)，
     $ set_scene_music("route1_hallucination")
@@ -325,11 +337,11 @@ label route1_start:
     ## 居中大字文本框开始 - centered large font textbox
     centered_large_narrator "瘾。"
     ## 居中大字文本框结束
-    ## 转场：甜品店幻视
-    scene bg_dessertshop with scene_soft
-    $ current_scene_name = "甜品店幻视"
-    $ current_scene_desc = "波纹幻视开始：背景切换到带水面波纹shader的甜品店幻象画面"
     ## Extended大文本框开始 - accumulating large textbox
+    ## 转场：甜品店对视5
+    scene bg_dessertgaze5 with scene_dissolve
+    $ current_scene_name = "甜品店对视5"
+    $ current_scene_desc = "背景蓝色调，桌上团子吃了几口，背景有更明显的波纹纹理，王霜变得半透明，表情是默认表情"
     large_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。"
     extend "\n成瘾。糖分子的洪流只消一个浪头就使你深深染上了挥之不去的瘾。"
     extend "\n渴望的源头冲动的源头想往的源头发现了。"
@@ -360,6 +372,10 @@ label route1_start:
             wangshuang "就这样睡去也无可厚非。"
 
     ## Extended大文本框开始 - accumulating large textbox
+    ## 转场：甜品店对视6
+    scene bg_dessertgaze6 with scene_dissolve
+    $ current_scene_name = "甜品店对视6"
+    $ current_scene_desc = "背景蓝色调，桌上团子吃了几口，背景有更加明显的波纹纹理。从这里开始王霜消失了，但是是和世界融为一体的感觉。"
     large_narrator "更多思绪已无意义，一如时间。"
     extend "\n溶解在蓝色空间里的凉爽糖分让你浑身的燥热与恶意消减了大半，你置身一片透明的海域里，又像是漂浮在空洞的宇宙空间中。"
     extend "\n一切都是许可的，这样的冲动从未如此强烈过。"
@@ -367,10 +383,14 @@ label route1_start:
     extend "\n更深的见解就隐藏其中，因为一切都是许可的，视野中的所有事物都是从始至终连贯而统一的，如此怡人，如此饱满。"
     extend "\n人类的智识自然无力探寻其中奥秘，但在王霜无处不在的笑容辉耀之下，你的一部分认知已踏入了更深层的水域。"
     extend "\n越向深处就越被不可知所掣肘，当眼前的色彩开始回旋，你意识到或许梦境的另一面并非现实，而是某种更加完整且怖人的造物。"
-    extend "\n你的知能越是提升，它的样貌就越发模糊，模糊的面容中只显露出一抹依稀可见的残酷笑容，仿佛在嘲讽你的徒劳。"
     ## Extended大文本框结束
+    ## 转场：甜品店对视6.51
+    scene bg_dessertgaze6_51 with scene_dissolve
+    $ current_scene_name = "甜品店对视6.51"
+    $ current_scene_desc = None
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "但你已经满足了，由内而外地满足了，在饱满的感官刺激中感到一阵——疲劳？"
+    large_narrator "你的知能越是提升，它的样貌就越发模糊，模糊的面容中只显露出一抹依稀可见的残酷笑容，仿佛在嘲讽你的徒劳。"
+    extend "\n但你已经满足了，由内而外地满足了，在饱满的感官刺激中感到一阵——疲劳？"
     extend "\n幸福的疲劳、优质的疲劳、苦苦追寻的疲劳、允许你在辗转反侧后终于入睡的甜美疲劳。"
     extend "\n世界空无一人，因为任何个体都不具备足够的差异能够让它们自称“存在”，因此你将它们尽数吞下，如同团子。"
     extend "\n糖分继续满溢出来，沿着你存在的边缘缓缓淌下，坠入周身蔚蓝的虚空之中，粘稠而香甜。"
@@ -385,7 +405,11 @@ label route1_start:
     extend "\n钟表嘀嗒作响。"
     extend "\n随着肠胃痉挛越发剧烈，你终于“哇”地一声吐了出来。"
     extend "\n和你所熟知的呕吐不同，你吐出的只有色彩。"
-    extend "\n呕吐物与面前桌子接触的瞬间，水蓝的桌面便恢复了木材的颜色，这令人沮丧的还原随着你吐出更多的色彩而提速，很快覆盖了大半个视野。"
+    ## 转场：甜品店对视7
+    scene bg_dessertgaze7 with scene_dissolve
+    $ current_scene_name = "甜品店对视7"
+    $ current_scene_desc = "背景蓝色调和暖色调掺半，是那种正常色彩顺着阿鹤呕吐为中心开始向四周扩散的感觉，桌上团子吃了几口，背景里的波纹纹理消失，王霜完全消失"
+    large_narrator "呕吐物与面前桌子接触的瞬间，水蓝的桌面便恢复了木材的颜色，这令人沮丧的还原随着你吐出更多的色彩而提速，很快覆盖了大半个视野。"
     extend "\n色彩还原的地方，水面般摇曳的空间停止了动态，原本随处可见的王霜的微笑也随着视野的复原逐渐消失了。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
@@ -396,6 +420,10 @@ label route1_start:
     ## Extended大文本框结束
     ## 画面出现裂痕
     ## Extended大文本框开始 - accumulating large textbox
+    ## 转场：甜品店对视8
+    scene bg_dessertgaze8 with scene_dissolve
+    $ current_scene_name = "甜品店对视8"
+    $ current_scene_desc = "这里就是以7为基础，逐渐碎裂然后转入黑屏的过程，我想就在周围背景里加一些裂纹就行。"
     large_narrator "还原之后的世界仿佛脱了水般脆弱不堪，单是目光扫过就让其表面生出了细小的裂痕。"
     extend "\n更多裂痕。"
     extend "\n直到周身的一切如同一副缺乏保养的老旧油画那样一片片剥落。"

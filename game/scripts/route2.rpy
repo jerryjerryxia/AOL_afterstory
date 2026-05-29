@@ -209,7 +209,7 @@ label route2_start:
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route2_lofi")
     ## 转场：甜品店对视
-    scene bg_dessertgaze with scene_soft
+    scene black with scene_soft
     $ current_scene_name = "甜品店对视"
     $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面。"
     ahe "你好，我要这个团子。"
@@ -352,7 +352,7 @@ label route2_start:
     ## Extended大文本框结束
     ## 玻璃逐渐碎裂音效
     ## 转场：甜品店对视
-    scene bg_dessertgaze with scene_soft
+    scene black with scene_soft
     $ current_scene_name = "甜品店对视"
     $ current_scene_desc = "王霜坐在桌子对面看着镜头方向，背景里是一家疑似甜品店的店面。"
     ahe "原来如此..."
@@ -974,7 +974,7 @@ label route2_start:
     wangshuang "别急，还没完。"
     ## 场景由外到内逐渐变黑，中心是无色透明多面体
     ## 转场：无色透明多面体
-    scene black with scene_soft
+    scene bg_polyhedron_video with scene_soft
     $ current_scene_name = "无色透明多面体"
     $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光"
     ahe "这也是老熟人了。"
