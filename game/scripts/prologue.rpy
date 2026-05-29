@@ -23,6 +23,7 @@ label route1_prologue:
     scene bg_polyhedron_video with None
     $ current_scene_name = "无色透明多面体动画"
     $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。视频背景，临时只在 prologue 用，后续可扩展到其他无色透明多面体场景。"
+    pause 1.0
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "一颗无色透明的多面体在无垠黑暗中幽幽地闪着冷光。"
     extend "\n你感到心平气和，脑海里没有任何多余的问题，只是冷静地观察着你眼前唯一的光源。"

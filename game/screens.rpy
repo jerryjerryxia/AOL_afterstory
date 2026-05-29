@@ -354,22 +354,57 @@ style choice_button_text is default:
 ## 主菜单 - Main Menu
 ################################################################################
 
+## 主菜单"开始游戏"被点击时的退场动画状态。
+## 注意：这套连贯衔接（主菜单→序章不切场景）只有 route1 真正受益 —— 序章首场景
+## 就是同一段多面体视频，无缝接上去。route2/route3 的 prologue 会自己 `scene X
+## with scene_soft` 切回各自的背景，所以视觉上是正常切场，没问题。
+##
+## 动画驱动方式：用 ATL 的 `function` 轮询状态变量 _main_menu_starting。
+## 试过的失败方案：
+##   1. showif + on hide —— showif 把 displayable 从树里抽走，on hide 来不及播。
+##   2. on exit + ScreenDisplayable.set_transform_event("exit") —— 事件能 dispatch，
+##      但 screen 重新求值时 transform 实例可能被复用/重建，事件丢失或者没触发。
+## 轮询方案：每帧调用 _wait_for_main_menu_exit。变量为 False 时返回 0（"下帧再叫
+## 我"），True 时返回 None（结束 function 块，ATL 继续走下一句）。下一句开始
+## 退场动画。displayable 一直留在树里，sensitive 关掉点击。
+init python:
+    def _wait_for_main_menu_exit(trans, st, at):
+        return None if _main_menu_starting else 0
+
+default _main_menu_starting = False
+
+## 标题：上滑淡出。先停在 alpha=1 yoffset=0，等变量翻 True，再易出动画。
+transform menu_title_anim:
+    alpha 1.0
+    yoffset 0
+    function _wait_for_main_menu_exit
+    easeout 0.5 alpha 0.0 yoffset -50
+
+## 菜单按钮：阶梯式左滑淡出。delay 让每个按钮错开开始时间，
+## 从最底下的按钮 (delay 0) 阶梯上去到"开始游戏" (delay 0.42s)。
+transform menu_btn_anim(delay=0.0):
+    alpha 1.0
+    xoffset 0
+    function _wait_for_main_menu_exit
+    pause delay
+    easeout 0.35 alpha 0.0 xoffset -180
+
 screen main_menu():
     ## 主菜单 - 这是游戏启动时显示的第一个界面
     tag menu
 
     style_prefix "main_menu"
 
-    ## 背景：无色透明多面体循环视频（mp4 母版见 game/images/bg/_video_masters/polyhedron.mp4，
-    ## 由 convert_videos.py 转为 webm）。Movie 在 Ren'Py 里只在被显示时播放，菜单离开就会停。
+    ## 背景：无色透明多面体循环视频。一直显示，不受退场动画影响 —— 标题上飞、
+    ## 按钮左飞，背景留在原地，channel 一直跑，route1 序章无缝衔接。
     add "bg_polyhedron_video"
 
-    ## 暗化效果
-    frame:
+    ## 暗化效果（也跟标题一起上飞）
+    frame at menu_title_anim:
         style "main_menu_frame"
 
-    ## 游戏标题
-    vbox:
+    ## 游戏标题：上滑淡出
+    vbox at menu_title_anim:
         xalign 0.5
         yalign 0.3
 
@@ -378,8 +413,32 @@ screen main_menu():
             xalign 0.5
             color "#ffffff"
 
-    ## 使用 navigation 屏幕显示菜单按钮
-    use navigation
+    ## 主菜单按钮：直接 inline，不走 `use navigation`，因为每个要带自己的 delay。
+    ## stagger = 0.06s。"开始游戏" 的 action 触发 _main_menu_starting=True 和
+    ## "exit" 事件；sensitive 在退场期间关掉所有按钮，避免误触发。
+    vbox:
+        style_prefix "navigation"
+        xpos gui.navigation_xpos
+        yalign 0.5
+        spacing gui.navigation_spacing
+
+        textbutton _("开始游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
+        textbutton _("读取存档") action ShowMenu("load") sensitive not _main_menu_starting at menu_btn_anim(0.36)
+        textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.30)
+        textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.24)
+        textbutton _("音乐鉴赏") action ShowMenu("music_room") sensitive not _main_menu_starting at menu_btn_anim(0.18)
+        textbutton _("设置") action ShowMenu("preferences") sensitive not _main_menu_starting at menu_btn_anim(0.12)
+        textbutton _("关于") action ShowMenu("about") sensitive not _main_menu_starting at menu_btn_anim(0.06)
+
+        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
+            textbutton _("退出") action Quit(confirm=not main_menu) sensitive not _main_menu_starting at menu_btn_anim(0.0)
+
+    ## 时序：
+    ##   按钮 stagger: 最顶按钮 0.42s 延迟 + 0.35s 动画 = 0.77s 完成
+    ##   标题:        0.5s 完成（更早）
+    ## 再加 ~0.5s 让玩家看到纯背景视频"喘口气"，文本框再进。
+    if _main_menu_starting:
+        timer 1.25 action [SetVariable("_main_menu_starting", False), Start()]
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox

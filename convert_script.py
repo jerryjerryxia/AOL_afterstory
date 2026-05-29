@@ -98,6 +98,12 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if '音乐停' in line:
         return f'{indent}$ current_music_scene = None\n{indent}stop music fadeout 1.0'
 
+    # Pause markers 【停顿：N】 -> `pause N` (N is seconds, float ok)
+    # Use sparingly — for breathing room before a scene's first line, etc.
+    pause_match = re.match(r'^【停顿[：:]([\d.]+)】$', line)
+    if pause_match:
+        return f'{indent}pause {pause_match.group(1)}'
+
     # Scene transition markers 【转场：场景名。场景描述】
     transition_match = re.match(r'^【转场[：:](.+?)】$', line)
     if transition_match:
