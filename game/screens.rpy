@@ -19,6 +19,8 @@ init python:
         for slot in renpy.list_slots():
             renpy.unlink_save(slot)
             deleted_count += 1
+        # 没存档了，主菜单按钮回到"开始游戏"
+        persistent.has_save_in_run = False
         renpy.notify("已删除 {} 个存档".format(deleted_count))
 
     def delete_persistent_data():
@@ -463,7 +465,14 @@ screen main_menu():
         yalign 0.5
         spacing gui.navigation_spacing
 
-        textbutton _("开始游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
+        ## 当前周目有存档就显示"继续游戏"（点了 load 最近存档），否则显示
+        ## "开始游戏"（点了走 start label）。两者共用退场动画，timer 跑完后
+        ## exit_main_menu_to_game() 根据 has_save_in_run 决定 Continue 还是 Start。
+        ## list_slots() 多查一道：flag 是 True 但没存档（边缘情况）也回退到 Start。
+        if persistent.has_save_in_run and renpy.list_slots():
+            textbutton _("继续游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
+        else:
+            textbutton _("开始游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
         textbutton _("读取存档") action ShowMenu("load") sensitive not _main_menu_starting at menu_btn_anim(0.36)
         textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.30)
         textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.24)
@@ -480,7 +489,7 @@ screen main_menu():
     ## 再加 ~0.5s 让玩家看到纯背景视频"喘口气"，文本框再进。
     if _main_menu_starting:
         ## 进游戏前先武装 intro 淡入标志，下一条 large_say（序章首句）会消费它一次。
-        timer 1.25 action [SetVariable("_main_menu_starting", False), SetVariable("_intro_fade_pending", True), Start()]
+        timer 1.25 action [SetVariable("_main_menu_starting", False), Function(exit_main_menu_to_game)]
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
