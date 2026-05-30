@@ -465,13 +465,13 @@ screen main_menu():
         yalign 0.5
         spacing gui.navigation_spacing
 
-        ## 有存档就显示"继续游戏"（点了 load 最近存档），没存档就显示
-        ## "开始游戏"（点了走 start label）。两者共用退场动画，timer 跑完后
-        ## exit_main_menu_to_game() 根据 list_slots() 决定 Continue 还是 Start。
-        ## 之前用 persistent.has_save_in_run 作为门，但对旧存档（flag 还没引入
-        ## 的时候做的）会卡死在 Start —— 玩家明明有存档却看不到 Continue。
-        ## 直接看磁盘上有没有存档最稳。
-        if renpy.list_slots():
+        ## "通关之后做的存档" 才显示"继续游戏"，否则"开始游戏"。
+        ## has_continuable_save() 比较 max(slot_mtime) > last_route_completion_time —
+        ## 通关后旧存档还在磁盘上，但 mtime 早于 completion_time，会回到 Start。
+        ## 玩家在新周目里再存档时，mtime 比 completion_time 晚，Continue 又自动出现。
+        ## 两个按钮共用退场动画，timer 跑完后 exit_main_menu_to_game() 用同一个判断
+        ## 决定走 load 还是走 start label，避免按钮和动作不一致。
+        if has_continuable_save():
             textbutton _("继续游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
         else:
             textbutton _("开始游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
