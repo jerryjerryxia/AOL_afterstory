@@ -27,10 +27,12 @@ image bg_night = Solid("#1a1a2a", xsize=1920, ysize=1080)
 ## convert_script.py 中的 SCENE_BG_MAP 把 【转场：场景名】 映射到这些 image 名。
 ################################################################################
 
-## 无色透明多面体：WebM (VP9) 循环视频。
-## 关键：不写 play=，而是从 channel 取帧。channel 在 game/scripts/videos.rpy 注册，
-## 在 splashscreen 启动后一直跑。所有引用 bg_polyhedron_video 的地方（主菜单、序章首场景、
-## 以及剧本中其它所有 无色透明多面体 场景）都从同一个 channel 取当前帧。
+## 无色透明多面体：WebM (VP9) 循环视频，共享 channel polyhedron_video。
+## channel 在 game/scripts/videos.rpy 注册，splashscreen 启动播放。
+## 主菜单和序章首场景都从同一个 channel 取帧，跨 scene 不重新开始 ——
+## 配合 prologue 首场景的 with None 做到主菜单→序章无缝衔接。
+## 在 full repo 里通关后会走到不同的菜单，不会再回到这个 polyhedron 菜单，
+## 所以不会触发 demo 版的 Movie/channel lifecycle bug。
 image bg_polyhedron_video = Movie(
     channel="polyhedron_video",
     size=(1920, 1080)

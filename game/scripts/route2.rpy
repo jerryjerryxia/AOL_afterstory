@@ -55,7 +55,7 @@ label route2_start:
     ## 居中大字文本框开始 - centered large font textbox
     centered_large_narrator "真他妈无聊啊。"
     ## 居中大字文本框结束
-    call screen route_title("水底捞月")
+    call screen route_title(_("水底捞月"))
     ## 转场：夏日对视
     scene bg_summergaze with scene_soft
     $ current_scene_name = "夏日对视"

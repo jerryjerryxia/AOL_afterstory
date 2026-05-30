@@ -5,7 +5,7 @@ label route1_start:
 
 ## 一周目：浮潜
 
-    call screen route_title("浮潜")
+    call screen route_title(_("浮潜"))
     ## 脸入水后冒泡泡的音效
     ## 转场：虚空对视
     scene black with scene_soft

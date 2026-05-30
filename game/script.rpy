@@ -8,10 +8,6 @@
 label splashscreen:
     ## 这个 label 在游戏启动时运行，确保主菜单正常显示
     ## return 后 Ren'Py 会自动显示 main_menu 屏幕
-    ##
-    ## 启动无色透明多面体循环视频。channel 在 game/scripts/videos.rpy 注册。
-    ## 一旦播放，channel 会一直跑下去 —— 主菜单和序章首场景的 Movie() displayable
-    ## 都从这个 channel 取帧，所以从菜单切到游戏不会有重新播放的跳。
     $ renpy.music.play("images/bg/polyhedron.webm", channel="polyhedron_video", loop=True)
     return
 
@@ -23,6 +19,11 @@ label start:
     ## 初始化变量
     $ madness = 0
     $ choice_flags = {}
+
+    ## 标记 polyhedron 需要在下次回到 main_menu 时强制重启 channel。
+    ## 走过游戏一遭后 Movie/channel lifecycle 会乱，必须 stop+play 才能让
+    ## bg_polyhedron_video 重新正常渲染（否则就是 checker board）。
+    $ persistent.polyhedron_started_game = True
 
     ## 跳转到序章
     jump prologue

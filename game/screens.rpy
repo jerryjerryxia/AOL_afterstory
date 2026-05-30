@@ -422,8 +422,22 @@ screen main_menu():
 
     style_prefix "main_menu"
 
-    ## 背景：无色透明多面体循环视频。一直显示，不受退场动画影响 —— 标题上飞、
-    ## 按钮左飞，背景留在原地，channel 一直跑，route1 序章无缝衔接。
+    ## 玩家从游戏回到主菜单后强制重启 polyhedron channel —— 走过游戏一遭
+    ## Movie/channel lifecycle 会乱，channel 显示 playing 但 Movie() 渲染成
+    ## checker board。stop+play 一遍才能让显示恢复正常。flag 用 persistent
+    ## 因为 MainMenu() action 清普通变量但保留 persistent。
+    python:
+        if persistent.polyhedron_started_game:
+            try:
+                renpy.music.stop(channel="polyhedron_video")
+            except Exception:
+                pass
+            renpy.music.play(
+                "images/bg/polyhedron.webm",
+                channel="polyhedron_video", loop=True)
+            persistent.polyhedron_started_game = False
+
+    ## 背景：polyhedron Movie 从共享 channel 取帧，主菜单 → 序章首场景无缝。
     add "bg_polyhedron_video"
 
     ## 暗化效果（也跟标题一起上飞）

@@ -126,7 +126,8 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         title_match = re2.search(r'分屏.(.+?).】$', line)
         if title_match:
             title = title_match.group(1)
-            return f'{indent}call screen route_title("{title}")'
+            # _() wraps the title for translation so it changes with language
+            return f'{indent}call screen route_title(_("{title}"))'
 
     # Music trigger markers 【音乐：scene_id】
     music_match = re.match(r'^【音乐[：:](.+?)】$', line)
@@ -839,10 +840,19 @@ def convert_prologue(lines, start_line, end_line):
         if not line:
             continue
 
-        # Skip title line and music reference comments at the very beginning
-        if i <= 5 and ('疯子的青春期' in line or '场景音乐参考' in line):
-            if '场景音乐参考' in line:
-                output.append(f"    ## {line.strip('【】')}")
+        # Skip the very first non-empty content line — that's the script title
+        # (e.g. "无休夏日综合征" or "疯子的青春期 完美夏日后日谈"). Was hardcoded
+        # to one specific phrase before; this catches whatever title the script
+        # currently uses. Markers (【...】) are handled later so they aren't
+        # captured here.
+        if i <= 5 and not line.startswith('【'):
+            # Music reference comments live in 【...】 and won't reach here.
+            # Anything else this early is the title — skip it silently.
+            continue
+
+        # Pass scene-music reference comments through as Ren'Py comments
+        if i <= 5 and '场景音乐参考' in line:
+            output.append(f"    ## {line.strip('【】')}")
             continue
 
         # Check for accumulating block markers

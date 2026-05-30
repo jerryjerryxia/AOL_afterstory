@@ -37,7 +37,7 @@ label route3_start:
     extend "\n连同意识一起夺去也无妨。"
     ## Extended大文本框结束
     ## 场景逐渐模糊
-    call screen route_title("完美夏日")
+    call screen route_title(_("完美夏日"))
     ## 场景重新清晰
     ## 转场：灰屏水母
     scene black with scene_soft
