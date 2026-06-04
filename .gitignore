@@ -51,3 +51,6 @@ token.json
 # Windows temp files
 ~$*
 nul
+
+# Claude Code temp working dirs
+tmpclaude-*
