@@ -5,8 +5,13 @@ Handles branching with A:/B: options and 【选项分线到此结束】 converge
 """
 
 import argparse
+import os
 import re
 import sys
+
+# Project root = this script's own directory, so all paths work regardless of
+# the folder name (rename-proof; replaces hardcoded X:\GameDev\... absolutes).
+_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Force UTF-8 stdout so 中文 prints correctly on Windows consoles (the default
 # cp936/cp1252 codepage mangles it). Safe no-op on POSIX. Python 3.7+.
@@ -1467,7 +1472,7 @@ def main():
     )
     args = parser.parse_args()
 
-    with open(r'X:\GameDev\AOL_afterstory\main_script_raw.txt', 'r', encoding='utf-8') as f:
+    with open(os.path.join(_ROOT, 'main_script_raw.txt'), 'r', encoding='utf-8') as f:
         lines = [line.rstrip('\n') for line in f.readlines()]
 
     if args.check_unmapped:
@@ -1489,25 +1494,25 @@ def main():
 
     # Prologue
     prologue = insert_sfx_waits(convert_prologue(lines, boundaries['prologue'][0], boundaries['prologue'][1]))
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\prologue.rpy', 'w', encoding='utf-8') as f:
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'prologue.rpy'), 'w', encoding='utf-8') as f:
         f.write(prologue)
     print("Prologue converted!")
 
     # Route 1
     route1 = insert_sfx_waits(convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1))
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\route1.rpy', 'w', encoding='utf-8') as f:
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'route1.rpy'), 'w', encoding='utf-8') as f:
         f.write(route1)
     print("Route 1 converted!")
 
     # Route 2
     route2 = insert_sfx_waits(convert_route(lines, boundaries['route2'][0], boundaries['route2'][1], "route2_start", 2))
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\route2.rpy', 'w', encoding='utf-8') as f:
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'route2.rpy'), 'w', encoding='utf-8') as f:
         f.write(route2)
     print("Route 2 converted!")
 
     # Route 3
     route3 = insert_sfx_waits(convert_route(lines, boundaries['route3'][0], boundaries['route3'][1], "route3_start", 3))
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\route3.rpy', 'w', encoding='utf-8') as f:
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'route3.rpy'), 'w', encoding='utf-8') as f:
         f.write(route3)
     print("Route 3 converted!")
 
