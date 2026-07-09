@@ -6,9 +6,9 @@ label route1_start:
 ## 一周目：浮潜
 
     call screen route_title(_("浮潜"))
-    ## 脸入水后冒泡泡的音效
+    ## 脸入水后冒泡泡的音效，lock text：face-down-bubble
     ## 转场：虚空对视
-    scene black with scene_soft
+    show void default with scene_dissolve
     $ current_scene_name = "虚空对视"
     $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来，阿鹤。"
@@ -33,9 +33,11 @@ label route1_start:
     ahe "我...又病了吗？"
     wangshuang "不，恰恰相反，阿鹤。要我说，你现在就像太阳一样稳定。"
     ahe "太阳？"
-    ## 小吃惊
+    ## 表情：小吃惊
+    show void surprised
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "哦，不好意思，太阳在那儿。"
-    ## 玻璃破碎音效
+    ## 玻璃破碎音效：glass-smash-normalized
     ## 转场：夏日对视
     scene bg_summergaze with scene_soft
     $ current_scene_name = "夏日对视"
@@ -44,14 +46,19 @@ label route1_start:
     ## 场景音乐参考风格1：樹氷の輝き (Shine of Silver Thaw)，夜の向日葵（The sunflower of the night），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu
     ## 场景音乐参考风格2：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
     $ set_scene_music("route1_scene1")
-    ## 默认
+    ## 表情：大笑
+    scene summergaze_laugh
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你看，太阳。"
     ahe "嗯，太阳。"
     wangshuang "金色的，温暖的，让人舒适而安心的太阳，它就在那里。"
     wangshuang "对于沐浴日光中的人来说，明白这一点就够了。"
-    ahe "可它分明是我视野里最暴烈而盛气凌人的造物。"
+    ahe "可它分明是我视野里最暴烈、最盛气凌人的造物。"
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "那就闭上眼睛，你的问题便迎刃而解了。"
-    ahe "可我还是我觉得我快要..."
+    ahe "可我还是觉得我快要..."
 
     menu:
         extend ""
@@ -61,54 +68,103 @@ label route1_start:
             $ madness += 1
             pass
 
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "那也是无可厚非的事情。"
     ahe "那怎么可能是——"
     wangshuang "当然就是这样的，阿鹤。"
+    ## 表情：小吃惊
+    scene summergaze_surprised
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "这是你的心理咨询，你是来访者，而我是咨询师。"
     ahe "所以...我该怎样才能好起来？"
     wangshuang "修补本就完整的东西，那自然是做不到的。"
     ahe "..."
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你不同意。"
     ahe "...你...求求你不要再浪费我的时间了..."
+    ## 表情：小声嘀咕
+    scene summergaze_mutter
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "时间，你要那东西有什么用？"
     ahe "我还要——我还得..."
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "我在听。"
     wangshuang "不用紧张，阿鹤，你可以畅所欲言。"
     ahe "想不起来...什么都想不起来..."
     wangshuang "想想你为什么来到这里，或者想想你用你先前的时间做了什么事，都能帮助你回忆过去。"
     wangshuang "但即使什么也想不起来也不必懊恼，那是意料之中的过程。"
     ahe "这...这肯定又是你的把戏！"
+    ## 表情：小声嘀咕
+    scene summergaze_mutter
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "总是向外归因可解决不了问题啊，我的朋友。"
     wangshuang "你的病虽然看起来已经根治了，但以你的身心状态而言，任何时候复发我都不意外。"
     wangshuang "但你还是没回答我的问题——时间对现在的你而言，有什么用？"
     ahe "没用...完全没用...一切都结束了..."
+    ## 表情：小吃惊
+    scene summergaze_surprised
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "哦？所以还是想起来了一些。"
     ahe "你...毁掉了整个逝乐园。"
+    ## 表情：大笑
+    scene summergaze_laugh
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "不必谦虚啊，阿鹤，这件事少了你是绝对不可能成功的。"
     wangshuang "所以我愿意把领衔主演的名头让给你，我去当制片人就可以了。"
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你也不用觉得我抬举你，过度谦虚只会让人习惯性地逃避责任，是一种需要调整的心态。"
     ahe "我..."
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "嗯，我懂的，在完成一件惊人的壮举后，出现冒充者综合征是非常常见的事情。"
     wangshuang "但不论你怎么想，事已至此，还是放平心态最重要。"
     ahe "...随便了..."
-    wangshuang "哎你看你这人，三天两头向外归因，遇事不决就开始摆烂——"
-    wangshuang "【小字】这就是为什么我——"
+    wangshuang "哎你看你这人，三天两头向外归因，遇事不决就无视问题——"
+    ## 表情：小声嘀咕
+    scene summergaze_mutter
+    $ renpy.transition(Dissolve(0.2), layer="master")
+    wangshuang "{size=-10}这就是为什么我——{/size}"
     ahe "什么？"
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "没事。没事。阿鹤，你知道太阳为什么会死吗？"
     ahe "因为它想死。"
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "错——太阳自出生的那一刻起便像氢弹般持续自毁，早就动了死的念头，但它还是在天上烧了四十多亿年。"
     ahe "我不明白..."
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你当然不明白，你肯定在想‘可这明明也是一种外因，毕竟整个太阳系都齐心协力地求它继续活下去’。"
     ahe "唔..."
     ## Extended文本框开始 - accumulating textbox
-    wangshuang "然而现实恰恰相反——太阳不死仅仅是因为它的使命尚未完成而已。"
-    extend "\n而它的死与它或其他任何造物的想法没有半点关系。"
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
+    wangshuang "然而现实恰恰相反——太阳不死仅仅是因为它的使命尚未完成而已。而它的死与它或其他任何造物的想法没有半点关系。"
     ## Extended文本框结束
     ## Extended文本框开始 - accumulating textbox
-    wangshuang "想法是轻薄的、由外界塑造的，一坨烂泥一样谁都可以捏一把，但同时也是无足轻重的。"
-    extend "\n而使命则是彻头彻尾、由内而外的——只有在‘使命’松手之后，‘想法’才配拥有虚假的自由。"
+    ## 表情：小声嘀咕
+    scene summergaze_mutter
+    $ renpy.transition(Dissolve(0.2), layer="master")
+    wangshuang "想法是轻薄的、由外界塑造的，一坨烂泥一样谁都可以捏一把，但同时也是无足轻重的。而使命则是彻头彻尾、由内而外的——只有在‘使命’松手之后，‘想法’才配拥有虚假的自由。"
     ## Extended文本框结束
     ahe "这和我们又有什么关系？"
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "当然有关系了，不然你怎么会出现在这里？"
     ahe "我从来没有想过要出现在这里..."
     wangshuang "嗯，‘你’当然不想。"
@@ -119,28 +175,47 @@ label route1_start:
     ahe "...？"
     wangshuang "嗯，就是那样，过多的言语会污染概念。你还是不要再多探究了为好。"
     ahe "哦...对对对...懂了..."
+    ## 表情：大笑
+    scene summergaze_laugh
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "但话说回来，瞪眼大赛啊，我接受挑战！"
     ahe "没说真要来啊..."
-    ## 面无表情
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
+    show screen op_lock(2)
     wangshuang "盯——"
+    hide screen op_lock
     ahe "..."
+    show screen op_lock(2)
     wangshuang "盯——"
+    hide screen op_lock
     ahe "..."
     wangshuang "噗——"
     ahe "..."
-    ## 大笑
+    ## 表情：大笑
+    scene summergaze_laugh
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "——噗噗呃啊——我败了..."
     ahe "自取其辱啊，阿霜。"
+    ## 表情：小声嘀咕
+    scene summergaze_mutter
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你还有脸得意！能盯着你那张臭脸看这么久还不笑的就只有死人了。"
     ahe "嗯...所以我每天刷牙的时候都要死一次..."
     wangshuang "你能活到今天确实不容易。"
     ahe "还不是拜你所赐..."
-    ## 默认
+    ## 表情：默认
+    scene summergaze_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "不用谢不用谢。那你来吧，拿走你的战利品。"
     ahe "哈？"
     wangshuang "别哈，让你来你就来。"
     ## 屏幕缩放，显得王霜近了很多
     ahe "是什么东西？"
+    ## 表情：面无表情
+    scene summergaze_blank
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你看就是了。"
     ## 转场：张目对日pt1
     scene bg_sungaze with scene_soft
@@ -151,18 +226,24 @@ label route1_start:
     wangshuang "凑近啊你，看仔细点！"
     ahe "啊你别拽我！"
     wangshuang "对准，仔细看好了。"
-    ahe "呃...嗯？——啊啊啊啊啊啊啊啊啊啊啊！"
+    ## Extended文本框开始 - accumulating textbox
+    ahe "呃...嗯？"
+    with fx_quake
+    extend "——啊啊啊啊啊啊啊啊啊啊啊！"
+    ## Extended文本框结束
     ## 背景开始旋转，白屏逐渐溢满了整个屏幕
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "自你双眼完成聚焦的一瞬，一阵刺眼的光晕便抹去了视野里的一切，仿佛王霜把天上那轮烈日移植进了你的眼球。"
+    ## 右侧Split Extended大文本框开始 - 右半屏分页
+    split_right_page_narrator "自你双眼完成聚焦的一瞬，一阵刺眼的光晕便抹去了视野里的一切，仿佛王霜把天上那轮烈日移植进了你的眼球。"
     extend "\n你立刻合上双眼，整张脸上的肌肉拧成一团，死死地挤压你抽搐的眼帘，但为时已晚，那令人绝望的强光已经在你脑海的更深处生了根。"
-    extend "\n随着炫目的光而来的是蚀骨的火。这由内而外的火顺着你的双眼、你的视神经蔓延。后脑勺烧了起来，随后是整个大脑皮层，最终你的全身都在这挥之不去的炫光中熊熊灼烧。"
-    extend "\n你将身躯团成球状、死死绷住全身肌肉以抵御这钻心之痛，但在光与火的风暴面前也只是杯水车薪。"
+    split_right_page_narrator "随着炫目的光而来的是蚀骨的火。这由内而外的火顺着你的双眼、你的视神经蔓延。后脑勺烧了起来，随后是整个大脑皮层，最终你的全身都在这挥之不去的炫光中熊熊灼烧。"
+    ## 右侧Split Extended大文本框结束
+    ## 右侧Split Extended大文本框开始 - 右半屏分页
+    split_right_page_narrator "你将身躯团成球状、死死绷住全身肌肉以抵御这钻心之痛，但在光与火的风暴面前也只是杯水车薪。"
     extend "\n就像太阳一般稳定..."
     extend "\n你想立刻去死，那是缓解疼痛的唯一方法，但你非常清楚，此刻死亡就和使命一样遥不可及。"
-    ## Extended大文本框结束
+    ## 右侧Split Extended大文本框结束
     ## 转场：白屏
-    scene black with scene_soft
+    scene bg_white_video with scene_soft
     $ current_scene_name = "白屏"
     $ current_scene_desc = "就是白屏。"
     ## Extended大文本框开始 - accumulating large textbox
@@ -176,64 +257,101 @@ label route1_start:
     ## Extended大文本框结束
     ## 白屏逐渐褪去
     ## 转场：甜品店对视1
-    scene bg_dessertgaze1 with scene_soft
+    ## 长黑场过渡（不可点击快进）
+    stop music fadeout 3.0
+    show black zorder 100:
+        alpha 0.0
+        linear 3.0 alpha 1.0
+    $ hard_pause(3.0)
+    $ hard_pause(0.5)
+    scene bg_dessertgaze1
+    show black zorder 100:
+        alpha 1.0
+        linear 2.0 alpha 0.0
+    $ hard_pause(2.0)
+    hide black
     $ current_scene_name = "甜品店对视1"
     $ current_scene_desc = "基础款，暖色，桌上没有团子，背景完全正常"
     ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route1_scene2")
     ahe "呃啊——！"
-    ## 疑惑
+    ## 表情：疑惑
+    scene dessert1_puzzled
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "怎么了？"
     ahe "你刚刚...是不是对我做了非常不得了的事情。"
+    ## 表情：撇嘴
+    scene dessert1_pout
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你盯着我发呆，我盯着你发呆，确实挺不得了的。"
     ahe "呃...所以我们为什么在这里？"
     wangshuang "这可是你说要来的。"
     ahe "那我要走了。"
+    ## 表情：疑惑
+    scene dessert1_puzzled
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "我们刚坐下诶，你要去哪儿？"
     ahe "不知道，要离开这里就是了。"
     ahe "...能麻烦开一下门吗？"
-    ## 默认
+    ## 表情：默认
+    scene dessert1_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "不如问问店家。"
     ahe "好吧...你好，能帮我把门开一下吗？"
     wangshuang "不好意思啊先生，老板刚才说了，今天店里的客人都必须留到天黑之后才能走。"
     ahe "可是天已经黑了。"
     wangshuang "老板说，还不够黑。"
     ahe "好吧...所以我能走了吗？"
+    ## 表情：坏笑
+    scene dessert1_smirk
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "不能。"
     ahe "你好烦。"
-    ## 撇嘴
+    ## 表情：撇嘴
+    scene dessert1_pout
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "就算出去了，你准备做什么？"
     ahe "把大石头推上山，把琴弦拧成电缆，什么都可以。"
     wangshuang "意思是你准备换个地方无所事事。"
     ahe "再无所事事都胜过和你呆在这里。"
-    ## 疑惑
+    ## 表情：疑惑
+    scene dessert1_puzzled
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "啊，已经这么遭人嫌了么..."
     ahe "...多少有点自知之明吧你..."
-    ## 撇嘴
+    ## 表情：撇嘴
+    scene dessert1_pout
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "彼此彼此咯，我们都只是遵循着强烈的愿望，尝试了一直以来想要尝试的事情。"
     ahe "区别在于我不需要人陪葬。"
     wangshuang "不，区别在于我做到了，而你没有。"
     ahe "..."
-    ## 默认
+    ## 表情：默认
+    scene dessert1_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "而你拒绝与我共处一室的真正原因只是嫉妒，仅此而已。"
     ahe "闭嘴吧..."
-    ## 坏笑
+    ## 表情：坏笑
+    scene dessert1_smirk
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "我闭嘴了又有什么用？难道你那苍白的“理想”就不需要人来陪葬了？"
-    wangshuang "你为了尤里娅那小姑娘折断了多少人的骨头？阿鹤，狡辩是没有意义的，无论如何我们都是逝乐园覆灭的共犯。"
+    wangshuang "你为了{i}尤里娅{/i}那小姑娘折断了多少人的骨头？阿鹤，狡辩是没有意义的，无论如何我们都是逝乐园覆灭的共犯。"
     ahe "..."
     ## 转场：甜品店对视2
     scene bg_dessertgaze2 with scene_dissolve
     $ current_scene_name = "甜品店对视2"
     $ current_scene_desc = "暖色，桌上出现了团子，背景完全正常"
-    ## 默认
+    ## 表情：默认
+    scene dessert2_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "所以不如放下成见，吃点团子，如何？"
     ## 默默吃一口
     ahe "..."
     ## 手中出现无色透明多面体
     wangshuang "这就对了嘛，来都来了。"
     ahe "..."
-    wangshuang "有件事你可能不知道，他们家团子是加了KAS才这么好吃的。"
+    wangshuang "有件事你可能不知道，他们家团子是加了{i}KAS{/i}才这么好吃的。"
     ahe "哦，所以之后我会上瘾？"
     wangshuang "也许。"
     ahe "也好吧。"
@@ -242,6 +360,9 @@ label route1_start:
     ahe "你自己不也在做同样的事情。"
     wangshuang "只是不想看着你和我坠入同样的深渊嘛，毕竟我还挺在乎你的。"
     ahe "别恶心我了，求你了。"
+    ## 表情：撇嘴
+    scene dessert2_pout
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "你这人，连真心话都不让人说。"
     ahe "你？真心话？笑话可以再冷点么？"
     wangshuang "连这都分不清，以后可是要吃大亏哦。"
@@ -252,42 +373,67 @@ label route1_start:
     $ current_scene_name = "甜品店对视3"
     $ current_scene_desc = "暖色，桌上的团子被吃了几口，背景完全正常"
     ahe "明明刚说完不想我染上。"
-    wangshuang "KAS生理上确实不怎么成瘾啊。"
+    wangshuang "{i}KAS{/i}生理上确实不怎么成瘾啊。"
     wangshuang "但太多人会陷进它能让人看到的那些东西，最后心里离不开了，所以你才能在安息地见到那么多活死人。"
     wangshuang "那么你会怎样呢，阿鹤？我很期待哦。"
     ahe "只致幻的话岂不是很无聊，尤其对你来讲。"
-    ## 小激动
+    ## 表情：小激动
+    scene dessert3_excited
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "无聊？可别太刺激了！你知道十二小时起步的感官过载是什么感觉吗？"
     wangshuang "五感全部推到极限，尤其是视觉，所有东西的颜色都比平时看到的要鲜艳无数倍，而且全都彼此交融，到最后视野里就是五彩斑斓的白。"
-    wangshuang "所有东西都是饱满到极致的，你懂我意思吗？就不是某种感官上的饱满，而是存在上的饱满，第四维度上的饱满，就是那种...不论我们怎么干涉都无法改变的状态。"
-    wangshuang "然后就觉得“我操这下不得了了要被外部存在的压强挤碎了快他妈跑”，然后据说是就开始往窗户外面跳...也不知道是被谁拉住的，是你吗？应该不是，你应该拽不住我。"
-    ## 默认
-    wangshuang "总之要不是后来配了眼镜，不然我是绝对不敢乱用KAS的，那次是真的差点死了..."
+    ## Extended文本框开始 - accumulating textbox
+    wangshuang "所有东西都是饱满到极致的，你懂我意思吗？那已经不单是感官上的饱满，而是存在上的饱满，第四维度上的饱满——是那种...不论我们怎么干涉都无法改变的状态。"
+    ## Extended文本框结束
+    ## Extended文本框开始 - accumulating textbox
+    wangshuang "然后脑子里就一个念头：“我操这下不得了了要被外部存在的压强挤碎了快他妈跑”，然后据说，我就开始往窗户外面跳...也不知道是被谁拉住的，是你吗？应该不是，你应该拽不住我。"
+    ## Extended文本框结束
+    ## 表情：默认
+    scene dessert3_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
+    wangshuang "总之要不是后来配了眼镜，不然我是绝对不敢乱用{i}KAS{/i}的，那次是真的差点死了..."
     ahe "哦，原来你那“磕完药差点死掉的小故事”还在更新啊。"
-    ## 小激动
+    ## 表情：小激动
+    scene dessert3_excited
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "那可是正儿八经的人命啊喂！"
     wangshuang "不过一般人应该不会那么夸张。你会喜欢的，我觉得。"
     ahe "所以我们要在这里待到什么时候？"
+    ## 表情：默认
+    scene dessert3_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "等时机到了，自然就能离开。"
     ahe "也是一种较为朴素的过程？"
     wangshuang "哦？如此简明且精确的定义，谁教你的？"
     ahe "一个傻逼。"
-    ## 小激动
-    wangshuang "好刻薄！"
+    ## 表情：小激动
+    scene dessert3_excited
+    $ renpy.transition(Dissolve(0.2), layer="master")
+    wangshuang "{shake}好刻薄！{/shake}"
     ahe "像您这样有成就的大人物，只被骂傻逼还请偷着乐吧。"
+    ## 表情：撇嘴
+    scene dessert3_pout
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "所以确实没法放过我了吗？"
     ahe "你还需要人放过？"
-    ## 默认
+    ## 表情：默认
+    scene dessert3_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "当然，我又不是没有罪恶感的人。"
     ahe "存疑。"
     wangshuang "哎阿鹤，虽然有些事情我确实做得...不太好...从世俗意义上来说，但也没必要这样质疑我演戏的质量嘛。"
     ahe "你看，你都自首了。还不逮捕你自己。"
-    ## 撇嘴
+    ## 表情：撇嘴
+    scene dessert3_pout
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "那我还得兼任检察官辩护律师和法官，太麻烦了。"
     ahe "用来消磨时间正合适，反正用不完。"
     wangshuang "不不不那就不对了，如果你还想“消磨时间”，那就说明你修为尚浅，还没悟透其中道理。"
     ahe "...好的，师傅。"
     ahe "话说师傅，你手里拿的是什么？"
+    ## 表情：默认
+    scene dessert3_default
+    $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "哦，这个？不是什么重要的东西，但你可以尝尝看。"
     ahe "尝尝看？"
     wangshuang "对啊，吃的。要不要试试？"
@@ -298,12 +444,12 @@ label route1_start:
             "阿霜手里把玩的那物件，你之前肯定见过，却想不起任何细节。"
             "总之没想到竟是一件吃食。"
             "从它那轻若无物又变幻莫测的形态来看，可能真是什么珍馐也说不定，抑或是另一剂猛药。"
-            "但无论如何，在KAS即将穿过血脑屏障的前一刻，再往身体里追加不明物质想必不是什么明智决定。"
+            "但无论如何，在{i}KAS{/i}即将穿过血脑屏障的前一刻，再往身体里追加不明物质想必不是什么明智决定。"
             ahe "算了吧。"
             wangshuang "随你便咯——说起来，阿鹤，你喜欢红色还是蓝色？"
         "接受。":
             $ madness += 1
-            "虽然你清楚地意识到你跳动的血管里，KAS即将穿越脑血屏障，随时可能把你的意识送上云端，你那该死的好奇心还是压过了残存的理性。"
+            "虽然你清楚地意识到你跳动的血管里，{i}KAS{/i}即将穿越脑血屏障，随时可能把你的意识送上云端，你那该死的好奇心还是压过了残存的理性。"
             "你接过王霜手里那无色透明的多面体。"
             "那东西轻若无物又变幻莫测，看似是固体，摸起来却又有介于凝胶和麻薯之间的质感，躺在你手心里，冰冰凉的。"
             "你毫无戒心地将那不明物件送进嘴里，简单地咀嚼了一阵，没有尝出任何味道。"
@@ -312,6 +458,7 @@ label route1_start:
             ahe "那你还让我吃？"
             wangshuang "毕竟这也是实验的一部分——阿鹤，你喜欢红色还是蓝色？"
 
+    ## 音乐开始fade out
     ahe "蓝色啊，怎么了？"
     wangshuang "你看——"
     ## 转场：甜品店对视4
@@ -321,35 +468,37 @@ label route1_start:
     ## 蓝色波纹特效，并逐渐加入更多色彩
     ## 场景音乐参考：进入幻视，所以虽然场景没变音乐也要切换https://audionautix.com/Music/Beautiful%20Daughter.mp3 (Jason Shaw)，
     $ set_scene_music("route1_hallucination")
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "你正摸不着头脑，转眼间却发现了周遭惊人的变故——四周逐渐泛起蓝色、波浪状的纹理，很快侵蚀了整个视野。"
+    ## Split Extended大文本框开始 - 左右分栏
+    split_left_narrator "你正摸不着头脑，转眼间却发现了周遭惊人的变故——四周逐渐泛起蓝色、波浪状的纹理，很快侵蚀了整个视野。"
     extend "\n你反倒比先前要更加冷静，又低头吃了几口团子。甜腻腻的滋味在口腔中涟漪般散开，每颗味觉细胞都在欣喜若狂地发送着饱足的信号。"
-    extend "\n甜味的颜色？金黄的莓红的草绿的深棕的，味觉的色彩洪流汇入弥漫在整个视觉空间的海蓝色波浪中。"
-    extend "\n你抬头望向王霜，她也望着你，脸上含蓄地挂了一抹邪魅而欣慰的笑，仿佛望着一个迷路的孩子。"
-    extend "\n她略卷的水蓝色长发在空间的蓝色波浪中散着，勾勒出洋流的轮廓。"
-    ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "你心中对她海啸般的戒心早已荡然无存了——你几乎有些喜欢她现在的样子，宛如一个母亲，又像是神明，给视野不断抹上温柔的蓝色。"
+    split_right_narrator "甜味的颜色？金黄的莓红的草绿的深棕的，味觉的色彩洪流汇入弥漫在整个视觉空间的海蓝色波浪中。"
+    extend "\n你抬头望向王霜，她也望着你，脸上含蓄地挂了一抹邪魅的笑容，眼神里却又流露出一丝欣慰，仿佛望着一个迷路的孩子。"
+    extend "\n她略卷的水蓝色长发在周身空间的波浪里散着，勾勒出洋流的轮廓。"
+    ## Split Extended大文本框结束
+    ## Split Extended大文本框开始 - 左右分栏
+    split_left_narrator "你心中对她海啸般的戒心早已荡然无存了——你几乎有些喜欢她现在的样子，宛如一个母亲，又像是神明，给视野不断抹上温柔的蓝色。"
     extend "\n每一缕神经都在扩张。启示性的景象。时间和空间波浪。无孔不入的色彩和甜味。蓝色的。交响。"
-    extend "\n反复咀嚼伤痛直至淡而无味，直到甜味凭空冒出来。"
+    split_right_narrator "反复咀嚼伤痛直至淡而无味，直到甜味凭空冒出来。"
     extend "\n在一切都已结束的当下，连时间都已丧失价值，唯一还能让你睁开双眼的，就只有——"
-    ## Extended大文本框结束
+    ## Split Extended大文本框结束
     ## 居中大字文本框开始 - centered large font textbox
     centered_large_narrator "瘾。"
     ## 居中大字文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
+    ## Split Extended大文本框开始 - 左右分栏
     ## 转场：甜品店对视5
     scene bg_dessertgaze5 with scene_dissolve
     $ current_scene_name = "甜品店对视5"
     $ current_scene_desc = "背景蓝色调，桌上团子吃了几口，背景有更明显的波纹纹理，王霜变得半透明，表情是默认表情"
-    large_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。"
+    split_left_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。"
     extend "\n成瘾。糖分子的洪流只消一个浪头就使你深深染上了挥之不去的瘾。"
-    extend "\n渴望的源头冲动的源头想往的源头发现了。"
-    extend "\n浪潮般的甜味反复沁进意识。她开始微笑。她停止微笑。目光所及之处就能看见她的微笑。"
-    extend "\n燥热意识模糊，痛苦消减。鼓的声音。恒久的鼓声从背景里逐渐浮现，强烈起来，震耳欲聋，每一击都与心跳同调。"
+    extend "\n渴望的源头冲动的源头向往的源头发现了。"
+    split_right_narrator "浪潮般的甜味反复沁入意识。她开始微笑。她停止微笑。目光所及之处就能看见她的微笑。"
+    ## Split Extended大文本框结束
+    ## Split Extended大文本框开始 - 左右分栏
+    split_left_narrator "燥热使得意识模糊，痛苦消减。鼓的声音。恒久的鼓声从背景里逐渐浮现，强烈起来，震耳欲聋，每一击都与心跳同调。"
     extend "\n在这暧昧混沌里，你感到安逸。"
     extend "\n这样就够了。"
-    ## Extended大文本框结束
+    ## Split Extended大文本框结束
     ## 撇嘴
     wangshuang "说到底，我们所做的一切也只是为了满足癖好而已。"
     ahe "这大概是一件无可厚非的事情。"
@@ -380,7 +529,9 @@ label route1_start:
     extend "\n溶解在蓝色空间里的凉爽糖分让你浑身的燥热与恶意消减了大半，你置身一片透明的海域里，又像是漂浮在空洞的宇宙空间中。"
     extend "\n一切都是许可的，这样的冲动从未如此强烈过。"
     extend "\n你迫切地想要伸出手，但双臂已经先你一步向前伸了出去，贪婪地揉捏着冰凉而柔顺的空气，水蓝色的空气。"
-    extend "\n更深的见解就隐藏其中，因为一切都是许可的，视野中的所有事物都是从始至终连贯而统一的，如此怡人，如此饱满。"
+    ## Extended大文本框结束
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "更深的见解就隐藏其中，因为一切都是许可的，视野中的所有事物都是从始至终连贯而统一的，如此怡人，如此饱满。"
     extend "\n人类的智识自然无力探寻其中奥秘，但在王霜无处不在的笑容辉耀之下，你的一部分认知已踏入了更深层的水域。"
     extend "\n越向深处就越被不可知所掣肘，当眼前的色彩开始回旋，你意识到或许梦境的另一面并非现实，而是某种更加完整且怖人的造物。"
     ## Extended大文本框结束
@@ -392,7 +543,9 @@ label route1_start:
     large_narrator "你的知能越是提升，它的样貌就越发模糊，模糊的面容中只显露出一抹依稀可见的残酷笑容，仿佛在嘲讽你的徒劳。"
     extend "\n但你已经满足了，由内而外地满足了，在饱满的感官刺激中感到一阵——疲劳？"
     extend "\n幸福的疲劳、优质的疲劳、苦苦追寻的疲劳、允许你在辗转反侧后终于入睡的甜美疲劳。"
-    extend "\n世界空无一人，因为任何个体都不具备足够的差异能够让它们自称“存在”，因此你将它们尽数吞下，如同团子。"
+    ## Extended大文本框结束
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "世界空无一人，因为任何个体都不具备足够的差异能够让它们自称“存在”，因此你将它们尽数吞下，如同团子。"
     extend "\n糖分继续满溢出来，沿着你存在的边缘缓缓淌下，坠入周身蔚蓝的虚空之中，粘稠而香甜。"
     extend "\n糖浆，万物的粘合剂。就用它来替代血液。"
     extend "\n完成之后就去睡吧。"
@@ -409,7 +562,7 @@ label route1_start:
     scene bg_dessertgaze7 with scene_dissolve
     $ current_scene_name = "甜品店对视7"
     $ current_scene_desc = "背景蓝色调和暖色调掺半，是那种正常色彩顺着阿鹤呕吐为中心开始向四周扩散的感觉，桌上团子吃了几口，背景里的波纹纹理消失，王霜完全消失"
-    large_narrator "呕吐物与面前桌子接触的瞬间，水蓝的桌面便恢复了木材的颜色，这令人沮丧的还原随着你吐出更多的色彩而提速，很快覆盖了大半个视野。"
+    large_narrator "呕吐物与面前桌子接触的瞬间，水蓝的桌面便恢复了木材的颜色。你吐出的色彩越多，这令人沮丧的还原就越发提速，转眼便侵蚀了大半个视野。"
     extend "\n色彩还原的地方，水面般摇曳的空间停止了动态，原本随处可见的王霜的微笑也随着视野的复原逐渐消失了。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
@@ -430,7 +583,7 @@ label route1_start:
     extend "\n即使如此，王霜依旧没有回来。"
     ## Extended大文本框结束
     ## 转场：黑屏
-    scene black with scene_soft
+    scene bg_black_video with scene_soft
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏"
     ## 剥落完成后，黑屏
@@ -568,7 +721,7 @@ label route1_start:
         extend ""
         "保持呼吸。":
             ## 呼吸音效渐强，随着文字进程逐渐加快&变响
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "仍要坚持？那就请继续忍耐吧。"
             extend "\n灰幕的蔓延永无止境，一如疼痛的叠加永无止境。"
             extend "\n更多毒液渗入血管，血液沸腾，内脏在沸腾血液的浇灌下燃烧，但你只能看见你执意选择的灰。"
@@ -576,10 +729,10 @@ label route1_start:
             ## Extended大文本框结束
             ## 电视机关机音效
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "..."
             extend "\n......"
             extend "\n........"
@@ -587,7 +740,7 @@ label route1_start:
         "放弃。":
             $ madness += 1
             ## 呼吸音效停止
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "主动放弃呼吸后，你反倒听见了某种远超于你存在的召唤。"
             extend "\n女人的声音，那嗓音神秘而熟悉 - 你的病终于和我一样，我羸弱的爱人。"
             extend "\n你听见那声音，就像听见了复活的钟声，虽振聋发聩，却让你义无反顾地站了起来。"
@@ -598,7 +751,7 @@ label route1_start:
             extend "\n在无际的灰幕中，你把灰色踩在脚下，开始仔细思考接下来的目的地。"
             ## Extended大文本框结束
             ## 黑屏
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "..."
             extend "\n......"
             extend "\n........."
@@ -676,7 +829,7 @@ label route1_start:
     ahe "这一点都不相关吧！"
     wangshuang "别急，听我讲完你就懂了。"
     wangshuang "所谓‘全知全能’，虽然听着像是造物主才被允许拥有的神力，但事实上以今天的技术，想要在有限时空里模拟这一状态不算难。"
-    wangshuang "试想，假若在我们与杰罗瓦的最后一战里，你在见到他放出的尤里娅们就立刻放弃了抵抗，会怎么样？一切就结束了对吧？"
+    wangshuang "试想，假若在我们与杰罗瓦的最后一战里，你在见到他放出的{i}尤里娅{/i}们就立刻放弃了抵抗，会怎么样？一切就结束了对吧？"
     wangshuang "那你再想，如果我能把这段不存在的“记忆”高清模拟出来，数据化掉，然后灌回你脑子里。"
     wangshuang "加上你脑子里原本就存在的记忆，这时让你同时体验选择支两边的事件，那在这样的认知草拟完成后，你是不是就已经实现对于这段记忆的‘全知全能’了？"
     ahe "可这人肯定会发现记忆存在冲突的吧。"
@@ -755,6 +908,54 @@ label route1_start:
     wangshuang "哎，我也没说缺了头骨就不行啊。"
     wangshuang "你看，你的“作品”从各种意义上已经完成了。"
     ahe "什——"
+    ## 一般态默认
+    youliya "你好，阿鹤。"
+    ahe "诶？你——"
+    youliya "嗯，我当然还活着。"
+    ahe "可是...可是我..."
+    ## 一般态面部glitch
+    youliya "你豋炅宓恇蠹璱钅飰棏巠㓬敪玸——"
+    ahe "啊...等等...等一下！"
+    ## 一般态默认
+    youliya "嗯，又失忆了么...离我们上次分别也没过多久吧，阿鹤？"
+    ahe "不是...{i}尤里娅{/i}...不对..."
+    ## 一般态面部glitch
+    youliya "喔，确实是不太对啊呃呃呃啊——。"
+    ## 尤里娅消失
+    ahe "{i}尤里娅{/i}，{i}尤里娅{/i}？"
+    wangshuang "飒炟曠莩皎靸礚睫覅是否解释你的诨涤？"
+    ahe "啊...你们...你们..."
+    ## 尤里娅出现
+    ## 一般态坏笑
+    youliya "嗯...只是撕碎了几百个长得和我一样的东西，你就扛不住了？这可不是我认识的阿鹤呢。"
+    ahe "呃...啊...可是...可是..."
+    ## 一般态邪恶表情1
+    youliya "但那对你来说根本不重要吧，毕竟你在正当防卫，无论怎样都不能在最后关头输给一群杰罗瓦控制的假人嘛！"
+    youliya "尤其当那些东西只是‘长得和我一样而已’的时候。"
+    youliya "只要你“看到”那些东西不是“我”，自然就可以随手杀掉了——一切都理所当然，无可厚非，不是么？"
+    ahe "..."
+    ## 一般态默认
+    youliya "可是阿鹤，你知道吗？所有复制体的感官都会回流到我的身体。"
+    ahe "{i}尤里娅{/i}...这不是——"
+    youliya "每根断掉的骨头、每滴流出来的血、每副碎掉的内脏——虽然尽是些无关紧要的事情，可还是让我记忆犹新啊，每一次死掉。"
+    ## 一般态坏笑glitch
+    youliya "死掉诶...那就是你口中那“无法重复的深邃体验”吧。能连续体验那么多次，我是不是该..."
+    youliya "谢谢你呢？"
+    ahe "..."
+    ## 一般态默认
+    youliya "那么作为你的谢礼，让我来告诉你一点浅显的事实吧。"
+    ## 一般态坏笑
+    youliya "阿鹤哥，在逝乐园终结的前几天里，不只是你，你身边的大家，所有人都在演戏哦，我、王霜、米姐，全都一样。"
+    ## 一般态默认
+    youliya "你是不是觉得，只要强撑着送我离开了逝乐园，你就能跳出日常了？"
+    ahe "——！"
+    youliya "你是不是觉得，只要假装抛下你在乎的一切，最可怕的下场无非就是死掉而已？"
+    ## 一般态邪恶表情1
+    youliya "完全不动脑子就接受这样的结论，简直是错得不能再错了啊，我一败涂地的救世主先生。"
+    youliya "那么——"
+    ## 一般态邪恶表情2
+    youliya "请见证真正的后果吧。"
+    ## 尤里娅异变
     ## 炸裂jump scare音效
     ## 浑身伤痕累累仿佛由尸块缝纫而成的无头尸首登场
     ## 高速心跳音效
@@ -762,11 +963,11 @@ label route1_start:
     ## 场景音乐参考：N2-07,N2-14
     $ set_scene_music("route1_transition")
     ahe "——么！！！"
-    shishou "是你啊，阿鹤，你在害怕什么呢？（到时候把所有尸首的话的音频反过来听一下，空耳进来）"
+    shishou "阿鹤，事到如今你又在害怕什么呢？（到时候把所有尸首的话的音频反过来听一下，空耳进来）"
     ahe "啊...啊啊啊啊...啊啊啊啊啊啊啊啊啊啊——"
     wangshuang "别跑啊，这可是你们的感人重逢诶！"
     ahe "别过来！"
-    shishou "阿鹤？"
+    shishou "阿鹤，我们还没聊完——"
     ahe "你别过来！！！"
     ## 沙地里跑步音效
     ## 进入一个向前跑动的sequence，可以是少量几帧透视感比较明显的画面，然后无限循环
@@ -792,7 +993,6 @@ label route1_start:
     ahe "这不是我想要的！"
     wangshuang "那就把头埋进沙子里啊，那样你就什么都不用看了。"
     ahe "呃...啊——对不起——"
-    wangshuang ""
     ## 黑屏
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "沙地冰凉而干燥，在这个无声的世界里，你艰难地呼吸。"
@@ -805,11 +1005,11 @@ label route1_start:
     $ current_scene_name = "眼珠背景"
     $ current_scene_desc = "全屏眼珠，表现方式：手拿一颗眼珠的特写"
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "每颗沙砾都是一颗无色透明多面体。"
+    large_narrator "每颗“沙砾”都是一颗无色透明多面体。"
     extend "\n每颗多面体里，都有一颗泛着血丝的眼珠。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "你绝望地想要把头抽出来，但原本稀松的沙地此刻如钢钳一般将你的头死死扼住，沙地表面狂乱抓挠的手臂也无法帮助你分毫。"
+    large_narrator "你绝望地想要把头抽出来，但原本稀松的沙地此刻如钢钳一般将你的头死死扼住，任凭双手在沙地上狂乱地挥舞抓挠，也无法动摇分毫 。"
     extend "\n你只能眼睁睁看着那些布满血丝的眼珠朝你的脸逐渐聚拢，随后——"
     ## Extended大文本框结束
     ## 连续破裂音效
@@ -828,7 +1028,7 @@ label route1_start:
     large_narrator "尸体气味的浓度达到了顶峰。"
     extend "\n你早就清楚那气味的来源，只是还在试图移开目光。"
     extend "\n然而逃避与走投无路总是形影相随。"
-    extend "\n当人创造了过多的尸体，那他迟早会提前步入其造物的行列。"
+    extend "\n当人制造了过多的尸体，那他自己迟早也会步入其造物的行列。"
     extend "\n你想死。"
     extend "\n你拼尽全力扼住自己的脖颈；你听见脑血管的轰鸣；视野四周开始坍缩，黑暗挤进来；你马上就要成功了。"
     extend "\n地心引力渐强，你的身躯逐渐被沙砾吞没。人为的窒息终于在血污将你口鼻覆盖之前到来。"
@@ -847,7 +1047,7 @@ label route1_start:
     ## Extended大文本框结束
     ## 脸入水后冒泡泡的音效
     ## 转场：虚空对视
-    scene black with scene_soft
+    show void default with scene_dissolve
     $ current_scene_name = "虚空对视"
     $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来。"
@@ -897,14 +1097,14 @@ label route1_start:
         extend ""
         "我想知道":
             wangshuang "那就继续想吧。眼前风景足够你继续想一阵子了，等你想明白了，你自然知道来什么地方找我。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "丢下这句话，阿霜便化作一阵轻烟消散了，只在完美夏日光景里留下孤零零的你。"
             extend "\n你其实早就下定决心要弄明白阿霜心里那些令你不安的事情，但一时的迟疑终究遭致永远的败北。"
             ## Extended大文本框结束
             ## 居中文本框开始 - centered textbox
             centered_narrator "王霜永远地消失了。"
             ## 居中文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "而你则在她留给你的完美夏日中，徒劳地坐守着取之不尽用之不竭的欢欣。"
             extend "\n淡金色的细腻沙滩，蔚蓝的海，略带盐味的小风，轻柔起伏的浪声。"
             extend "\n在空无一人的海滩上，你感到有些怅然若失。"
@@ -920,7 +1120,7 @@ label route1_start:
             wangshuang "哈。行啊，那你闭上眼睛。"
             ahe "..."
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## 水中探头出水的音效
@@ -935,7 +1135,7 @@ label route1_start:
             wangshuang "怎么样？是不是挺他妈无聊的？"
             ahe "可是，等等，那些眼睛——"
             wangshuang "哦，对，见得太多都忘了它们还在了。它们一直都在那儿，不会把你怎么样的。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "确实如此，在包容的灰幕中，你感知不到任何危险。一切都是安全的，仿佛置身母亲温暖的怀抱之中。"
             extend "\n“比较”不再重要。在灰的抚慰下，事物不再具备它们原本的质地——仅是灰而已，平整、柔软、不加修饰。"
             extend "\n“边界”不复存在。在灰的调剂下，事物之间的隔阂分崩离析，相互流进彼此，在同一张灰色的网下成为同样的事物。"
@@ -943,7 +1143,7 @@ label route1_start:
             ## 居中文本框开始 - centered textbox
             centered_narrator "但这一切都与你无关。"
             ## 居中文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "远处沙滩椅上的眼睛并不是你的眼睛。它只是幽幽地观望着你的一举一动。"
             extend "\n你与事物之间的隔阂一如既往地高耸着。你迫切想要融入灰，但这愿望越是强烈，你就越感到身处深灰色的海底，周身却干燥无比。"
             extend "\n窒息。因为这一切都与你无关。"
@@ -975,18 +1175,18 @@ label route1_start:
             ahe "...我累了。"
             wangshuang "巧了，我也累了。但这里不存在睡眠，我们只能望着它，直到不累为止。"
             ahe "那就这样吧。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "倦意填满了你的全部意识，但你无论如何也无法入睡。"
             extend "\n在灰白夏日的牢笼中，你与王霜四目相对，连说话的力气也没剩下。"
             extend "\n眼前的女子既是狱长，又是囚徒，你们在她一砖一瓦精心搭建的完美监狱中意识清醒地度过无限的时间。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "并不是一场对杀或审问，只是沉默的两人在完整的世界里等待崩溃的发生。"
             extend "\n数千或数万次潮起潮落后，你终于下定决心问王霜太阳是否会在某个时刻落下或爆炸，但还未张嘴就打消了这个念头。"
             extend "\n你看见她心满意足地望着眼前一成不变的光景，双眼里只留下了某种接近疯狂的极乐。"
             extend "\n万物皆落入她深邃的眼底，在光信号到电信号的转码过程中被碾得粉碎，逐渐成为更加无意义的存在。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "你也不例外，任她将你纳入视野的巨大黑洞中，成为幅员辽阔的空虚的一角。"
             extend "\n那精致而脆弱的空虚，只能在这绝对无尘的美好光景中存在，连一丝空气的振动都会令其在顷刻间支离破碎。"
             extend "\n你决定保持沉默。"
@@ -1000,7 +1200,7 @@ label route1_start:
     ## 最后只剩下一片纯黑幕和一块无色透明多面体
     ## 从水中探头+大口吸气音效
     ## 转场：黑屏
-    scene black with scene_soft
+    scene bg_black_video with scene_soft
     $ current_scene_name = "黑屏"
     $ current_scene_desc = None
 

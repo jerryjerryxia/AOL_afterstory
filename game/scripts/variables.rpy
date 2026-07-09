@@ -140,6 +140,13 @@ init python:
         elif ending_id == "true_end":
             persistent.true_end_unlocked = True
 
+    def hard_pause(t):
+        """不可点击快进的暂停（长黑场过渡用）。自动化测试里跳过 —— 否则 5s+ 的 hard
+        暂停会吃满 `advance until` 的超时预算。正常游玩照常等。"""
+        if getattr(renpy.game.args, "command", None) == "test":
+            return
+        renpy.pause(t, hard=True)
+
     def unlock_route(route_num):
         """标记周目完成"""
         if route_num == 1:

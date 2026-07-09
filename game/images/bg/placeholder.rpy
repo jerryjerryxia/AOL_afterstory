@@ -68,6 +68,40 @@ image bg_dessertshop:
     function _ripple_tick
 
 ################################################################################
+## 白屏 / 黑屏 视频背景（循环）。master 在 bg/_video_masters/，游戏用 webm。
+## Movie(play=...) 在 show 时自动在 movie channel 播放、scene 走时停止；二者
+## 不会同时出现，共用默认 channel。转场 白屏/黑屏 由 SCENE_BG_MAP 指到这里。
+################################################################################
+image bg_white_video = Movie(play="images/bg/white_screen.webm", size=(1920, 1080))
+image bg_black_video = Movie(play="images/bg/black_screen.webm", size=(1920, 1080))
+
+################################################################################
+## 表情差分（全图 / 透明叠层）。转换器在 王霜【表情】 处切换：
+##   full 场景（夏日对视 / 甜品店1-3）：scene <差分> —— 整图已含人物，默认图==bg。
+##   overlay 场景（虚空对视）：scene black + show <差分> —— 差分是透明人物立绘。
+## 文件在 images/bg/expression_variations/<场景>/。
+################################################################################
+## 夏日对视（full）
+image summergaze_default   = Transform("images/bg/expression_variations/summergaze/summergaze_default.png",   xysize=(1920, 1080), fit="cover")
+image summergaze_mutter    = Transform("images/bg/expression_variations/summergaze/summergaze_mutter.png",    xysize=(1920, 1080), fit="cover")
+image summergaze_blank     = Transform("images/bg/expression_variations/summergaze/summergaze_blank.png",     xysize=(1920, 1080), fit="cover")
+image summergaze_laugh     = Transform("images/bg/expression_variations/summergaze/summergaze_laugh.png",     xysize=(1920, 1080), fit="cover")
+image summergaze_surprised = Transform("images/bg/expression_variations/summergaze/summergaze_surprised.png", xysize=(1920, 1080), fit="cover")
+## 甜品店（full）
+image dessert1_default = Transform("images/bg/expression_variations/dessert/dessert1_default.png", xysize=(1920, 1080), fit="cover")
+image dessert1_smirk   = Transform("images/bg/expression_variations/dessert/dessert1_smirk.png",   xysize=(1920, 1080), fit="cover")
+image dessert1_pout    = Transform("images/bg/expression_variations/dessert/dessert1_pout.png",    xysize=(1920, 1080), fit="cover")
+image dessert1_puzzled = Transform("images/bg/expression_variations/dessert/dessert1_puzzled.png", xysize=(1920, 1080), fit="cover")
+image dessert2_default = Transform("images/bg/expression_variations/dessert/dessert2_default.png", xysize=(1920, 1080), fit="cover")
+image dessert2_pout    = Transform("images/bg/expression_variations/dessert/dessert2_pout.png",    xysize=(1920, 1080), fit="cover")
+image dessert3_default = Transform("images/bg/expression_variations/dessert/dessert3_default.png", xysize=(1920, 1080), fit="cover")
+image dessert3_excited = Transform("images/bg/expression_variations/dessert/dessert3_excited.png", xysize=(1920, 1080), fit="cover")
+image dessert3_pout    = Transform("images/bg/expression_variations/dessert/dessert3_pout.png",    xysize=(1920, 1080), fit="cover")
+## 虚空对视（overlay，透明立绘叠在 black 上）。共用 tag "void" → 表情用 show 互换。
+image void default   = Transform("images/bg/expression_variations/void/void_default.png",   xysize=(1920, 1080), fit="cover")
+image void surprised = Transform("images/bg/expression_variations/void/void_surprised.png", xysize=(1920, 1080), fit="cover")
+
+################################################################################
 ## 资源替换说明
 ##
 ## 当美术资源准备好后，将此文件中的 Solid() 替换为实际图片路径：

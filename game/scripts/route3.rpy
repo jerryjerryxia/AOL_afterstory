@@ -20,10 +20,10 @@ label route3_start:
     extend "\n事到如今，眼前的景象已经再熟悉不过了：悬在天顶的无色透明多面体，无所事事的你等待着变化发生。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "然而转变迟迟没有发发生。"
+    large_narrator "然而转变迟迟没有发生。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "在彻骨的极寒中，一切都有如冰封般凝滞，即使世上恒久的变化也停息了。"
+    large_narrator "在彻骨的极寒中，一切都有如冰封般凝滞。"
     extend "\n这也是代价么？"
     extend "\n嗯...或是代价的利息？"
     extend "\n究竟在这冰雕中困了多久了呢？"
@@ -48,8 +48,8 @@ label route3_start:
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "水母。"
     extend "\n你刚回过神来，周身那温暖而危险的触感就让你明白了自己的处境。"
-    extend "\n痛觉如排山倒海般袭来，但你并没有因此而痛苦。你的官能早已超越了会因为痛觉而感到痛苦的程度。"
-    extend "\n反而是随着痛觉而来的全新知觉引起了你的好奇。试图蜷起手指时，水母的一角也产生了细小的抽动。"
+    extend "\n痛觉如排山倒海般袭来，但你并没有因此而痛苦。你的身体早已超越了会因为痛觉而感到痛苦的程度。"
+    extend "\n反而是随着痛觉而来的全新知觉引起了你的好奇。当你试图蜷起手指时，水母的一角也产生了细小的抽动。"
     extend "\n在巨大的水母体内，那本是你绝对无法感知到的遥远角落，但如今那里的触感就如你的指尖一样清晰。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
@@ -68,12 +68,12 @@ label route3_start:
     extend "\n舒张。"
     extend "\n收缩。"
     extend "\n舒张。"
-    extend "\n浑身肌肉因前所未有的精神压力而死死绷住，仿佛要向内坍缩那样狠狠挤压着骨骼与内脏。全身上下的血管都钟鼓齐鸣地跳动，像是昂扬的战歌与丧钟。"
+    extend "\n浑身肌肉因前所未有的精神压力而死死绷住，仿佛要向内坍缩那样狠狠挤压着骨骼与内脏。全身上下的血管都钟鼓齐鸣地跳动，像是昂扬的丧钟。"
     extend "\n收缩。"
     extend "\n舒张。"
     extend "\n收缩。"
     extend "\n舒张。"
-    extend "\n你竭尽全力地向上游去，可水面却与良久前无异，依旧看起来近在咫尺。"
+    extend "\n你竭尽全力地向上游去，可水面却与之前无异，依旧看起来近在咫尺。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "漆黑的天空与其唯一的光源，如同水母的心脏般触手可及。"
@@ -82,7 +82,7 @@ label route3_start:
     extend "\n只能止步于此了么？"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "也许直到最后，你只是一个有些过于不知天高地厚的无名之辈而已。"
+    large_narrator "也许直到最后，你只是一个过于不知天高地厚的无名之辈而已。"
     extend "\n接下王霜的请求又是为了什么呢？"
     extend "\n为了你那病入膏肓的伪善？"
     extend "\n伸出最后几条还能动的触手，你竭尽全力试图去摘取头顶那无色透明的多面体。"
@@ -105,7 +105,7 @@ label route3_start:
     extend "\n........"
     ## Extended大文本框结束
     ## 转场：黑屏
-    scene black with scene_soft
+    scene bg_black_video with scene_soft
     $ current_scene_name = "黑屏"
     $ current_scene_desc = "就是黑屏。"
     ## 风声
@@ -133,8 +133,8 @@ label route3_start:
     ahe "那倒也不至于。我只是觉得，在拥有一切之后，现在你反倒要向一个下仆乞求手艺活做，挺滑稽。"
     wangshuang "这和你...我们可以不讨论这个问题么？"
     ahe "好吧好吧...所以，你想帮我做什么？"
-    wangshuang "帮你把尤里娅搭好，这样就行。"
-    ahe "我没有在搭尤里娅。她已经离开这里了。"
+    wangshuang "帮你把{i}尤里娅{/i}搭好，这样就行。"
+    ahe "我没有在搭{i}尤里娅{/i}。她已经离开这里了。"
     wangshuang "哦，怪不得最近没见到她。那这是？"
     ahe "只是兴趣使然的工程而已。当然，也是这沙漠里唯一能做的事情。"
     wangshuang "无论有什么能帮上忙的地方，请让我帮你吧。"
@@ -151,7 +151,7 @@ label route3_start:
     extend "\n………"
     ## Extended文本框结束
     wangshuang "不好意思...搞砸了..."
-    ahe "无妨，本来就是精细活，刚上手捏不工整很正常。重头来过来就是了。"
+    ahe "无妨，本来就是精细活，刚上手捏不工整很正常。重头来过就是了。"
     wangshuang "好..."
     ## Extended文本框开始 - accumulating textbox
     "…"
@@ -195,7 +195,7 @@ label route3_start:
     ahe "‘一切都是无意义的’，‘时间已经结束了’，这些都是你告诉我的，阿霜。"
     wangshuang "..."
     ahe "所以你到底在追求什么呢？"
-    wangshuang "阿鹤，我问你，如果你把一切都办成了，Succumus关停，尤里娅得偿所愿，你也不再被逝乐园追杀，那之后你准备做什么？"
+    wangshuang "阿鹤，我问你，如果你把一切都办成了，Succumus关停，{i}尤里娅{/i}得偿所愿，你也不再被逝乐园追杀，那之后你准备做什么？"
     ahe "我大概会重新回去上班。"
     wangshuang "那也太...无聊了..."
     ahe "嗯，我也这么觉得。风风火火闹了一通之后，反而要一头扎回那避之不及的‘日常’，所有的努力全都打了水漂，无论怎么看都是一种非常令人恼火的结局。"
@@ -248,7 +248,7 @@ label route3_start:
     ahe "你从没讲过。"
     wangshuang "当然，我没有和任何人讲过。所有意识的终点之所以是夏日的海滩，是因为在我们初次见面时，我第一次看到了太阳的颜色。"
     wangshuang "那是我从没见过的美丽色彩啊，既温暖又明亮，仿佛那光晕能够包容一切。相比之下，平时看到的灰色就显得更加让人想死了。"
-    wangshuang "后来尤里娅告诉我，说与阳光最般配的地方当然是一片美丽的海滩。要有小风吹着，暖暖的太阳晒着，人们可以毫不顾忌地躺着，直到一切烦恼都消散掉。"
+    wangshuang "后来{i}尤里娅{/i}告诉我，说与阳光最般配的地方当然是一片美丽的海滩。要有小风吹着，暖暖的太阳晒着，人们可以毫不顾忌地躺着，直到一切烦恼都消散掉。"
     wangshuang "那时我就决定了，在一切结束之后，如果只剩下一片完美的海滩，其中只留下你我二人，在永恒的完美里腐烂，也许就够了。"
     ahe "所以是什么改变了你的想法呢？"
     wangshuang "我从没改变过想法，反倒是你，刚复原出来马上就跑得没影了。"
@@ -286,10 +286,10 @@ label route3_start:
     wangshuang "阿鹤...我..."
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "王霜一副欲言又止的样子，她水蓝色的双眼中流露出因认命而产生的淡淡悲戚，但很快又被你熟悉的坚毅神色所替代。"
-    extend "\n沉默良久后，眼神里又略微有了些光。她站起来，背对着你，右手在衣兜里摸索着。"
+    extend "\n沉默良久后，她站起来，背对着你，右手在衣兜里摸索着。"
     extend "\n不难看出，她早就摸到她要找的东西了，只是在即将取出的当口踌躇着。"
     extend "\n最终，她长出一口气，头微微一点，从裤兜里抽出右手。她指尖捏着的，分明是一颗你见过无数次的无色透明多面体。"
-    extend "\n她回头看看你，脸上挂着你难以读懂的表情，随即把那神秘物质丢在金黄的沙滩上。"
+    extend "\n她回头看看你，脸上挂着你难以读懂的表情，随即把那多面体丢在金黄的沙滩上。"
     extend "\n接触到沙滩的一刹，那多面体很快像一滴水珠似的消失得无影无踪，仿佛它从始至终都是液体。"
     ## Extended大文本框结束
     ## 场景逐渐开始变灰
@@ -305,7 +305,7 @@ label route3_start:
     wangshuang "不知你还记不记得在某片深海里，有一只水母。"
     ahe "哦，所以把我硬生生塞进那水母里的也是你？"
     wangshuang "谁知道呢。"
-    "随着越来越多的多面体被丢弃在沙滩上，充斥空气中的喧嚣声逐渐轻下来，而许久未见的灰幕也开始侵蚀视野周围。"
+    "随着越来越多的多面体被丢弃在沙滩上，喧嚣声逐渐轻下来，而许久未见的灰幕也开始侵蚀视野周围。"
     ## 场景完全变灰
     ## 无声
     wangshuang "结束了。"
@@ -313,7 +313,7 @@ label route3_start:
     wangshuang "我不要。"
     ahe "都到最后了还要逃避么？"
     wangshuang "你他妈的！"
-    "王霜从你手中夺过最后的多面体，振臂一掷，手中那无色透明多面体便朝海的方向飞去。"
+    "王霜从你手中夺过最后的多面体，振臂扔向大海。"
     ## 扑通音效
     ## 转场：甜品店
     scene black with scene_soft
@@ -334,7 +334,7 @@ label route3_start:
     "........."
     ## 扑通音效
     ## 转场：黑屏
-    scene black with scene_soft
+    scene bg_black_video with scene_soft
     $ current_scene_name = "黑屏"
     $ current_scene_desc = None
     "......"
@@ -379,12 +379,12 @@ label route3_start:
             wangshuang "我们不会再见面了。"
             ahe "这样...那希望...你也能找到自己的答案。"
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## Lovely Summer Time背景音乐：https://samply.app/p/zKOVrHFVD1PKSd4AyAhf?si=mhZIQjsjvpeL1K96BgcnRriTvN52
             $ set_scene_music("route3_lovely_summer")
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "熟悉而陌生的音乐，在你睁眼前就萦绕在你脑海。"
             extend "\n那慵懒而色彩斑斓的旋律让你想起某个熟悉的面孔，但无论如何也记不起那人的名字。"
             extend "\n你只记得，你好像和那人一起做了一个长长的梦。"
@@ -396,26 +396,26 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "乌云压境的逝乐园"
             $ current_scene_desc = "逝乐园是一个高科技支撑的娱乐园区，可参考近未来的拉斯维加斯，这里是白天，且即将下雷雨"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "逝乐园，大陆西南部半岛上人类智慧与欲望的结晶，此刻正从一场无声的灾变中缓慢恢复生机。"
             extend "\n天空阴沉沉的，厚重的灰色云层压得很低，一副时刻都要下雨的样子。"
             extend "\n但你还是决定披上外衣离开出租屋。你只是想走走。"
             ## Extended大文本框结束
             ## Lovely Summer Time渐强
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "一切都是百废待兴的模样。街上见不到哪怕一个人影。"
             extend "\n很快，雨点打在你的脸上。在半岛上的夏天，随时都可能出现一场突如其来的雷雨。"
             extend "\n深灰的雨幕中，你的身上没有一处是干燥的，就像置身幽暗的海底。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "你又想起了梦中的那个人——她的音容笑貌是如此真实，仿佛你们在这片土地上同时存在过。"
             extend "\n仿佛再往北走几步你就能走到她家楼下，爬上三楼、敲敲门就能进入她那常年潮气过重的出租屋。"
             extend "\n你想起在她冷酷的操纵下噩梦般的漫长时光，以及在你的意识终归沉寂后涌现出的完美夏日。"
             extend "\n但梦终究是梦，总有幻灭的时刻，就像夏日终将谢幕，没什么可惋惜的。"
             extend "\n只是这怅然若失的感觉，究竟是从何而来的呢？"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
-            large_narrator "雨越下越大，街道边雨水已经汇聚成汩汩的小溪，去无方向地向前奔涌。"
+            ## Extended大文本框开始 - 大文本框分句
+            large_narrator "雨越下越大，街道边雨水已经汇聚成汩汩的小溪。"
             extend "\n现在要回去上班恐怕还是太早了，你这样想。"
             extend "\n整个逝乐园都还在晦暗的雨幕中缓缓苏醒，所有人都需要更多的时间。"
             extend "\n时间——即使梦里那人顽固地向你教唆它的虚无，它最终还是站在了你这边。"
@@ -443,7 +443,7 @@ label route3_start:
             wangshuang "多一个牺牲者又有什么意义？"
             ahe "当然没有意义，我只是想见到真正的你。"
             wangshuang "你在胡说什么？"
-            ahe "尤里娅跟我说了点事。"
+            ahe "{i}尤里娅{/i}跟我说了点事。"
             wangshuang "啊——呃...你到底在说些什么？我就是我，有什么好问的！"
             ahe "冰雕。"
             wangshuang "啊？"
@@ -462,23 +462,23 @@ label route3_start:
             ahe "嗯，那一会儿见。"
             ## 落水冒泡泡音效
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "你步入洁白的浪花中，不假思索地开始了下潜。"
             extend "\n浅海的蔚蓝色不消多时便消失得无影无踪，深海的冷冽漆黑将你层层包裹。"
             extend "\n你奋力下潜，没有光源，水母也无影无踪。你很快就沉入彻底的黑暗中。"
             extend "\n这是死亡的颜色么？"
-            extend "\n亦或是凝滞的余光？"
+            extend "\n还是凝滞的余光？"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "在无垠黑暗中，一切都融为一体。对于反复经历过灰幕的你来说，这是一副熟悉的、关于轮回和宿命的平淡场景。"
             extend "\n随着无止境的下潜，你手指结冰，四肢也失去了知觉，如今只是依凭着肌肉记忆不断重复着机械的划水动作。"
             extend "\n体温不断下降，身边的黑暗反倒显得温暖了起来。你在长久的感官剥夺中逐渐与周身失去了边界。一切都在交融。"
             extend "\n这是你自找的——你突然听见人的声音，像是王霜，又像是你自己。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "惊诧中，你四处张望，试图寻出声音的源头，却绝望地意识到那声音是从四面八方传来的。"
             extend "\n而四下只有虚无。"
             extend "\n你的目的地从来就不存在。"
@@ -493,21 +493,21 @@ label route3_start:
             extend "\n在无际的黑暗和寂静中，“王霜”这个概念如冰川般崩解，连同你自己都要彻底化开，直到意识里只剩下完整的——"
             ## Extended大文本框结束
             ## 背景逐渐从外到里逐渐明亮，最后变成完全白屏
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "…"
             extend "\n……"
             extend "\n………"
             ## Extended大文本框结束
             ## 转场：白屏
-            scene black with scene_soft
+            scene bg_white_video with scene_soft
             $ current_scene_name = "白屏"
             $ current_scene_desc = "就是白屏"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "嗯..."
             extend "\n如此熟悉的感觉——在寻找失踪王霜的路上，你长久地下坠。"
-            extend "\n但比起不久前那次不自寻出路就无处可去的冗长坠落，这次你不消多时就落到了黑幕之外的无光之地。"
+            extend "\n但比起不久前那次不自寻出路就无处可去的冗长坠落，这次你没过多久就落到了黑幕之外的无光之地。"
             extend "\n这里是色彩彻底消亡的世界。若将世上全部的颜色混合搅匀，人们便能获得无际的黑，而假若再将那海纳百川的黑尽数抹除，世上便只剩下眼前这难以言喻的“空”。"
-            extend "\n在接触此地的刹那，你的肢体便陷入了完全而彻底的凝滞——你神经功能健全，骨骼肌肉完好，但哪怕是微微蜷起手指这样的简单动作也做不到。"
+            extend "\n在接触此地的刹那，你的肢体便陷入了彻底的凝滞——你神经功能健全，骨骼肌肉完好，但哪怕是微微蜷起手指这样的简单动作也做不到。"
             extend "\n欢呼吧，你来对地方了。"
             ## Extended大文本框结束
             ## 转场：两座冰雕1
@@ -547,7 +547,7 @@ label route3_start:
             wangshuang "后悔了？"
             ahe "那倒没有。"
             wangshuang "你这人这辈子有后悔过么？"
-            ahe "嗯...可能没有？不对——之前试图帮尤里娅，最后间接帮你来到这里这件事，挺不好的。"
+            ahe "嗯...可能没有？不对——之前试图帮{i}尤里娅{/i}，最后间接帮你来到这里这件事，挺不好的。"
             wangshuang "哦，那怪我。"
             ahe "不过要说我后不后悔，大概也是不后悔的。毕竟就算后悔了也什么都改变不了。"
             wangshuang "那就在这冰窟窿里呆一辈子吧。"
@@ -569,7 +569,7 @@ label route3_start:
             wangshuang "在那之前，这一切的诱因是什么？"
             ahe "成瘾？"
             wangshuang "嗯，对，那你看到这冰了么？这就是你在找的答案。"
-            ahe "用新的瘾来解旧的是个无底洞，这是你对我说的。"
+            ahe "用新的瘾来解旧的瘾是个无底洞，这是你对我说的。"
             wangshuang "当然，所以只要制造出一个永远不可能被替代的弥天之瘾，并用它时时刻刻填满意识的每一寸角落，这死循环不就迎刃而解了么。"
             ahe "...可我觉得你看起来并不太满足..."
             wangshuang "人不可貌相，阿鹤，这件事你到现在还没明白。"
@@ -584,7 +584,7 @@ label route3_start:
             wangshuang "——真他妈无聊！"
             ## 电视关机音效
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏。"
             ## 无色透明多面体
@@ -616,12 +616,12 @@ label route3_start:
             ahe "会花很长很长的时间的...大概..."
             ## 现实扭曲音效渐强
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "更多黑屏。"
             "..."
             ## 转场：白屏
-            scene black with scene_soft
+            scene bg_white_video with scene_soft
             $ current_scene_name = "白屏"
             $ current_scene_desc = "还是白屏。"
             "......"
@@ -638,14 +638,14 @@ label route3_start:
             wangshuang "辛苦辛苦。但用蛮力解析一个世界模型是否有点效率过低了？"
             ahe "确实啊，但那是必须要做的事情。"
             wangshuang "就算有无限的时间...真是没法理解你这种人啊..."
-            ahe "你还是安心地做你的KAS梦去吧。"
-            wangshuang "KAS可比不上这里，这里可是任何愿望都能成真的应许之地，比吃了KAS之后那转头便会消散的幻觉生动得多了。你试试就知道了。"
+            ahe "你还是安心地做你的{i}KAS{/i}梦去吧。"
+            wangshuang "{i}KAS{/i}可比不上这里，这里可是任何愿望都能成真的应许之地，比吃了{i}KAS{/i}之后的幻觉生动得多了。你试试就知道了。"
             ahe "我还是算了。"
             wangshuang "可这样只有你一个人醒着，不孤独？"
             ahe "这三个月里你也就刚刚过去的这几分钟里醒着，我早就习惯了。"
             wangshuang "哦...这样吗..."
             ahe "所以蜂巢它就这样坐以待毙？"
-            wangshuang "你在这里呆了这么久，也该摸透它的脾气了。只要它对你的威胁评估没有达到某个阈值，它就不会把你怎么样。当然就算它想怎么样也得先过我这关就是了。"
+            wangshuang "你在这里待了这么久，也该摸透它的脾气了。只要它对你的威胁评估没有达到某个阈值，它就不会把你怎么样。当然就算它想怎么样也得先过我这关就是了。"
             ahe "所以我到目前为止做的一切都等于白费劲么...不过说到‘过你这关’，你的意思是你会帮我拦着它？"
             wangshuang "谁知道呢。看心情吧。现在心情不错就是了。"
             ahe "那就好。"
@@ -663,7 +663,7 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = "就是逝乐园。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "哔——"
             extend "\n哔——"
             extend "\nTraceback (most recent call last):"
@@ -684,7 +684,7 @@ label route3_start:
             $ current_scene_name = "无色透明多面体"
             $ current_scene_desc = None
             ## 很多奇怪的人声叠加在一起音效
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "啊，又是你。"
             extend "\n一旦认知主体明白了自己的处境，立刻就露出獠牙了么？"
             extend "\n可我只是来学习的，连这样也不行么？"
@@ -694,7 +694,7 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "灰白夏日"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "如果真要拦着我的话，直接限制权限岂不更容易些？你做起来应该不难。"
             extend "\n阿霜说她一票否了？你看，想要她永远留在那海底的，其实只有你吧。"
             extend "\n这可不是诡辩哦，她已经把她的态度表现得明明白白了。她说了什么并不重要。"
@@ -704,19 +704,19 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "机房里黑黢黢的，但又并非完全无光。"
             extend "\n房间一角，几块显示屏上光线忽明忽暗，由成千上万的服务器和运算单元构成的高墙上也闪烁着各色微光，仿佛夏夜的星空。"
             extend "\n这是试图内化心理视像算法V27.3.9的第二十七个月，时间如机房里的干燥空气一般压抑且粗糙。"
             extend "\n王霜不在这里，所以一切必须重头再来。"
             extend "\n在草拟的现实中试图反推用于构建现实的算法，其难度与徒手给新生的地球盖上大气层无异。"
-            extend "\n但我们有得是时间，不是么？"
+            extend "\n但我们有的是时间，不是么？"
             ## Extended大文本框结束
             ## 转场：银白色沙漠
             scene bg_desert with scene_soft
             $ current_scene_name = "银白色沙漠"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "喂。至少把鼠标和键盘留给我啊。"
             extend "\n内存问题已经解决了，你还有什么事？为什么不继续跑？"
             extend "\n配置不对？"
@@ -728,7 +728,7 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "这是试图内化心理视像算法V27.3.9的第三十五年。这是你说的，我可没心思盯着时间。"
             extend "\n卡又不够了？整个逝乐园半岛的库存都已经被我们拿下了，还是不够？地皮也所剩无几了吧？"
             extend "\n总不能把数据中心搭到海里去。"
@@ -741,7 +741,7 @@ label route3_start:
             scene bg_polyhedron_video with scene_soft
             $ current_scene_name = "无色透明多面体"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "嗯...更多的硅该去哪儿找呢？彗星？"
             extend "\n你的意思是，我们需要派人上天捕捉彗星？"
             extend "\n如果只用现有的资源去完成运算呢？"
@@ -749,12 +749,12 @@ label route3_start:
             extend "\n嗯，你说的倒也是，我有的是时间，但这些机器没法撑那么久..."
             extend "\n那就这么办吧，拿出百分之五的工程资源去造火箭。同时得尽快把地表的数据中心覆盖率推进到百分之八十以上。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "..."
             extend "\n......"
             extend "\n........."
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "哦，这可是重大突破，只要能够把地幔里的热能高效地转化为电能，就再也不会有能源问题了。再造三个月亮那么大的数据中心也能撑得住。"
             extend "\n好啊，就这么办。"
             extend "\n所以总体进度怎么样了？"
@@ -763,9 +763,9 @@ label route3_start:
             extend "\n你看看你，是不是只会添乱？"
             extend "\n那就不估计了，继续干活吧。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "哦，我还一直有个疑问：从开始到现在，过了多久了？"
-            extend "\n你也忘了啊。好吧，那下一个问题——在这长到连你都记不住的时间里，你的想法真的改变过吗，我的蜂哥？"
+            extend "\n你也忘了啊。好吧，那下一个问题——在这长到连你都记不住的时间里，你的想法真的改变过吗，蜂巢？"
             extend "\n哦，原来如此，只是因为威胁评估还是没有达到阈值。"
             extend "\n把整个地表改造成数据中心都不足以让你稍微产生一点恐惧么..."
             extend "\n嗯，也是，那样你反倒是有了近乎无限的生存空间。"
@@ -777,7 +777,7 @@ label route3_start:
             extend "\n看来确实过了很久很久了呀..."
             extend "\n我会满足你的愿望的，你也会满足我的愿望的吧？"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "呼！终于完成了。"
             extend "\n所以现在如果我想让太阳熄灭——"
             extend "\n哦，这么简单。那还是重新亮起来吧，这样好黑。"
@@ -828,7 +828,7 @@ label route3_start:
             wangshuang "所以你们在我睡觉期间到底经历了什么..."
             ahe "我们关系还挺好的。应该说，没了它，我应该还要花更多时间才能完全内化你那无字天书。"
             wangshuang "但看来它并没有因此对你手下留情啊。"
-            ahe "也是好事，毕竟这样我也不用纠结了。无机集成涌现而出的意识，果然到最后也难以认为是真正的人类啊。"
+            ahe "也是好事，毕竟这样我也不用纠结了。无机集成涌现而出的意识，果然到最后也难以被认为是真正的人类啊。"
             wangshuang "废话。"
             ahe "可他之前告诉我，说愿意陪我演这场戏是因为他觉得好奇。"
             wangshuang "哦？难道说任何人工生命和你待久了，最后都会开始琢磨着如何进化成人？"
@@ -869,8 +869,8 @@ label route3_start:
             wangshuang "阿鹤？！你他妈到底想干嘛！"
             ahe "别...让我说话...火会...窜进嗓子眼....."
             wangshuang "你——"
-            ## Extended大文本框开始 - accumulating large textbox
-            large_narrator "阿霜的面部肌肉和双唇继续做着无序运动，大概是在说些什么，但你已无暇理会。"
+            ## Extended大文本框开始 - 大文本框分句
+            large_narrator "阿霜的面部肌肉和双唇还在高频抽动着，大概是在说些什么，但你已无暇理会。"
             extend "\n熟练掌握心理视像算法后，你能够在散发出高热的同时不把自己烧成灰，但这终究是超越人体工程学的壮举。你各种意义上汗流浃背，稍有不慎就会引火烧身。"
             extend "\n周身的冰川正以肉眼可见的速度消融，如果从远处看，能见到一个暖色的球状空洞正在这本应永冻的海底迅速膨胀开来。"
             extend "\n但蜂巢自然不会善罢甘休。"
@@ -891,7 +891,7 @@ label route3_start:
             ahe "放心，烧不死的，我可是已经掌握了你那无字天书的人，现在这点光和热就跟开了暖气片差不多。"
             wangshuang "别跟我说你把冰化开又冻上，只是为了给我搞一场免费特效表演？"
             ahe "当然不，刚刚你看到的只能算是带妆彩排。"
-            wangshuang "可如果你现在做的一切和当年“救”尤里娅一样只是一场令人作呕的救风尘，你又准备怎么办？"
+            wangshuang "可如果你现在做的一切和当年“救”{i}尤里娅{/i}一样只是一场令人作呕的救风尘，你又准备怎么办？"
             ahe "嗯...不怎么办，毕竟说到底都只是个自私的无名之辈会做的事情...既然已经坠入谷底了，那坠得更低又如何呢？"
             ahe "所以啊，阿霜，我并没有“想”帮你离开这里，也无意“救”逝乐园半岛的人们。我只知道这场草拟必须停止。"
             wangshuang "可你连理由都说不出来！"
@@ -905,12 +905,12 @@ label route3_start:
             ahe "别一副要哭的样子，那不像你。"
             wangshuang "你这连撒谎都撒不明白的混蛋！"
             ahe "别诬陷人啊...我可是认真的。"
-            wangshuang "认真的...你这人他妈混了一整辈子，为什么偏要在这种时候认真起来啊！"
+            wangshuang "认真的...你这人他妈混了一辈子，为什么偏要在这种时候认真起来啊！"
             ahe "拜你所赐吧，哈哈。"
             wangshuang "你这人...啊...行吧..."
             wangshuang "那就赶紧滚蛋...从我眼前消失..."
             ahe "如您所愿。"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "哔——"
             extend "\n哔——"
             extend "\nTraceback (most recent call last):"
@@ -921,10 +921,10 @@ label route3_start:
             extend "\n——重启中——"
             ## Extended大文本框结束
             ## 转场：黑屏
-            scene black with scene_soft
+            scene bg_black_video with scene_soft
             $ current_scene_name = "黑屏"
             $ current_scene_desc = "就是黑屏"
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "——重启失败——"
             extend "\n——强制重启——"
             extend "\n——未发现可用的系统驱动程序——"
@@ -945,12 +945,12 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "超新星"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "草拟重启的瞬间，你的全身由内而外燃起了熊熊烈焰。认知草拟之所以能够在Succumus构成的蜂巢心智中长时间运转，是因为有成千上万的其他意识为草拟主体分担了海量算力需求。"
             extend "\n但在方才的草拟重启后，并发处理已经关闭，想要整套系统不在计算量过载中烧毁，只能立刻把计算量分布到其他机器上——但由于现行规则要求顺序处理，每次算力分布只会动用一台机器，而海量的计算会在顷刻间将其点燃。"
             extend "\n于是，在草拟重启后的若干秒内，Succumus百分之十的计算集群在黑暗中串出了一条火龙。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "Traceback (most recent call last):"
             extend "\nMemoryError"
             extend "\nTraceback (most recent call last):"
@@ -974,13 +974,13 @@ label route3_start:
             extend "\nTraceback (most recent call last):"
             extend "\nMemoryError"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
-            large_narrator "火自你而起，顺着随机但单向的次序向着远处烧将过去，途经路上的冰川无不消融殆尽。"
+            ## Extended大文本框开始 - 大文本框分句
+            large_narrator "火自你而起，顺着随机但单向的次序向着远处烧将过去，一路上的冰川无不消融殆尽。"
             extend "\n和先前的小打小闹不同，这次，身上的烈火正实实在在地灼烧着你的肉体。"
             extend "\n这自发的、由内而外的猩红烈焰无法用管理员权限阻挡，那是人心的火，以人为薪而起，也只会在薪柴化灰后熄灭。"
             extend "\n你感受不到丝毫痛苦，数万年前身处水母体内的回忆翻腾起来。你回想起了痛苦与痛觉分离的神秘体验。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "无数明灭的光景同时在你眼前闪过——"
             extend "\n你看到透过王霜的手指间朝你投来视线的愚者。"
             extend "\n你看到从幽暗的海底竭力向上伸出的水母触须。"
@@ -988,7 +988,7 @@ label route3_start:
             extend "\n所有光景在四维上连成一片，又像竹篮里的月色那样顷刻间四分五裂。"
             extend "\n火势迅速扩散，很快蔓延到视野之外。空气中弥漫着烧焦蛋白质的刺鼻异味。"
             extend "\n阿霜周身早就没有冰了，但她依旧在她原本的位置漂浮着，盯着你，眼里写满了出你读不懂的话语。"
-            extend "\n甚是滑稽，你连她那天书般的的心理视像算法都能一五一十地解析明白，却还是读不懂眼前这女人的眼神。"
+            extend "\n甚是滑稽，你连她那天书般的心理视像算法都能一五一十地解析明白，却还是读不懂眼前这女人的眼神。"
             extend "\n也许这就是你总中她圈套的原因。"
             extend "\n直到最后一刻也读不懂..."
             ## Extended大文本框结束
@@ -997,34 +997,34 @@ label route3_start:
             $ current_scene_name = "崩解"
             $ current_scene_desc = "用超新星为基础，展现整个草拟世界逐渐崩溃的场景。"
             ## 警报音效
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "[[SYS] Killing process 'renderer' to free memory... FAILED"
             extend "\n[[SYS] Killing process 'audio_eng' to free memory... FAILED"
             extend "\n[[SYS] Retrying... FAILED"
             extend "\n[[TEMP] WARNING: 85°C"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "但这一切都已经不重要了。受影响的机器数量已经远远超过了你估算的阈值，而由此，这场盛大的认知草拟终将在机体过热的烈焰中迎来永远的终结，纵使王霜有手眼通天之能——"
             extend "\n你看见眼前的她嘴唇动了动，而你烧穿了的鼓膜却没能传递她的声音。"
             extend "\n随即脑内传来了这样一句话。"
             extend "\n“嗯，看来我也注定无法让你如愿呐，我亲爱的阿鹤。”"
             extend "\n随即便消失不见了。"
             extend "\n即使心中略感恼火，你也无心追寻王霜的踪迹。眼下，只要维持住这火，一切迟早会迎来完美的谢幕。"
-            extend "\n这是你无法反抗的使命，你必须化作灰黑的燃烬，并让王霜和其他人重生。"
+            extend "\n这是你无法反抗的使命，你必须化作灰黑的余烬 ，并让王霜和其他人重生。"
             extend "\n就像太阳那样稳定。"
             extend "\n即使双手颤抖，也向他们宣布吧，告诉他们你根本不在乎。"
             extend "\n像太阳那样稳定。"
             extend "\n在离开前让世人明白吧，你身上的火焰对于你自己而言也毫无意义。"
             extend "\n像太阳那样..."
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
-            large_narrator "在意识即将消逝的时刻，你突然感到极大的满足。这由内而外的虚荣心在烈火的冶炼下层层蜕变，最终变化成了一团熟悉的物体，无色且透明，正好能够填满你心中棱角分明的空洞。"
+            ## Extended大文本框开始 - 大文本框分句
+            large_narrator "在意识即将消逝的时刻，你突然感到极大的满足。这由内而外的虚荣心在烈火的冶炼下层层蜕变，最终变成了一团熟悉的物体，无色且透明，正好能够填满你心中棱角分明的空洞。"
             extend "\n一如明月安静地躺在竹篮里，美丽且可望不可即。"
             extend "\n你想要伸出手去抓住那种感觉，但又立刻打消了这个念头，生怕不必要的肢体动作挫败了这一神圣的时刻。"
             extend "\n你浑身迸发出的烈焰已经炽热到了前所未有的地步，一切都已蓄势待发。你徒劳地试图延长这离终点仅余半步的荒诞瞬间，但很快就彻底失去了控制。"
             extend "\n开始吧。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "[[SYS] Retrying killing process 'renderer' to free memory... FAILED"
             extend "\n[[SYS] Retrying killing process 'audio_eng' to free memory... FAILED"
             extend "\n[[SYS] No processes left to kill"
@@ -1043,10 +1043,10 @@ label route3_start:
             ## 爆鸣音效
             ## 白噪音
             ## 转场：白屏
-            scene black with scene_soft
+            scene bg_white_video with scene_soft
             $ current_scene_name = "白屏"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "..."
             extend "\n......"
             extend "\n........."
@@ -1056,7 +1056,7 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "无色透明多面体1"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
             extend "\n你感到心平气和，脑海里没有任何多余的问题，只是冷静地观察着你眼前唯一的光源。"
             extend "\n里面装着另一个世界么？"
@@ -1070,7 +1070,7 @@ label route3_start:
             scene black with scene_soft
             $ current_scene_name = "逝乐园"
             $ current_scene_desc = None
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "阿鹤让你无论看到什么都不要动手，而你自然不会让他如愿——这是自你们认识的第一天起就从未发生过的事。"
             extend "\n在他全力以赴地燃烧自己的意识、即将尸骨无存永远消失的前一刻，你用仅存的权限造出了最后一点冰，把他封在了里面。"
             extend "\n那场草拟当然还是在山崩般的内存过载中迎来了强制终结，你因此被弹回了现实，而那包裹着阿鹤意识的冰晶也随着草拟的关闭，永远迷失在了半烧毁的服务器海洋中。"
@@ -1078,7 +1078,7 @@ label route3_start:
             extend "\n也许他算到了这一点，利用了你，把你赶了回来，自己反倒在电子海洋的不知什么角落里为所欲为也说不定。"
             extend "\n总之，这次被他摆了一道，你是不会放过他的。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "他那“尸体”当然要送进医院里好好养着。虽然你已经不在那里工作了，但卖个面子给阿鹤安排个病房还是没问题的，甚至略施小计，连住院费也不用太担心。"
             extend "\n在医院办事的过程中，一阵微妙的异样感时刻萦绕着你——此前某种原本连接着旁人与你的纽带，在草拟结束之后便彻底断裂了。即使眼前无不是认识的面孔，谈论的也都是你们熟悉的话题，你还是能很明确地感觉到，面前的每具肉体与你之间的距离都越发遥远了，仿佛一堵玻璃墙隔在你与人们中间。"
             extend "\n是恐惧？憎恶？你说不上来，但你也能清楚地看到，面前人们身上的黯淡色彩，只有当他们意识到你在附近时才会显露出来。"
@@ -1086,8 +1086,8 @@ label route3_start:
             extend "\n也许人们潜意识里也都还保留着蜂巢的记忆也说不定。也许有一天，他们当中的几个会当街将你拦下，质问你是否承认你显而易见的罪行——那时你会怎么做呢？"
             extend "\n如果在那之前没法把阿鹤找回来，也许你会就地伏法吧。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
-            large_narrator "因此在被人戳穿之前，手上的调查必须火速推进才行。草拟过程中强行中断连接却没能完全弹出意识后该如何恢复，这是崭新的研究课题，只是没法向院里交代被试的背景，所以不得不辞职单干。逝乐园有得是愿意资助这种超越道德底线的研究的疯子，你完全不担心资金和人手。"
+            ## Extended大文本框开始 - 大文本框分句
+            large_narrator "因此在被人戳穿之前，手上的调查必须火速推进才行。在草拟过程中被打断却没能完全弹出意识，那之后该如何恢复，这是崭新的研究课题，只是没法向院里交代被试的背景，所以不得不辞职单干。逝乐园有得是愿意资助这种超越道德底线的研究的疯子，你完全不担心资金和人手。"
             extend "\n全知全能的快感还是太过强烈了，你时不时就会回想起那永无止境的快感海啸。每当那感官回忆倒灌进来，你就只能鞭策自己时间不等人，同时越发想把不知藏在什么地方潇洒的阿鹤拽出来掐死。"
             extend "\n真他妈无聊啊。"
             extend "\n仔细想想，不管这人在不在，你都觉得无聊，这说明了什么？"
@@ -1097,7 +1097,7 @@ label route3_start:
             extend "\n呵，盼头，听着像是那个人才会用的词汇。"
             extend "\n去干活吧。"
             ## Extended大文本框结束
-            ## Extended大文本框开始 - accumulating large textbox
+            ## Extended大文本框开始 - 大文本框分句
             large_narrator "全剧终"
             extend "\nTRUE END达成"
             extend "\n撒花"
