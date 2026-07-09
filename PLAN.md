@@ -56,7 +56,7 @@ Create a modern visual novel prototype with full UX functionality, ready for ass
 ## 3. Project Structure
 
 ```
-AOL_afterstory/
+EndlessSummerSyndrome/
 ├── game/
 │   ├── audio/
 │   │   ├── bgm/              # Background music

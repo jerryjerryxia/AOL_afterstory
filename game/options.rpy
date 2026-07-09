@@ -4,20 +4,20 @@
 ## 游戏基本信息
 define config.name = _("无休夏日综合症")
 define config.version = "0.1.2"
-define build.name = "AOLAfterstory"
+define build.name = "EndlessSummerSyndrome"
 
 ## 是否显示游戏名称在主菜单
 define gui.show_name = True
 
 ## 游戏存档目录名称
-define config.save_directory = "AOLAfterstory-1234567890"
+define config.save_directory = "EndlessSummerSyndrome-1234567890"
 
 ## 分辨率配置 - 1920x1080 基准
 define config.screen_width = 1920
 define config.screen_height = 1080
 
-## 游戏图标（需要替换为实际图标）
-# define config.window_icon = "gui/window_icon.png"
+## 游戏图标
+define config.window_icon = "images/ui/icon/game_icon.png"
 
 ## 默认语言为中文（None 表示使用 script 中的原始文本）
 define config.language = None
@@ -51,8 +51,11 @@ define config.end_game_transition = dissolve
 ## 窗口标题
 define config.window_title = "无休夏日综合症"
 
-## 主菜单音乐（可选）
-define config.main_menu_music = "audio/bgm/Whispers_in_the_Twilight.mp3"
+## 主菜单音乐：glitter_in_the_dark。序章首曲也是它，且 set_scene_music 用 if_changed，
+## 所以从主菜单到点"开始游戏"进序章，这首曲子无缝连续播放、不重启。整曲从头循环到尾。
+## <volume 0.737>：响度配平到 -16.5 LUFS —— 必须与 music_config.rpy 里 polyhedron
+## 轨的 volume 逐字一致，set_scene_music 会拼出同样的前缀，if_changed 才认作同一首。
+define config.main_menu_music = "<volume 0.737>audio/bgm/glitter_in_the_dark.ogg"
 
 ## 游戏菜单 - ESC/右键打开存档界面
 define config.game_menu_action = ShowMenu("save")

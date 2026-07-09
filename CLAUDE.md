@@ -1,4 +1,4 @@
-# AOL Afterstory - Ren'Py Visual Novel
+# Endless Summer Syndrome - Ren'Py Visual Novel
 
 「以第一性原理！从原始需求和问题本质出发，不从惯例或模板出发。
 1. 不要假设我清楚自己想要什么。动机或目标不清晰时，停下来讨论。
@@ -6,7 +6,7 @@
 3. 遇到问题追根因，不打补丁。每个决策都要能回答"为什么"。
 4. 输出说重点，砍掉一切不改变决策的信息。」
 
-**IMPORTANT: Always work directly in `X:\GameDev\AOL_afterstory`. Do NOT use git worktrees - the game can only be launched from the main location.**
+**IMPORTANT: Always work directly in `X:\GameDev\EndlessSummerSyndrome`. Do NOT use git worktrees - the game can only be launched from the main location.**
 
 ## Quick Reference
 
@@ -67,14 +67,14 @@ B: Choice B text（madness+1）
 
 1. **Ren'Py Lint:**
    ```
-   X:\RenPy\renpy-8.5.0-sdk\renpy.exe "X:\GameDev\AOL_afterstory" lint
+   X:\RenPy\renpy-8.5.0-sdk\renpy.exe "X:\GameDev\EndlessSummerSyndrome" lint
    ```
    - Fix any "Unreachable Statements" (usually missing `【选项分线到此结束】` markers)
    - Fix any undefined labels or variables
 
 2. **Check traceback.txt:**
    ```
-   X:\GameDev\AOL_afterstory\traceback.txt
+   X:\GameDev\EndlessSummerSyndrome\traceback.txt
    ```
    - If exists, read and fix the error
    - Delete after confirming fix

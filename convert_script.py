@@ -5,8 +5,13 @@ Handles branching with A:/B: options and 【选项分线到此结束】 converge
 """
 
 import argparse
+import os
 import re
 import sys
+
+# Project root = this script's own directory, so all paths work regardless of
+# the folder name (rename-proof; replaces hardcoded X:\GameDev\... absolutes).
+_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Force UTF-8 stdout so 中文 prints correctly on Windows consoles (the default
 # cp936/cp1252 codepage mangles it). Safe no-op on POSIX. Python 3.7+.
@@ -26,6 +31,12 @@ SCENE_BG_MAP = {
     # 无色透明多面体：循环视频。剧本里所有引用此名的场景都用同一个 channel，
     # 主菜单和序章首场景共享帧位置。
     '无色透明多面体': 'bg_polyhedron_video',
+    # 白屏 / 黑屏：循环视频背景（bg/white_screen.webm、black_screen.webm）。
+    '白屏': 'bg_white_video',
+    '黑屏': 'bg_black_video',
+    # 虚空对视：黑屏视频背景 + 透明立绘叠层（overlay 模型，见 SCENE_EXPRESSIONS）。
+    # 用视频而非纯色 Solid，这样立绘透明处能透出"背景里的黑屏"动画。
+    '虚空对视': 'bg_black_video',
     # 甜品店对视 1-7 + 6.51：场景渐进，详见 placeholder.rpy 里的注释。
     '甜品店对视1': 'bg_dessertgaze1',
     '甜品店对视2': 'bg_dessertgaze2',
@@ -79,6 +90,66 @@ SPECIAL_FX = [
     ('黑影', 'fx_shock'),
 ]
 
+# 表情切换过渡（短溶解；改这里改全局表情切换速度）。
+EXPR_TRANSITION = "Dissolve(0.2)"
+
+# 指定场景转场的特殊过渡（覆盖默认 scene_soft）。场景名 -> transitions.rpy 里的过渡名。
+SCENE_TRANSITIONS = {
+}
+
+# 长黑场过渡 + 禁止点击快进。用黑色叠层 ATL 动画 + hard pause 实现：屏幕缓缓黑
+# 下来 → 黑场停留 → 新场景缓缓浮现，全程 hard=True 不可点击跳过。
+# 值 = (淡出到黑秒, 黑场停留秒, 新场景淡入秒)。白屏褪去后进甜品店用这个。
+SCENE_HARD_FADE = {
+    '甜品店对视1': (3.0, 0.5, 2.0),
+}
+
+# 表情差分配置：场景名 -> {model, ...}。场景名 = 脚本 【转场：X。…】 里的 X。
+#   "full"    —— 整图差分：scene <img> 直接换整张背景（默认图==bg 目录原图）。
+#   "overlay" —— 透明立绘：转场时 scene <bg> + show <default>，表情用 show 互换
+#                （共用 image tag）。用于没有实景、只在黑屏上放人物的场景。
+# 图片名与 placeholder.rpy 里的 image 定义一致。详见 expression_variations/。
+SCENE_EXPRESSIONS = {
+    '虚空对视': {
+        'model': 'overlay',
+        'continue_bg': True,   # 黑屏视频从浮潜连续过来，不重新 scene，只淡入立绘
+        'default': 'void default',
+        'map': {'默认': 'void default', '小吃惊': 'void surprised'},
+    },
+    '夏日对视': {
+        'model': 'full',
+        'map': {
+            '默认': 'summergaze_default',
+            '小声嘀咕': 'summergaze_mutter',
+            '面无表情': 'summergaze_blank',
+            '大笑': 'summergaze_laugh',
+            '小吃惊': 'summergaze_surprised',
+        },
+    },
+    '甜品店对视1': {
+        'model': 'full',
+        'map': {
+            '默认': 'dessert1_default', '坏笑': 'dessert1_smirk',
+            '撇嘴': 'dessert1_pout', '疑惑': 'dessert1_puzzled',
+        },
+    },
+    '甜品店对视2': {
+        'model': 'full',
+        'map': {'默认': 'dessert2_default', '撇嘴': 'dessert2_pout'},
+    },
+    '甜品店对视3': {
+        'model': 'full',
+        'map': {
+            '默认': 'dessert3_default', '小激动': 'dessert3_excited',
+            '撇嘴': 'dessert3_pout',
+        },
+    },
+}
+
+# 当前所处的表情场景（转场时更新）。决定 角色【表情】 切到哪张差分；
+# 非表情场景（如甜品店对视4-8）置为该场景名、map 取不到 → 表情退化成注释。
+_CURRENT_EXPR_SCENE = None
+
 def escape_quotes(text):
     """Escape straight double quotes for Ren'Py"""
     return text.replace('"', '\\"')
@@ -87,8 +158,40 @@ def has_curly_quotes(text):
     """Check if text contains curly double quotes"""
     return '"' in text or '"' in text
 
+# 专有名词列表：这些字眼在正文中出现时用 {i}斜体{/i} 强调。
+# 在 raw script 里直接以普通文字书写，由转换器负责加斜体标签——
+# 这样剧本保持干净，新增名词只要往这个列表里加即可。
+PROPER_NOUNS = ['尤里娅', 'KAS']
+
+def italicize_proper_nouns(text):
+    """Wrap any proper noun (PROPER_NOUNS) in {i}...{/i} for italic emphasis."""
+    for noun in PROPER_NOUNS:
+        if noun in text:
+            text = text.replace(noun, '{i}' + noun + '{/i}')
+    return text
+
+def apply_small_text(text):
+    """【小字】 → 把标记之后的文字缩小，并去掉标记本身。
+    标记是行内前缀，缩小一直作用到该行结尾。"""
+    marker = '【小字】'
+    if marker not in text:
+        return text
+    idx = text.index(marker)
+    before = text[:idx]
+    after = text[idx + len(marker):]
+    return before + '{size=-10}' + after + '{/size}'
+
+def transform_display_text(text):
+    """所有可见正文（对话/旁白/选项/extend）共用的行内文字变换。
+    顺序：先 小字 再 斜体（斜体可嵌套进小字里，互不干扰）。"""
+    text = apply_small_text(text)
+    text = italicize_proper_nouns(text)
+    return text
+
 def format_dialogue(text):
     """Format dialogue string, using single quotes if curly quotes present"""
+    # 行内显示变换（小字 / 专有名词斜体），对所有正文统一生效
+    text = transform_display_text(text)
     # Escape square brackets for Ren'Py text interpolation: [ -> [[
     text = text.replace('[', '[[')
     if has_curly_quotes(text):
@@ -99,6 +202,332 @@ def format_dialogue(text):
         # Use double quotes as delimiter, escape any double quotes in text
         escaped = text.replace('"', '\\"')
         return f'"{escaped}"'
+
+# 【锁定操作Ns】：文本展示完成后锁定所有操作 N 秒。
+LOCK_RE = re.compile(r'【锁定操作([\d.]+)s?】')
+
+def extract_lock(dialogue):
+    """从对话里抽出 【锁定操作Ns】，返回 (去掉标记的文本, 秒数 or None)。"""
+    m = LOCK_RE.search(dialogue)
+    if not m:
+        return dialogue, None
+    cleaned = LOCK_RE.sub('', dialogue).strip()
+    return cleaned, m.group(1)
+
+_SFX_TEXT_STMT_RE = re.compile(r'''^([a-z_]+ )?["']''')
+
+def insert_sfx_waits(script_text):
+    """在 `$ play_sfx(…)` 之后、下一句正文/对白之前插入 `$ wait_sfx()`。
+
+    正文/对白 = say / extend / 旁白（行首是「小写标识符 + 引号」或直接引号）。
+    转场（## 注释、scene、$ 赋值、call screen 等）都不算正文会被跳过 —— 所以
+    音效与碎裂等转场仍然同步触发，转场之后的第一句正文才阻塞等音效播完。
+    """
+    lines = script_text.split('\n')
+    out = []
+    pending = False
+    for line in lines:
+        if pending and _SFX_TEXT_STMT_RE.match(line.strip()):
+            indent = line[:len(line) - len(line.lstrip())]
+            out.append(f'{indent}$ wait_sfx()')
+            pending = False
+        out.append(line)
+        if 'play_sfx(' in line:
+            pending = True
+    return '\n'.join(out)
+
+# 左栏（固定高度）的视觉行容量与每视觉行字数估算。左栏约 800px 高、620px 宽、
+# 字号 33 + 行距 10 ≈ 每视觉行 ~46px → ~16 行；620px / ~33px(一个汉字) ≈ 每视觉行
+# ~18 字。改这两个数 = 改"左栏装多少才溢到右栏"。
+_SPLIT_COL_CAPACITY_LINES = 8
+_SPLIT_COL_CHARS_PER_LINE = 18
+
+def _visual_lines(text):
+    """一行原文按左栏宽度折行后占多少视觉行（向上取整，至少 1）。"""
+    return max(1, -(-len(text) // _SPLIT_COL_CHARS_PER_LINE))
+
+def _split_capacity_index(narration):
+    """先把文本尽量塞进左栏：返回左栏能容纳的行数 k（累计视觉行数不超过容量）。
+    k == len 表示整块都放得下左栏（右栏不用，渲染成单栏、无阶段切换）。
+    至少保证左栏有一行（首行特别长也先放左栏）。"""
+    cum = 0
+    for idx, line in enumerate(narration):
+        v = _visual_lines(line)
+        if idx > 0 and cum + v > _SPLIT_COL_CAPACITY_LINES:
+            return idx
+        cum += v
+    return len(narration)
+
+def _emit_split_column(out, indent, lines, opening_stmt):
+    """把分栏一栏的若干源行写成 say/extend：每个源行 = 一句**干净文本**，源行之间
+    用字面 \\n 换行。第一行用 opening_stmt 起头（split_left_narrator /
+    split_right_narrator），其余 extend "\\n…"。标点逐句点击由运行时 {w} 处理
+    （screens.rpy add_click_pauses），所以翻译 ID 与源行 1:1 稳定。"""
+    first = True
+    for ln in lines:
+        ln = ln.strip()
+        if not ln:
+            continue
+        if first:
+            out.append(f'{indent}{opening_stmt} {format_dialogue(ln)}')
+            first = False
+        else:
+            out.append(f'{indent}extend {format_dialogue(chr(92) + "n" + ln)}')
+
+def emit_split_large_block(lines, start_i, end_line, indent="    "):
+    """Split Extended大文本框：文本先尽量塞进固定高度的左栏；放得下就单栏显示
+    （文字尽量待在一侧），左栏装满才把溢出部分接到右栏。中间留白避开王霜的头。
+
+    放得下（多数块）：只走左栏，split_left_narrator（屏幕 split_say_left），
+      普通 say/extend、逐字显示、单击推进，没有阶段切换（也就没有"切换后行距变大"）。
+    放不下：左栏阶段填到容量上限 → `$ _split_left_text = ...` 冻结左栏 → 切
+      split_right_narrator（屏幕 split_say_right，左栏静态、右栏活动逐字）。
+    返回 (output_lines, new_index)。
+    """
+    out = []
+    i = start_i
+    narration = []
+    while i < end_line and i < len(lines):
+        line = lines[i].strip()
+        i += 1
+        if 'Split Extended大文本框结束' in line:
+            break
+        if not line:
+            continue
+        # 块内转场：立即输出（一般在块首，如甜品店对视5）
+        tm = re.match(r'^【转场[：:](.+?)】$', line)
+        if tm:
+            content = tm.group(1).strip()
+            pm = re.search(r'。', content)
+            if pm:
+                sn, sd = content[:pm.start()].strip(), content[pm.end():].strip()
+            else:
+                sn, sd = content, ""
+            emit_transition_lines(out, indent, sn, sd)
+            continue
+        # 其它舞台提示跳过
+        if line.startswith('【') and line.endswith('】'):
+            continue
+        narration.append(line)
+
+    if not narration:
+        return out, i
+
+    # 先尽量塞左栏；放得下就单栏（无右栏、无阶段切换），放不下才溢到右栏。
+    k = _split_capacity_index(narration)
+    left, right = narration[:k], narration[k:]
+
+    # 左栏阶段：split_left_narrator（屏幕 split_say_left，左栏即活动 say，逐字显示）。
+    # 每个源行内部再按标点切块逐次点击，源行之间 \n 换行。
+    _emit_split_column(out, indent, left, 'split_left_narrator')
+
+    if right:
+        # 左栏装不下，溢出部分进右栏。左栏内容由 split_say_left 屏幕在运行时把
+        # （已翻译的）what 存进 _split_left_text，再切右栏活动 say —— 不在这里写
+        # 中文字面量，否则英文模式下右栏阶段左栏会变回中文。
+        _emit_split_column(out, indent, right, 'split_right_narrator')
+
+    return out, i
+
+def emit_rightpage_block(lines, start_i, end_line, indent="    "):
+    """右侧Split Extended大文本框：只占右半屏的单栏文本框，逐行点击累积；
+    每页最多 _SPLIT_COL_CAPACITY_LINES 视觉行，装不下的从"下一页"继续——
+    下一页 = 新的一句 say（清掉上一页内容、从头开始），其余行 extend 累积。
+    返回 (output_lines, new_index)。"""
+    out = []
+    i = start_i
+    narration = []
+    while i < end_line and i < len(lines):
+        line = lines[i].strip()
+        i += 1
+        if '右侧Split Extended大文本框结束' in line:
+            break
+        if not line:
+            continue
+        tm = re.match(r'^【转场[：:](.+?)】$', line)
+        if tm:
+            content = tm.group(1).strip()
+            pm = re.search(r'。', content)
+            if pm:
+                sn, sd = content[:pm.start()].strip(), content[pm.end():].strip()
+            else:
+                sn, sd = content, ""
+            emit_transition_lines(out, indent, sn, sd)
+            continue
+        if line.startswith('【') and line.endswith('】'):
+            continue
+        narration.append(line)
+
+    if not narration:
+        return out, i
+
+    page_first = True   # 该源行是否为某页第一行（第一行用 say 清屏，其余 extend）
+    used = 0
+    for ln in narration:
+        ln = ln.strip()
+        if not ln:
+            continue
+        v = _visual_lines(ln)
+        if not page_first and used + v > _SPLIT_COL_CAPACITY_LINES:
+            page_first = True   # 这一页装不下了 → 翻页
+            used = 0
+        # 每个源行 = 一句干净文本；标点逐句点击由运行时 {w} 处理。翻页/换行以源行为单位。
+        if page_first:
+            out.append(f'{indent}split_right_page_narrator {format_dialogue(ln)}')
+            page_first = False
+        else:
+            out.append(f'{indent}extend {format_dialogue(chr(92) + "n" + ln)}')
+        used += v
+
+    return out, i
+
+def emit_char_dialogue(char_var, dialogue, indent, comment=None):
+    """生成一行角色对话，处理 【锁定操作Ns】。
+
+    带锁定时：先 show 一个 modal 的 op_lock 屏幕（zorder 高、吃掉所有点击）N 秒，
+    再正常说这句话——文本框照常显示且保持可见，但玩家在 N 秒内无法点击前进。
+    op_lock 到点自动隐藏。（不用 {nw}+硬暂停：那会让文本框在暂停期间消失。）
+    """
+    cleaned, lock = extract_lock(dialogue)
+    out = []
+    if comment:
+        out.append(f'{indent}## {comment}')
+    if lock:
+        out.append(f'{indent}show screen op_lock({lock})')
+        out.append(f'{indent}{char_var} {format_dialogue(cleaned)}')
+        # 一旦推进过这句（等满 N 秒、或 ctrl 快进），立刻收掉锁，避免 op_lock
+        # 残留到后面几句继续吃点击。
+        out.append(f'{indent}hide screen op_lock')
+    else:
+        out.append(f'{indent}{char_var} {format_dialogue(cleaned)}')
+    return '\n'.join(out)
+
+def _emit_scene(out, indent, scene_name, bg_image, transition):
+    """发出 scene 行，并更新当前表情场景。overlay 表情场景额外把透明立绘默认
+    表情叠上去（scene <bg> + show <default> + with，三者同一个过渡一起淡入）。"""
+    global _CURRENT_EXPR_SCENE
+    # 长黑场 + 禁止点击快进：黑色叠层渐入 → 停留 → 换场后渐出，全程 hard pause。
+    if scene_name in SCENE_HARD_FADE:
+        fo, hold, fi = SCENE_HARD_FADE[scene_name]
+        out.append(f'{indent}## 长黑场过渡（不可点击快进）')
+        # 屏幕开始变暗时同步淡出当前音乐，避免到甜品店时音乐"硬切"。
+        # 新场景音乐随后由 set_scene_music(...) 淡入。
+        out.append(f'{indent}stop music fadeout {fo}')
+        out.append(f'{indent}show black zorder 100:')
+        out.append(f'{indent}    alpha 0.0')
+        out.append(f'{indent}    linear {fo} alpha 1.0')
+        out.append(f'{indent}$ hard_pause({fo})')
+        if hold:
+            out.append(f'{indent}$ hard_pause({hold})')
+        out.append(f'{indent}scene {bg_image}')
+        out.append(f'{indent}show black zorder 100:')
+        out.append(f'{indent}    alpha 1.0')
+        out.append(f'{indent}    linear {fi} alpha 0.0')
+        out.append(f'{indent}$ hard_pause({fi})')
+        out.append(f'{indent}hide black')
+        _CURRENT_EXPR_SCENE = scene_name
+        return
+    cfg = SCENE_EXPRESSIONS.get(scene_name)
+    if cfg and cfg['model'] == 'overlay':
+        if cfg.get('continue_bg'):
+            # bg（黑屏视频）从上一场景连续过来：不重新 scene —— 重新 scene 会重启视频
+            # 并经 scene_soft 的黑场"暗一下"。只把立绘 dissolve 淡入，黑屏全程连续。
+            out.append(f'{indent}show {cfg["default"]} with scene_dissolve')
+        else:
+            out.append(f'{indent}scene {bg_image}')
+            out.append(f'{indent}show {cfg["default"]}')
+            out.append(f'{indent}with {transition}')
+    else:
+        out.append(f'{indent}scene {bg_image} with {transition}')
+    _CURRENT_EXPR_SCENE = scene_name
+
+def emit_expression_change(action, indent):
+    """角色【表情】 → 切换差分。当前场景没有该表情（或非表情场景）返回 None，
+    交还给调用方按普通"舞台提示注释"处理（道具/第一人称提示等）。
+    full 场景用 scene 换整图；overlay 场景用 show 换透明立绘（共用 tag）。
+
+    过渡只作用于 master 层（renpy.transition(..., layer="master")），不碰 screens 层
+    的对话框/文字 —— 这样换表情时背景平滑溶解，但对话框和当前那句文字全程不消失、
+    不闪烁（不能用 `with`，那是全屏过渡，会把对话框和文字一起淡掉）。"""
+    cfg = SCENE_EXPRESSIONS.get(_CURRENT_EXPR_SCENE)
+    if not cfg:
+        return None
+    img = cfg['map'].get(action)
+    if not img:
+        return None
+    verb = 'show' if cfg['model'] == 'overlay' else 'scene'
+    return (f'{indent}## 表情：{action}\n'
+            f'{indent}{verb} {img}\n'
+            f'{indent}$ renpy.transition({EXPR_TRANSITION}, layer="master")')
+
+def emit_transition_lines(output, indent, scene_name, scene_desc):
+    """把一个场景转场写进 output（供 Extended 累积块内部复用）。
+    scene_desc 仅用于剧本可读性，不再写进 .rpy（开发者场景叠层已移除）。"""
+    output.append(f'{indent}## 转场：{scene_name}')
+    bg_image = SCENE_BG_MAP.get(scene_name, 'black')
+    if scene_name in SCENE_TRANSITIONS:
+        transition = SCENE_TRANSITIONS[scene_name]
+    elif scene_name in NO_TRANSITION_SCENES:
+        transition = 'None'
+    elif scene_name in CROSS_DISSOLVE_SCENES:
+        transition = 'scene_dissolve'
+    else:
+        transition = 'scene_soft'
+    _emit_scene(output, indent, scene_name, bg_image, transition)
+
+def emit_extended_segments(collected, output, indent, large=False, centered=False):
+    """Extended文本框（大/小）：保留源换行。每个源行 = 一句 say/extend，整句**干净
+    文本**——标点的「逐句点击」改由运行时 {w} 处理（见 screens.rpy 的
+    add_click_pauses）。这样翻译 ID 与源行 1:1 稳定，以后改分句逻辑再也不会冲掉翻译。
+
+    collected 是 [(speaker_or_None or '__transition__' or '__expr__', text/payload), ...]。
+    - 段落第一行 = say；其后每行 = extend "\\n…"（源换行保留为视觉换行）。
+    - 行内 【屏幕震动】：在标记处把该行拆开，中间插 `with fx_quake`；拆出的后半段
+      不另起 \\n（仍属同一句、同一视觉行）。这是唯一仍在转换期拆分的情况（震动是
+      屏幕特效，没法靠 {w} 文本标签触发）。
+    - __transition__ 结束当前段落（其后另起新 say，不带前导 \\n）。large=True 旁白
+      走 large_narrator（大文本框屏幕），否则普通 narrator。
+    """
+    # centered：居中Extended 文本框 —— 累积句子走 centered_say 屏幕、屏幕正中显示。
+    narr = 'centered_narrator ' if centered else ('large_narrator ' if large else '')
+    first_emitted = False   # 本段落是否已经发出开头 say
+
+    def emit_piece(speaker, text, lead_newline):
+        nonlocal first_emitted
+        if lead_newline:
+            text = chr(92) + 'n' + text
+        if not first_emitted:
+            if speaker:
+                output.append(f'{indent}{speaker} {format_dialogue(text)}')
+            else:
+                output.append(f'{indent}{narr}{format_dialogue(text)}')
+            first_emitted = True
+        else:
+            output.append(f'{indent}extend {format_dialogue(text)}')
+
+    for speaker, text in collected:
+        if speaker == '__expr__':
+            # 块内表情切换：master 层溶解，对话框/文字不动（见 emit_expression_change）。
+            expr_line = emit_expression_change(text, indent)
+            output.append(expr_line if expr_line else f'{indent}## {text}')
+            first_emitted = False
+            continue
+        if speaker == '__transition__':
+            scene_name, scene_desc = text
+            emit_transition_lines(output, indent, scene_name, scene_desc)
+            first_emitted = False
+            continue
+        # 行内屏幕震动：按标记拆段，段间插 with fx_quake。
+        parts = text.split('【屏幕震动】')
+        for pidx, part in enumerate(parts):
+            if pidx > 0:
+                output.append(f'{indent}with fx_quake')
+            part = part.strip()
+            if not part:
+                continue
+            # 新源行的第一段（且非段落开头）才需要前导 \n；被震动拆出的后半段
+            # （pidx>0）不加 \n，仍在同一视觉行。
+            emit_piece(speaker, part, first_emitted and pidx == 0)
 
 def convert_content_line(line, indent="    ", use_large_textbox=False):
     """Convert a single content line to Ren'Py format"""
@@ -139,6 +568,27 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     if '音乐停' in line:
         return f'{indent}$ current_music_scene = None\n{indent}stop music fadeout 1.0'
 
+    # Music fade-out marker 【音乐开始fade out】：当前音乐缓缓淡出（进入幻视前的留白）。
+    # current_music_scene 置 None，淡出后存档/读档不会把这段音乐恢复回来。
+    # 时长 4s：调这里改淡出快慢（后面 set_scene_music 切幻视曲时会接管交叉淡入）。
+    if '音乐开始fade out' in line:
+        return (f'{indent}## 音乐开始 fade out\n'
+                f'{indent}$ current_music_scene = None\n'
+                f'{indent}stop music fadeout 4.0')
+
+    # Sound-effect markers 【…音效：filename】 -> one-shot on the sound channel.
+    # Convention: the marker names the clip explicitly (base name, no extension)
+    # of a file in audio/sfx/ (all .wav). play_sfx records the clip's duration so
+    # insert_sfx_waits can bracket the following dialogue with $ wait_sfx(); the
+    # sound mixer ("音效音量") controls its volume. A 音效 marker without a named
+    # file (e.g. 【呼吸音效】, or a "…，lock text：…" cue) does not match this
+    # regex and falls through to a plain comment (no sound) by design.
+    sfx_match = re.match(r'^【(.*?音效)[：:]\s*(.+?)\s*】$', line)
+    if sfx_match:
+        sfx_label = sfx_match.group(1)
+        sfx_name = sfx_match.group(2).strip()
+        return f'{indent}## {sfx_label}：{sfx_name}\n{indent}$ play_sfx("audio/sfx/{sfx_name}.wav")'
+
     # Pause markers 【停顿：N】 -> `pause N` (N is seconds, float ok)
     # Use sparingly — for breathing room before a scene's first line, etc.
     pause_match = re.match(r'^【停顿[：:]([\d.]+)】$', line)
@@ -167,12 +617,9 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
             scene_name = content
             scene_desc = ""
 
-        # Escape quotes in scene name and description
-        scene_name_escaped = scene_name.replace('"', '\\"')
-        scene_desc_escaped = scene_desc.replace('"', '\\"')
-
-        # Generate the comment, the background scene, and the variables.
-        # Scenes without dedicated art fall back to a plain black background.
+        # Generate the comment and the background scene. Scenes without
+        # dedicated art fall back to a plain black background. _emit_scene
+        # handles overlay / hard-fade scenes.
         output_lines = [f'{indent}## 转场：{scene_name}']
         bg_image = SCENE_BG_MAP.get(scene_name, 'black')
         global _PROLOGUE_FIRST_TRANSITION_PENDING
@@ -180,18 +627,15 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
             # Main menu's bg is already what we're scening to; skip the fade.
             transition = 'None'
             _PROLOGUE_FIRST_TRANSITION_PENDING = False
+        elif scene_name in SCENE_TRANSITIONS:
+            transition = SCENE_TRANSITIONS[scene_name]
         elif scene_name in NO_TRANSITION_SCENES:
             transition = 'None'
         elif scene_name in CROSS_DISSOLVE_SCENES:
             transition = 'scene_dissolve'
         else:
             transition = 'scene_soft'
-        output_lines.append(f'{indent}scene {bg_image} with {transition}')
-        output_lines.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
-        if scene_desc:
-            output_lines.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
-        else:
-            output_lines.append(f'{indent}$ current_scene_desc = None')
+        _emit_scene(output_lines, indent, scene_name, bg_image, transition)
         return '\n'.join(output_lines)
 
     # Bad End markers - unlock ending and return to main menu (MUST be before general stage direction check)
@@ -246,14 +690,22 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     char_names = sorted(char_var_map.keys(), key=len, reverse=True)
     char_pattern = '|'.join(re.escape(name) for name in char_names)
 
-    # Character dialogue with inline stage direction
-    char_action_match = re.match(rf'^({char_pattern})【(.+?)】[：:](.*)$', line)
+    # Character dialogue with one or more leading 【…】 markers（表情 / 小字 / 道具提示）。
+    # 一句可带多个 marker，如 王霜【小声嘀咕】【小字】：…（既切表情又缩小字体）。
+    char_action_match = re.match(rf'^({char_pattern})((?:【.+?】)+)[：:](.*)$', line)
     if char_action_match:
         char_name = char_action_match.group(1)
-        action = char_action_match.group(2)
         dialogue = char_action_match.group(3).strip()
         char_var = char_var_map[char_name]
-        return f'{indent}## {action}\n{indent}{char_var} {format_dialogue(dialogue)}'
+        pre = []   # 表情切换 / 注释，放在台词前
+        for m in re.findall(r'【(.+?)】', char_action_match.group(2)):
+            if m == '小字':
+                # 把 【小字】 放回台词开头，交给 apply_small_text 缩小到行尾。
+                dialogue = '【小字】' + dialogue
+                continue
+            swap = emit_expression_change(m, indent)   # 已知表情 → master 层溶解切差分
+            pre.append(swap if swap else f'{indent}## {m}')  # 否则当舞台提示注释
+        return '\n'.join(pre + [emit_char_dialogue(char_var, dialogue, indent)])
 
     # Character dialogue (simple)
     char_match = re.match(rf'^({char_pattern})[：:](.*)$', line)
@@ -261,7 +713,7 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         char_name = char_match.group(1)
         dialogue = char_match.group(2).strip()
         char_var = char_var_map[char_name]
-        return f'{indent}{char_var} {format_dialogue(dialogue)}'
+        return emit_char_dialogue(char_var, dialogue, indent)
 
     # Section headers
     if re.match(r'^[一二三四五六七八九十]+周目', line):
@@ -317,10 +769,11 @@ def parse_choice(line):
     return None, 0, None
 
 
-def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=False):
+def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=False, centered=False):
     """
     Collect lines between markers and output them with extend for accumulating display.
     First line is normal dialogue, subsequent lines use extend to append.
+    centered=True：居中累积框（centered_say），用于 demo 结尾谢幕卡等。
     Returns (output_lines, new_index)
     """
     # Character name to variable mapping (must match convert_content_line)
@@ -370,6 +823,21 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
             collected.append(('__transition__', (scene_name, scene_desc)))
             continue
 
+        # Character dialogue with one or more leading 【…】（块内也可能出现，如夏日对视
+        # 那段 Extended 里的 王霜【面无表情】）。先于普通 char_match 判断。支持多 marker
+        # （表情 + 小字）。
+        char_action = re.match(rf'^({char_pattern})((?:【.+?】)+)[：:](.*)$', line)
+        if char_action:
+            char_var = char_var_map[char_action.group(1)]
+            dialogue = char_action.group(3).strip()
+            for m in re.findall(r'【(.+?)】', char_action.group(2)):
+                if m == '小字':
+                    dialogue = '【小字】' + dialogue
+                else:
+                    collected.append(('__expr__', m))
+            collected.append((char_var, dialogue))
+            continue
+
         # Character dialogue
         char_match = re.match(rf'^({char_pattern})[：:](.*)$', line)
         if char_match:
@@ -390,53 +858,9 @@ def collect_accumulating_block(lines, start_i, end_line, marker_end, use_large=F
     output = []
     indent = "    "
 
-    # Track whether this is the first content line (after which we use extend)
-    first_line = True
-
-    for speaker, text in collected:
-        # Handle scene transitions - they break the extend chain
-        if speaker == '__transition__':
-            scene_name, scene_desc = text
-            scene_name_escaped = scene_name.replace('"', '\\"')
-            scene_desc_escaped = scene_desc.replace('"', '\\"')
-            output.append(f'{indent}## 转场：{scene_name}')
-            bg_image = SCENE_BG_MAP.get(scene_name, 'black')
-            # Same transition-choice logic as convert_content_line.
-            # (We don't touch _PROLOGUE_FIRST_TRANSITION_PENDING here because
-            # the prologue's first 转场 is at the top of the file, never inside
-            # an accumulating textbox block.)
-            if scene_name in NO_TRANSITION_SCENES:
-                transition = 'None'
-            elif scene_name in CROSS_DISSOLVE_SCENES:
-                transition = 'scene_dissolve'
-            else:
-                transition = 'scene_soft'
-            output.append(f'{indent}scene {bg_image} with {transition}')
-            output.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
-            if scene_desc:
-                output.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
-            else:
-                output.append(f'{indent}$ current_scene_desc = None')
-            # Next dialogue line should start fresh
-            first_line = True
-            continue
-
-        # First line outputs normally, all subsequent lines use extend
-        if first_line:
-            if speaker:
-                # Character dialogue
-                output.append(f'{indent}{speaker} {format_dialogue(text)}')
-            else:
-                # Narration
-                if use_large:
-                    output.append(f'{indent}large_narrator {format_dialogue(text)}')
-                else:
-                    output.append(f'{indent}{format_dialogue(text)}')
-            first_line = False
-        else:
-            # All subsequent lines use extend
-            output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + text)}')
-
+    # Extended 文本框（大/小）现在统一走同一段落、按标点逐次点击的分句逻辑。
+    # 大文本框只是旁白用 large_narrator、屏幕用 large_say，分句规则完全一致。
+    emit_extended_segments(collected, output, indent, large=use_large, centered=centered)
     return output, i
 
 
@@ -455,33 +879,48 @@ def process_choice_content(content_lines, indent="            "):
         if not line:
             continue
 
-        # Check for Extended大文本框 markers
+        # 右侧Split（右半屏分页）必须在普通 Split 之前判断（子串包含关系）
+        if '右侧Split Extended大文本框开始' in line:
+            output.append(f"{indent}## 右侧Split Extended大文本框开始 - 右半屏分页")
+            rp_out, i = emit_rightpage_block(content_lines, i, len(content_lines), indent)
+            output.extend(rp_out)
+            output.append(f"{indent}## 右侧Split Extended大文本框结束")
+            continue
+
+        # Check for Split Extended大文本框 markers (左右分栏；必须在普通大文本框之前判断，
+        # 因为 'Split Extended大文本框开始' 包含 'Extended大文本框开始' 子串)
+        if 'Split Extended大文本框开始' in line:
+            output.append(f"{indent}## Split Extended大文本框开始 - 左右分栏")
+            split_out, i = emit_split_large_block(content_lines, i, len(content_lines), indent)
+            output.extend(split_out)
+            output.append(f"{indent}## Split Extended大文本框结束")
+            continue
+
+        # Check for Extended大文本框 markers（也走同段落标点分句，large=True）
         if 'Extended大文本框开始' in line:
-            output.append(f"{indent}## Extended大文本框开始 - accumulating large textbox")
-            # Collect lines until end marker
-            first_line = True
+            output.append(f"{indent}## Extended大文本框开始 - 大文本框分句")
+            entries = []
             while i < len(content_lines):
                 next_line = content_lines[i].strip()
                 i += 1
                 if 'Extended大文本框结束' in next_line:
-                    output.append(f"{indent}## Extended大文本框结束")
                     break
                 if not next_line:
                     continue
-                # Skip stage directions
                 if next_line.startswith('【') and next_line.endswith('】'):
                     continue
-                if first_line:
-                    output.append(f'{indent}large_narrator {format_dialogue(next_line)}')
-                    first_line = False
-                else:
-                    output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + next_line)}')
+                entries.append((None, next_line))
+            emit_extended_segments(entries, output, indent, large=True)
+            output.append(f"{indent}## Extended大文本框结束")
             continue
 
         # Check for Extended文本框 markers (non-large)
-        # All lines accumulate with extend after the first
+        # All lines accumulate with extend after the first.
+        # 【居中Extended文本框…】= 居中累积框（centered_say），如 demo 结尾谢幕卡。
         if 'Extended文本框开始' in line and 'Extended大文本框' not in line:
-            output.append(f"{indent}## Extended文本框开始 - accumulating textbox")
+            centered_box = '居中' in line
+            label = '居中Extended文本框' if centered_box else 'Extended文本框'
+            output.append(f"{indent}## {label}开始 - {'centered ' if centered_box else ''}accumulating textbox")
             # Character name to variable mapping
             char_var_map = {
                 '王霜': 'wangshuang',
@@ -499,35 +938,25 @@ def process_choice_content(content_lines, indent="            "):
             char_names = sorted(char_var_map.keys(), key=len, reverse=True)
             char_pattern = '|'.join(re.escape(name) for name in char_names)
 
-            first_line = True
+            # 收集块内所有行，再交给 emit_extended_segments 做"同段落标点分句"；
+            # 行内 【屏幕震动】保留在对话里由分句逻辑处理。
+            entries = []
             while i < len(content_lines):
                 next_line = content_lines[i].strip()
                 i += 1
                 if 'Extended文本框结束' in next_line:
-                    output.append(f"{indent}## Extended文本框结束")
                     break
                 if not next_line:
                     continue
                 if next_line.startswith('【') and next_line.endswith('】'):
                     continue
-                # Check for character dialogue
                 char_match = re.match(rf'^({char_pattern})[：:](.*)$', next_line)
                 if char_match:
-                    char_name = char_match.group(1)
-                    dialogue = char_match.group(2).strip()
-                    char_var = char_var_map[char_name]
-                    if first_line:
-                        output.append(f'{indent}{char_var} {format_dialogue(dialogue)}')
-                        first_line = False
-                    else:
-                        output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + dialogue)}')
+                    entries.append((char_var_map[char_match.group(1)], char_match.group(2).strip()))
                 else:
-                    # Narration
-                    if first_line:
-                        output.append(f'{indent}{format_dialogue(next_line)}')
-                        first_line = False
-                    else:
-                        output.append(f'{indent}extend {format_dialogue(chr(92) + "n" + next_line)}')
+                    entries.append((None, next_line))
+            emit_extended_segments(entries, output, indent, centered=centered_box)
+            output.append(f"{indent}## {label}结束")
             continue
 
         # Check for 居中文本框 markers
@@ -608,6 +1037,24 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
 
         # Check for accumulating block markers (【Extended文本框开始】 or 【Extended大文本框开始】)
         # These use extend to accumulate text with each click
+        # 右侧Split（右半屏分页）必须在普通 Split 之前判断
+        # （'右侧Split...开始' 含 'Split...开始' 子串）。
+        if '右侧Split Extended大文本框开始' in line:
+            output.append("    ## 右侧Split Extended大文本框开始 - 右半屏分页")
+            rp_out, i = emit_rightpage_block(lines, i, end_line)
+            output.extend(rp_out)
+            output.append("    ## 右侧Split Extended大文本框结束")
+            continue
+
+        # Split Extended大文本框（左右分栏）必须在普通大文本框之前判断
+        # （'Split Extended大文本框开始' 含 'Extended大文本框开始' 子串）。
+        if 'Split Extended大文本框开始' in line:
+            output.append("    ## Split Extended大文本框开始 - 左右分栏")
+            split_out, i = emit_split_large_block(lines, i, end_line)
+            output.extend(split_out)
+            output.append("    ## Split Extended大文本框结束")
+            continue
+
         if 'Extended大文本框开始' in line:
             output.append("    ## Extended大文本框开始 - accumulating large textbox")
             accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended大文本框结束', use_large=True)
@@ -616,10 +1063,12 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             continue
 
         if 'Extended文本框开始' in line and 'Extended大文本框' not in line:
-            output.append("    ## Extended文本框开始 - accumulating textbox")
-            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended文本框结束', use_large=False)
+            centered_box = '居中' in line
+            label = '居中Extended文本框' if centered_box else 'Extended文本框'
+            output.append(f"    ## {label}开始 - {'centered ' if centered_box else ''}accumulating textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended文本框结束', use_large=False, centered=centered_box)
             output.extend(accumulated)
-            output.append("    ## Extended文本框结束")
+            output.append(f"    ## {label}结束")
             continue
 
         # Check for large textbox markers (non-combined, single line mode)
@@ -806,8 +1255,9 @@ def convert_prologue(lines, start_line, end_line):
     # Arm the seamless-handoff flag; the first 【转场：...】 we see in this
     # section will emit `with None` to avoid a fade-through-black on the
     # main-menu→prologue boundary (where the bg is already the same video).
-    global _PROLOGUE_FIRST_TRANSITION_PENDING
+    global _PROLOGUE_FIRST_TRANSITION_PENDING, _CURRENT_EXPR_SCENE
     _PROLOGUE_FIRST_TRANSITION_PENDING = True
+    _CURRENT_EXPR_SCENE = None
 
     output = []
     output.append("## prologue.rpy")
@@ -856,6 +1306,24 @@ def convert_prologue(lines, start_line, end_line):
             continue
 
         # Check for accumulating block markers
+        # 右侧Split（右半屏分页）必须在普通 Split 之前判断
+        # （'右侧Split...开始' 含 'Split...开始' 子串）。
+        if '右侧Split Extended大文本框开始' in line:
+            output.append("    ## 右侧Split Extended大文本框开始 - 右半屏分页")
+            rp_out, i = emit_rightpage_block(lines, i, end_line)
+            output.extend(rp_out)
+            output.append("    ## 右侧Split Extended大文本框结束")
+            continue
+
+        # Split Extended大文本框（左右分栏）必须在普通大文本框之前判断
+        # （'Split Extended大文本框开始' 含 'Extended大文本框开始' 子串）。
+        if 'Split Extended大文本框开始' in line:
+            output.append("    ## Split Extended大文本框开始 - 左右分栏")
+            split_out, i = emit_split_large_block(lines, i, end_line)
+            output.extend(split_out)
+            output.append("    ## Split Extended大文本框结束")
+            continue
+
         if 'Extended大文本框开始' in line:
             output.append("    ## Extended大文本框开始 - accumulating large textbox")
             accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended大文本框结束', use_large=True)
@@ -864,10 +1332,12 @@ def convert_prologue(lines, start_line, end_line):
             continue
 
         if 'Extended文本框开始' in line and 'Extended大文本框' not in line:
-            output.append("    ## Extended文本框开始 - accumulating textbox")
-            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended文本框结束', use_large=False)
+            centered_box = '居中' in line
+            label = '居中Extended文本框' if centered_box else 'Extended文本框'
+            output.append(f"    ## {label}开始 - {'centered ' if centered_box else ''}accumulating textbox")
+            accumulated, i = collect_accumulating_block(lines, i, end_line, 'Extended文本框结束', use_large=False, centered=centered_box)
             output.extend(accumulated)
-            output.append("    ## Extended文本框结束")
+            output.append(f"    ## {label}结束")
             continue
 
         # Check for large textbox markers
@@ -1002,7 +1472,7 @@ def main():
     )
     args = parser.parse_args()
 
-    with open(r'X:\GameDev\AOL_afterstory\main_script_raw.txt', 'r', encoding='utf-8') as f:
+    with open(os.path.join(_ROOT, 'main_script_raw.txt'), 'r', encoding='utf-8') as f:
         lines = [line.rstrip('\n') for line in f.readlines()]
 
     if args.check_unmapped:
@@ -1019,27 +1489,30 @@ def main():
     print(f"  Route 2: lines {boundaries['route2'][0]+1}-{boundaries['route2'][1]+1}")
     print(f"  Route 3: lines {boundaries['route3'][0]+1}-{boundaries['route3'][1]}")
 
+    # insert_sfx_waits is a no-op where there are no play_sfx lines, so it is
+    # safe to apply to every route (prologue + route1/2/3).
+
     # Prologue
-    prologue = convert_prologue(lines, boundaries['prologue'][0], boundaries['prologue'][1])
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\prologue.rpy', 'w', encoding='utf-8') as f:
+    prologue = insert_sfx_waits(convert_prologue(lines, boundaries['prologue'][0], boundaries['prologue'][1]))
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'prologue.rpy'), 'w', encoding='utf-8') as f:
         f.write(prologue)
     print("Prologue converted!")
 
     # Route 1
-    route1 = convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1)
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\route1.rpy', 'w', encoding='utf-8') as f:
+    route1 = insert_sfx_waits(convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1))
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'route1.rpy'), 'w', encoding='utf-8') as f:
         f.write(route1)
     print("Route 1 converted!")
 
     # Route 2
-    route2 = convert_route(lines, boundaries['route2'][0], boundaries['route2'][1], "route2_start", 2)
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\route2.rpy', 'w', encoding='utf-8') as f:
+    route2 = insert_sfx_waits(convert_route(lines, boundaries['route2'][0], boundaries['route2'][1], "route2_start", 2))
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'route2.rpy'), 'w', encoding='utf-8') as f:
         f.write(route2)
     print("Route 2 converted!")
 
     # Route 3
-    route3 = convert_route(lines, boundaries['route3'][0], boundaries['route3'][1], "route3_start", 3)
-    with open(r'X:\GameDev\AOL_afterstory\game\scripts\route3.rpy', 'w', encoding='utf-8') as f:
+    route3 = insert_sfx_waits(convert_route(lines, boundaries['route3'][0], boundaries['route3'][1], "route3_start", 3))
+    with open(os.path.join(_ROOT, 'game', 'scripts', 'route3.rpy'), 'w', encoding='utf-8') as f:
         f.write(route3)
     print("Route 3 converted!")
 

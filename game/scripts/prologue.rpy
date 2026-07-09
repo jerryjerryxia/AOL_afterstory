@@ -21,8 +21,6 @@ label route1_prologue:
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，Doutokutosetsu，Shinsou no reijou，Gaidankousetsu
     ## 转场：无色透明多面体
     scene bg_polyhedron_video with None
-    $ current_scene_name = "无色透明多面体"
-    $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "一颗无色透明的多面体在无垠黑暗中幽幽地闪着冷光。"
     extend "\n你感到心平气和，脑海里没有任何多余的问题，只是冷静地观察着你眼前唯一的光源。"
@@ -56,11 +54,15 @@ label route1_prologue:
     extend "\n——无可奉告。"
     extend "\n——真是无聊啊。"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "…"
-    extend "\n……"
-    extend "\n………"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "…"
+    ## 居中大字文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "……"
+    ## 居中大字文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "………"
+    ## 居中大字文本框结束
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "——没想到，这么快就找到你了。"
     extend "\n——我以为这种事对于现在的你来说易如反掌。"
@@ -75,16 +77,18 @@ label route1_prologue:
     extend "\n——那就当你同意了。"
     extend "\n——请自便吧。"
     ## Extended大文本框结束
-    ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "…"
-    extend "\n……"
-    extend "\n………"
-    ## Extended大文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "…"
+    ## 居中大字文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "……"
+    ## 居中大字文本框结束
+    ## 居中大字文本框开始 - centered large font textbox
+    centered_large_narrator "………"
+    ## 居中大字文本框结束
     ## 转场：黑屏
-    scene black with scene_soft
-    $ current_scene_name = "黑屏"
-    $ current_scene_desc = "就是黑屏。"
-    ## 头出水面后大吸一口气音效
+    scene bg_black_video with scene_soft
+    ## 头出水面后大吸一口气音效，lock text：out-of-water-deep-breath
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "仿佛完成了一场亘古的潜行，你轻轻浮出水面。"
     extend "\n可眼前只有一片黑暗，比你所熟知的海底更加幽深。"
@@ -92,12 +96,11 @@ label route1_prologue:
     extend "\n你模糊地记得这一点。"
     ## Extended大文本框结束
     ## Extended大文本框开始 - accumulating large textbox
-    large_narrator "失望之余，你肆意俯身漂浮，不再试图活动任何肌肉，只是慵懒地咪着双眼。你想，也许能从水下那幽暗世界里看出些什么。"
+    large_narrator "失望之余，你索性俯身漂浮，不再试图活动任何肌肉，只是慵懒地眯着双眼。你想，也许能从水下那幽暗世界里看出些什么。"
     extend "\n但终究是什么都没有。"
     extend "\n在长久的漂浮中，你渐渐忘记了消逝的体温，忘记了静脉里潺潺流动的暗红血液，忘记了你究竟为什么来到这里。"
     extend "\n你忘记了呼吸。"
     ## Extended大文本框结束
-    ## 水底泡泡上浮音效
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "都说远道而来的友人要以热情相迎。"
     extend "\n本该是这样的。"

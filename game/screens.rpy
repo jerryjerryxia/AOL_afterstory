@@ -8,10 +8,45 @@
 init offset = -1
 
 ################################################################################
+## SFX Lock Screen - blocks player input until sound channel finishes playing
+################################################################################
+
+screen sfx_lock():
+    modal True
+    timer 0.1 repeat True action Function(sfx_lock_check)
+
+init python:
+    def sfx_lock_check():
+        if not renpy.music.get_playing(channel='sound'):
+            renpy.hide_screen('sfx_lock')
+
+################################################################################
 ## 存档删除功能
 ################################################################################
 
 init python:
+    ## English boxes use the full-size font (33) and so sit a touch lower than
+    ## they did at the shrunk size; nudge the large/split boxes up in English
+    ## only. Bump EN_BOX_YSHIFT to move them further up; Chinese is untouched.
+    EN_BOX_YSHIFT = 40
+    def box_ypos(base):
+        if _preferences.language == "english":
+            return base - EN_BOX_YSHIFT
+        return base
+
+    def dialog_size():
+        """Per-language dialogue font size.
+
+        English needs more horizontal room than the same Chinese — sentences
+        stretch where 4–5 hanzi convey a clause. Shrinking the dialogue font
+        a bit in English mode prevents big monologue blocks from overflowing
+        the large_say textbox. Tweak the English value if the contrast feels
+        too aggressive.
+        """
+        if _preferences.language == "english":
+            return 27
+        return gui.text_size
+
     def delete_all_saves():
         """Delete all save files using Ren'Py's built-in functions."""
         deleted_count = 0
@@ -21,14 +56,14 @@ init python:
             deleted_count += 1
         # 没存档了，主菜单按钮回到"开始游戏"
         persistent.has_save_in_run = False
-        renpy.notify("已删除 {} 个存档".format(deleted_count))
+        renpy.notify(_("已删除 {} 个存档").format(deleted_count))
 
     def delete_persistent_data():
         """Delete all persistent data (route progress, endings, etc.)."""
         # Clear all persistent data by resetting to defaults
         persistent._clear(progress=True)
         # Notify the user
-        renpy.notify("已清除所有持久化数据，请重启游戏")
+        renpy.notify(_("已清除所有持久化数据，请重启游戏"))
         # Restart the game to apply changes
         renpy.utter_restart()
 
@@ -122,6 +157,68 @@ style prompt_text is gui_text
 ## 对话界面 - Say Screen
 ################################################################################
 
+init python:
+    ## 运行时「逐句点击」：显示时在句末标点后插入 {w}（等待点击）标签，而不是把
+    ## 分句写进源文本。好处：翻译 ID 永远是干净整句、与英文源 1:1，以后改分句规则
+    ## 再也不会冲掉翻译（这是把转换期分句改成运行时分句的核心）。
+    ## 规则（中英通吃）：
+    ##   - 。！？… 和 ASCII . ! ? 之后断句（标点留在前），等待点击；—— 之后也断；
+    ##   - 省略号不断：ASCII 连续 ≥2 个点当省略号（…/...），单个 . 当英文句号要断；
+    ##   - 句尾（后面再无实质内容）不加 {w}——say 收尾本身就等点击；
+    ##   - extend 边界（标点紧跟 Ren'Py 的 {fast} 标签）也不加 {w}：那个 {w} 会被
+    ##     {fast} 瞬显跳过（冗余），更糟的是会吞掉紧随其后的 \n 换行（split/大文本框
+    ##     里"几乎没有跨行"的元凶）。statement 边界本身就是一次点击。
+    ##   - 用于旁白和所有有名字的角色对白（point：句号/问号/感叹号/破折号处处分句）；
+    ##     只有居中大字框不分句。
+    def add_click_pauses(what):
+        if not what:
+            return what
+        STRONG = u"。！？!?…"          # 单个即断的句末标点
+        def wants_pause(rest):
+            rest = rest.lstrip()
+            if not rest or rest.startswith('{fast}'):
+                return False
+            ## 去掉文本标签（{size}/{i}/{/…} 等）后还有实质文字才断句——避免在闭合标签
+            ## 前插看不见的空 {w}（如小字行 "…——{/size}"、斜体专有名词收尾）。
+            import re as _re
+            return bool(_re.sub(r'\{[^}]*\}', '', rest).strip())
+        out = []
+        n = len(what)
+        i = 0
+        while i < n:
+            ch = what[i]
+            if ch == '.':                # ASCII 点：≥2 个=省略号不断，单个=句号断
+                j = i
+                while j < n and what[j] == '.':
+                    j += 1
+                out.append(what[i:j])
+                if j - i == 1 and wants_pause(what[j:]):
+                    out.append('{w}')
+                i = j
+                continue
+            if ch in STRONG or ch == u'—':
+                j = i + 1
+                while j < n and (what[j] in STRONG or what[j] == u'—'):
+                    j += 1
+                out.append(what[i:j])
+                if wants_pause(what[j:]):
+                    out.append('{w}')
+                i = j
+                continue
+            out.append(ch)
+            i += 1
+        return ''.join(out)
+
+    class ClickPauseCharacter(renpy.character.ADVCharacter):
+        ## 旁白/对白角色：在 __call__ 最早处把整句 what 插入 {w}（逐句点击）。
+        ## 关键——必须在 __call__ 里改，不能在 do_display 里改：ADVCharacter.__call__
+        ## 会先 `dtt = DialogueTextTags(what)` 从原文解析出 {w} 停顿点，再带着这个 dtt
+        ## 调 do_display。在 do_display 里加的 {w} 进了屏幕文本却没进 dtt，会被当成无效
+        ## 标签静默吞掉 —— 整句一次显示、完全不分句（和文字速度无关，这是之前的真 bug）。
+        ## {w} 停顿是按 dtt 拆出的独立 saybehavior 交互，逐段等点击，瞬显也照样生效。
+        def __call__(self, what, *args, **kwargs):
+            return super(ClickPauseCharacter, self).__call__(add_click_pauses(what), *args, **kwargs)
+
 screen say(who, what):
     style_prefix "say"
 
@@ -142,12 +239,6 @@ screen say(who, what):
 
     ## 快捷按钮（跳过、自动、菜单等）
     use quick_menu
-
-    ## 开发者场景信息
-    use dev_scene_info
-
-    ## 开发者音乐选择器
-    use dev_music_selector
 
 style window is default
 style say_label is default
@@ -200,6 +291,11 @@ style namebox:
 default _intro_fade_pending = False
 
 init python:
+    def _clear_demo_return_fade():
+        # 清掉主菜单入场淡入标志。必须返回 None —— 若返回非 None（如 session.pop
+        # 返回的 True），screen action 会以该值结束主菜单交互，被当成"开始游戏"。
+        renpy.session.pop("_demo_return_fade", None)
+
     def _say_intro_fade_or_halt(trans, st, at):
         if renpy.store._intro_fade_pending:
             renpy.store._intro_fade_pending = False
@@ -213,6 +309,119 @@ transform say_intro_fade:
     function _say_intro_fade_or_halt
     easein 0.6 alpha 1.0
 
+## demo 通关 reboot 回主菜单后，整屏（背景+标题+按钮）从纯黑淡入一次。
+## 出屏是 fade_to_black_long，落到黑；reboot 后主菜单本会瞬间弹出（很生硬），
+## 这里盖一层黑幕 easeout 淡出，视觉上就是主菜单从黑里缓缓浮现。
+transform _demo_return_fadein:
+    alpha 1.0
+    easeout 1.2 alpha 0.0
+
+################################################################################
+## 点击继续指示器 - CTC (click-to-continue) 打字光标（point 2）
+## ----------------------------------------------------------------
+## 一行文字打完、等待玩家点击时，在文字末尾出现一个闪烁的打字光标（竖条 ▏），
+## 亮 0.5s / 灭 0.5s 循环，像文本框里在等你继续输入。挂在 Character 的 ctc 上
+## （nestled，自动紧跟正文末尾）。
+##
+## 为什么用"竖条"而不是省略号：文字里的内联显示物是从基线往下挂的，句点 "."
+## 落在基线最底端，看起来又低又"离得远"；而占满整行高度的竖条字形天然和正文
+## 对齐。位置还想微调就改 characters.rpy 里 `define ctc = Transform("ctc_dots", …)`
+## 的 xoffset / yoffset。
+################################################################################
+
+## 光标画成一根实心竖条（不是 Text "|"——那种会被字体上沿空白拖低，长度和位置分不开）。
+## 每个 (文本框类型, 语言) 三个**互相独立**的旋钮：
+##   length：竖条高度（长度）
+##   yoff  ：上下位置。0 = 条顶和这行文字顶部齐平；往大调（正数）= 整条往下。
+##           注意：往上只能到 0（内联元素超出行顶会被裁掉、变不可见），到 0 就和正文齐了。
+##   width ：竖条粗细
+##   xoff  ：左右位置。0 = 紧贴文字末尾；往大调（正数）= 往右留空。往左只能到 0
+##           （超出文字末尾左边会被裁掉，和 yoff 同理）。
+init python:
+    _CARET_CFG = {
+        # (类型,    语言)        (length, yoff, width, xoff)
+        ("normal", "chinese"): (31, 5, 3, 0),
+        ("normal", "english"): (30, 6, 3, 6),
+        ("large",  "chinese"): (33, 5, 3, 0),
+        ("large",  "english"): (33, 5, 3, 6),
+    }
+    def _caret_size(kind):
+        def f(st, at):
+            lang = "english" if _preferences.language == "english" else "chinese"
+            length, yoff, width, xoff = _CARET_CFG[(kind, lang)]
+            ow = 2  # 黑色描边宽度（浮在亮背景上也清晰）
+            bar = Composite((width + 2 * ow, length + 2 * ow),
+                            (0, 0), Solid("#000000", xsize=width + 2 * ow, ysize=length + 2 * ow),
+                            (ow, ow), Solid(gui.text_color, xsize=width, ysize=length))
+            # 内联元素裁掉文字行框以外的部分，所以横竖都靠在「框内」摆放竖条：
+            # yoff 往下、xoff 往右（负值会被裁，下限 0）。
+            bx = max(0, xoff)
+            box_h = length + 2 * ow
+            cur = Composite((width + 2 * ow + bx, box_h), (bx, yoff), bar)
+            on = (st % 1.0) < 0.5
+            return (Transform(cur, alpha=(1.0 if on else 0.0)),
+                    ((0.5 - (st % 1.0)) if on else (1.0 - (st % 1.0))))
+        return f
+
+image ctc_dots = DynamicDisplayable(_caret_size("normal"))
+image ctc_dots_large = DynamicDisplayable(_caret_size("large"))
+
+################################################################################
+## 操作锁定屏幕 - op_lock（point 5）
+## ----------------------------------------------------------------
+## 用一个全屏按钮把"点击/回车/空格"吃掉（NullAction），让玩家在 N 秒内无法靠点击
+## 跳过文字展示或前进；但**不 modal**，所以 ctrl 快进（skip 是 keysym，不落到按钮
+## 上）依然有效。N 秒后自动隐藏。配合 convert_script.py 的 【锁定操作Ns】。
+## （"盯——"：不允许点击快速结束文字展示，但允许 ctrl 快进。）
+################################################################################
+
+screen op_lock(seconds):
+    zorder 200
+    button:
+        xfill True
+        yfill True
+        background None
+        hover_background None
+        action NullAction()
+    timer seconds action Hide("op_lock")
+
+################################################################################
+## 颤动文字标签 - {shake}...{/shake}（point 8）
+## ----------------------------------------------------------------
+## 给一段文字加持续颤动。把内容逐字替换为带 tremble 变换的内联 displayable，
+## 这样只有被包裹的文字抖动，其余文字与名字框不受影响。
+## 用法（剧本/raw script 内）：{shake}好刻薄{/shake}
+################################################################################
+
+transform tremble:
+    subpixel True
+    block:
+        ease 0.06 yoffset -2 xoffset 1
+        ease 0.06 yoffset 2 xoffset -1
+        ease 0.06 yoffset -1 xoffset -2
+        ease 0.06 yoffset 1 xoffset 2
+        repeat
+
+style tremble_char is default:
+    font gui.text_font
+    size gui.text_size
+    color gui.text_color
+    outlines gui.text_outlines
+
+init python:
+    def _shake_text_tag(tag, argument, contents):
+        new_list = []
+        for kind, text in contents:
+            if kind == renpy.TEXT_TEXT:
+                for ch in text:
+                    new_list.append(
+                        (renpy.TEXT_DISPLAYABLE, At(Text(ch, style="tremble_char"), tremble)))
+            else:
+                new_list.append((kind, text))
+        return new_list
+
+    config.custom_text_tags["shake"] = _shake_text_tag
+
 ################################################################################
 ## 大文本框界面 - Large Textbox Screen (Full-height narrative text)
 ## 居中在屏幕正中央 (1920-1520)/2=200, (1080-800)/2=140
@@ -222,7 +431,7 @@ screen large_say(who, what):
     frame:
         at say_intro_fade
         xpos 200
-        ypos 140
+        ypos box_ypos(140)
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
@@ -235,6 +444,9 @@ screen large_say(who, what):
             text_align 0.0
             xsize 1360
             font gui.text_font
+            ## Full-height box has room to spare, so keep English at the normal
+            ## gui.text_size (33) — same as the other text — instead of shrinking
+            ## it to dialog_size() (27) like the narrower boxes do.
             size gui.text_size
             color "#ffffff"
             line_spacing 10
@@ -242,12 +454,6 @@ screen large_say(who, what):
 
     ## 快捷按钮
     use quick_menu
-
-    ## 开发者场景信息
-    use dev_scene_info
-
-    ## 开发者音乐选择器
-    use dev_music_selector
 
 ################################################################################
 ## 居中文本框界面 - Centered Textbox Screen (for striking single lines)
@@ -269,19 +475,13 @@ screen centered_say(who, what):
             text_align 0.5
             xsize 1360
             font gui.text_font
-            size gui.text_size
+            size dialog_size()  # smaller in English; see init python at top
             color "#ffffff"
             line_spacing 10
             outlines gui.text_outlines
 
     ## 快捷按钮
     use quick_menu
-
-    ## 开发者场景信息
-    use dev_scene_info
-
-    ## 开发者音乐选择器
-    use dev_music_selector
 
 ################################################################################
 ## 居中大字文本框界面 - Centered Large Font Textbox Screen
@@ -297,13 +497,15 @@ screen centered_large_say(who, what):
         background None
 
         text what id "what":
-            ## Centered with larger font for dramatic effect
+            ## Centered with a much larger font — these are the prologue's
+            ## single-sentence gut-punches (疯子。/ 逃避吧！/ 瘾。). The size jump
+            ## is the whole point: make the impact land (point 1).
             xalign 0.5
             yalign 0.5
             text_align 0.5
             xsize 1360
             font gui.text_font
-            size gui.text_size + 6
+            size dialog_size() + 39  # ≈72 in CN / ≈66 in EN; see init python at top
             color "#ffffff"
             line_spacing 10
             outlines gui.text_outlines
@@ -311,11 +513,128 @@ screen centered_large_say(who, what):
     ## 快捷按钮
     use quick_menu
 
-    ## 开发者场景信息
-    use dev_scene_info
+################################################################################
+## 左右分栏大文本框 - Split Large Textbox（甜品店幻视段）
+## ----------------------------------------------------------------
+## 把大文本框分成左右两栏：先逐行点击填满左栏，再填右栏。中间留空避开王霜的头
+## （她大致在画面正中）。两栏字数由转换器按行边界尽量切平均（见 convert_script.py
+## 的 emit_split_large_block）。
+##
+## 两阶段，各阶段的"活动栏"就是带 id "what" 的那个 text —— 所以逐字速度（文字
+## 速度设置）和"单击推进下一段"在两栏里都和普通文本框一样。
+##   split_say_left ：左栏 = 活动 say（id "what"，逐字显示）。
+##   split_say_right：左栏 = 静态 _split_left_text（上阶段冻结的内容）；
+##                    右栏 = 活动 say（id "what"，逐字显示）。
+## 左栏在两阶段坐标一致（xpos 90），切换时不跳动。两栏放在 fixed 里各自定位
+## （frame 只能放单个子项，多个会乱——这是之前"前两句消失/重复"的根源）。
+################################################################################
 
-    ## 开发者音乐选择器
-    use dev_music_selector
+## 上阶段填满的左栏内容（由转换器 `$ _split_left_text = ...` 设置）
+default _split_left_text = ""
+
+## 分栏几何：左栏 90..710、右栏 1210..1830，中间 710..1210（~500px，画面正中）
+## 留给王霜的头。想调就改下面 xpos / xsize。
+style split_column_text is default:
+    font gui.text_font
+    color "#ffffff"
+    xanchor 0.0
+    yalign 0.0
+    text_align 0.0
+    line_spacing 10
+    outlines gui.text_outlines
+
+## 关键：活动 say（id "what"）和静态左栏必须渲染得**一模一样**，否则左栏在切到
+## 右栏阶段时会"变高/行距变大"。两个差异都得内联写死（style 里的设不到 say 的 what）：
+##   1. line_spacing 10 —— say 的 what 拿不到 style 里的行距（受 what_style 影响）。
+##   2. adjust_spacing False —— 逐字显示默认 adjust_spacing=True，会为"打字时宽度稳定"
+##      微调字间距，导致最终折行/高度和静态文本不一致。中文是逐字折行，关掉它不会
+##      有"打字时回流"的副作用，却能让 say 和静态左栏折行、高度完全一致。
+screen split_say_left(who, what):
+    ## 左栏阶段：左栏就是活动 say（id "what" → 逐字显示、单击推进）。
+    ## 顺手把（已翻译的）what 存进 _split_left_text，供右栏阶段静态显示——这样
+    ## 英文模式下右栏开始后，左栏仍是英文，不会变回中文。
+    ## 关键：必须用 renpy.predicting() 门控。Ren'Py 会预渲染（predict）后面的
+    ## split_say_left，预测时这个 $ 会带着「后面某个分栏块」的 what 执行，污染
+    ## _split_left_text，导致右栏阶段左栏显示成后文（例如"鼓的声音"那段反复顶替
+    ## 前文）。只在真正显示（非预测）时写入，预测不写，bug 即消。
+    ## 冻结左栏给右栏阶段静态显示：去掉 {w}（ClickPauseCharacter 给活动 what 插了
+    ## 逐句点击标签，但静态左栏已全部显示完，不需要也不能用 {w}）。
+    $ if not renpy.predicting(): store._split_left_text = what.replace("{w}", "")
+    fixed:
+        xpos 0
+        ypos box_ypos(260)
+        xsize 1920
+        ysize 760
+
+        text what id "what":
+            style "split_column_text"
+            xpos 90
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+    use quick_menu
+
+screen split_say_right(who, what):
+    ## 右栏阶段：左栏静态（已填满），右栏是活动 say（id "what" → 逐字显示）。
+    fixed:
+        xpos 0
+        ypos box_ypos(260)
+        xsize 1920
+        ysize 760
+
+        ## 左栏：已填满，静态（和 split_say_left 同坐标 + 同行距 + 同字距 + 同纵向锚点，
+        ## 切换不跳动/不上移）
+        text _split_left_text:
+            style "split_column_text"
+            xpos 90
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+        ## 右栏：活动 say，逐字显示
+        text what id "what":
+            style "split_column_text"
+            xpos 1210
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+    use quick_menu
+
+################################################################################
+## 右侧Split 大文本框 - 只占右半屏的单栏、分页（每页满 8 行翻页）
+## 比左右分栏的"右栏"略往中间推一点（xpos 1120 vs 1210），左半屏留空。
+## 想再往中间/往右挪就改下面的 xpos（越小越靠中间）。
+## 翻页由转换器控制：每页第一行是新 say（清屏），其余 extend；满 8 行就开新页。
+################################################################################
+screen split_right_page(who, what):
+    fixed:
+        xpos 0
+        ypos box_ypos(260)
+        xsize 1920
+        ysize 760
+
+        text what id "what":
+            style "split_column_text"
+            xpos 1120
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+    use quick_menu
 
 ################################################################################
 ## 快捷菜单 - Quick Menu
@@ -325,13 +644,16 @@ screen quick_menu():
     zorder 100
 
     if quick_menu:
-        hbox:
+        vbox:
             style_prefix "quick"
 
-            xalign 0.5
+            ## 竖排放在屏幕右下角（原本是横排居中底部）。
+            ## 想调位置就改 xoffset（离右边界）/ yoffset（离下边界）/ spacing（行距）。
+            xalign 1.0
             yalign 1.0
-            yoffset -10
-            spacing 20
+            xoffset -30
+            yoffset -15
+            spacing 6
 
             textbutton _("历史") action ShowMenu('history')
             textbutton _("跳过") action Skip() alternate Skip(fast=True, confirm=True)
@@ -349,12 +671,14 @@ style quick_button_text is button_text
 
 style quick_button:
     background None
+    xalign 1.0  # 竖排时每个按钮靠右对齐（贴右下角）
 
 style quick_button_text:
     size 21
     idle_color gui.idle_small_color
     hover_color gui.hover_color
     selected_color gui.selected_color
+    outlines gui.text_outlines  # 和正文一致的黑色描边，浮在画面上也清晰
 
 ################################################################################
 ## 选择支界面 - Choice Screen
@@ -395,23 +719,14 @@ style choice_button_text is default:
 ################################################################################
 
 ## 主菜单"开始游戏"被点击时的退场动画状态。
-## 注意：这套连贯衔接（主菜单→序章不切场景）只有 route1 真正受益 —— 序章首场景
-## 就是同一段多面体视频，无缝接上去。route2/route3 的 prologue 会自己 `scene X
-## with scene_soft` 切回各自的背景，所以视觉上是正常切场，没问题。
-##
 ## 动画驱动方式：用 ATL 的 `function` 轮询状态变量 _main_menu_starting。
-## 试过的失败方案：
-##   1. showif + on hide —— showif 把 displayable 从树里抽走，on hide 来不及播。
-##   2. on exit + ScreenDisplayable.set_transform_event("exit") —— 事件能 dispatch，
-##      但 screen 重新求值时 transform 实例可能被复用/重建，事件丢失或者没触发。
-## 轮询方案：每帧调用 _wait_for_main_menu_exit。变量为 False 时返回 0（"下帧再叫
-## 我"），True 时返回 None（结束 function 块，ATL 继续走下一句）。下一句开始
-## 退场动画。displayable 一直留在树里，sensitive 关掉点击。
+## showif + on_hide 在 Ren'Py 里不能驱动退场动画（条件翻假 displayable 被
+## 立刻从树里抽走）；transform_event 在 screen 重新求值时也不可靠。轮询稳。
+default _main_menu_starting = False
+
 init python:
     def _wait_for_main_menu_exit(trans, st, at):
         return None if _main_menu_starting else 0
-
-default _main_menu_starting = False
 
 ## 标题：上滑淡出。先停在 alpha=1 yoffset=0，等变量翻 True，再易出动画。
 transform menu_title_anim:
@@ -435,74 +750,78 @@ screen main_menu():
 
     style_prefix "main_menu"
 
-    ## 玩家从游戏回到主菜单后强制重启 polyhedron channel —— 走过游戏一遭
+    ## 主菜单每次 mount 都强制重启 polyhedron channel —— 走过游戏一遭后
     ## Movie/channel lifecycle 会乱，channel 显示 playing 但 Movie() 渲染成
-    ## checker board。stop+play 一遍才能让显示恢复正常。flag 用 persistent
-    ## 因为 MainMenu() action 清普通变量但保留 persistent。
+    ## checker board。原来用 persistent flag 判断 "是否需要重启"，但有些边
+    ## 角情况 flag 没被设上（比如玩家不通过 start label 也不通过 after_load
+    ## 进游戏），checker board 又冒回来。直接无脑每次 main_menu mount 就
+    ## stop+play，最稳。fresh launch 时 splashscreen 刚 play 完会被立刻 stop
+    ## +play 一遍，肉眼基本看不出来，但能保证后续永远不出 checker board。
+    ## flag 留着只是为了清，对外语义已经废弃。
     python:
-        if persistent.polyhedron_started_game:
-            try:
-                renpy.music.stop(channel="polyhedron_video")
-            except Exception:
-                pass
-            renpy.music.play(
-                "images/bg/polyhedron.webm",
-                channel="polyhedron_video", loop=True)
-            persistent.polyhedron_started_game = False
+        try:
+            renpy.music.stop(channel="polyhedron_video")
+        except Exception:
+            pass
+        renpy.music.play(
+            "images/bg/polyhedron.webm",
+            channel="polyhedron_video", loop=True)
+        persistent.polyhedron_started_game = False
 
     ## 背景：polyhedron Movie 从共享 channel 取帧，主菜单 → 序章首场景无缝。
     add "bg_polyhedron_video"
 
-    ## 暗化效果（也跟标题一起上飞）
+    ## 暗化效果（也跟标题一起淡出）
     frame at menu_title_anim:
         style "main_menu_frame"
 
-    ## 游戏标题：上滑淡出
+    ## 游戏标题：上滑淡出。按语言切换中/英标题图。
     vbox at menu_title_anim:
         xalign 0.5
-        yalign 0.3
+        yalign 0.18
 
-        text _("无休夏日综合症"):
-            size 80
-            xalign 0.5
-            color "#ffffff"
+        if _preferences.language == "english":
+            add "images/ui/titles/en_title.png" zoom 0.24 xalign 0.5
+        else:
+            add "images/ui/titles/zh_title.png" zoom 0.30 xalign 0.5
 
     ## 主菜单按钮：直接 inline，不走 `use navigation`，因为每个要带自己的 delay。
-    ## stagger = 0.06s。"开始游戏" 的 action 触发 _main_menu_starting=True 和
-    ## "exit" 事件；sensitive 在退场期间关掉所有按钮，避免误触发。
+    ## stagger = 0.06s。点击"开始游戏" → _main_menu_starting=True → 所有 transform
+    ## 同时翻动；sensitive 在退场期间关掉所有按钮，避免误触发。
     vbox:
         style_prefix "navigation"
         xpos gui.navigation_xpos
         yalign 0.5
         spacing gui.navigation_spacing
 
-        ## "通关之后做的存档" 才显示"继续游戏"，否则"开始游戏"。
-        ## has_continuable_save() 比较 max(slot_mtime) > last_route_completion_time —
-        ## 通关后旧存档还在磁盘上，但 mtime 早于 completion_time，会回到 Start。
-        ## 玩家在新周目里再存档时，mtime 比 completion_time 晚，Continue 又自动出现。
-        ## 两个按钮共用退场动画，timer 跑完后 exit_main_menu_to_game() 用同一个判断
-        ## 决定走 load 还是走 start label，避免按钮和动作不一致。
+        ## 通关之后做的存档 → 显示"继续游戏"；否则显示"开始游戏"。
+        ## has_continuable_save() 比较 max(slot_mtime) 和 last_route_completion_time，
+        ## 通关后老存档自动失效；玩家新周目存档后又自动出 Continue。
         if has_continuable_save():
             textbutton _("继续游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
         else:
             textbutton _("开始游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
         textbutton _("读取存档") action ShowMenu("load") sensitive not _main_menu_starting at menu_btn_anim(0.36)
-        textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.30)
-        textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.24)
-        textbutton _("音乐鉴赏") action ShowMenu("music_room") sensitive not _main_menu_starting at menu_btn_anim(0.18)
-        textbutton _("设置") action ShowMenu("preferences") sensitive not _main_menu_starting at menu_btn_anim(0.12)
-        textbutton _("关于") action ShowMenu("about") sensitive not _main_menu_starting at menu_btn_anim(0.06)
+        textbutton _("音乐鉴赏") action ShowMenu("music_room") sensitive not _main_menu_starting at menu_btn_anim(0.30)
+        textbutton _("设置") action ShowMenu("preferences") sensitive not _main_menu_starting at menu_btn_anim(0.24)
+        textbutton _("关于") action ShowMenu("about") sensitive not _main_menu_starting at menu_btn_anim(0.18)
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-            textbutton _("退出") action Quit(confirm=not main_menu) sensitive not _main_menu_starting at menu_btn_anim(0.0)
+            textbutton _("退出") action Quit(confirm=not main_menu) sensitive not _main_menu_starting at menu_btn_anim(0.12)
 
-    ## 时序：
-    ##   按钮 stagger: 最顶按钮 0.42s 延迟 + 0.35s 动画 = 0.77s 完成
-    ##   标题:        0.5s 完成（更早）
+    ## 时序：按钮 stagger 最顶 0.42 + 0.35 = 0.77s 完成；标题 0.5s。
     ## 再加 ~0.5s 让玩家看到纯背景视频"喘口气"，文本框再进。
+    ## timer 跑完 → 重置状态 → exit_main_menu_to_game() 决定 Continue / Start。
+    ## (exit_main_menu_to_game 内部按 has_save_in_run 选 load_most_recent_save
+    ## 或者武装 intro_fade_pending + jump_out_of_context("start")。)
     if _main_menu_starting:
-        ## 进游戏前先武装 intro 淡入标志，下一条 large_say（序章首句）会消费它一次。
         timer 1.25 action [SetVariable("_main_menu_starting", False), Function(exit_main_menu_to_game)]
+
+    ## demo 通关 reboot 回主菜单：整屏从黑淡入一次，然后清标志（只淡入这一次）。
+    ## 放在 screen 最后 = 盖在背景/标题/按钮之上；淡完由 timer 清 session 标志。
+    if renpy.session.get("_demo_return_fade"):
+        add Solid("#000000") at _demo_return_fadein
+        timer 1.25 action Function(_clear_demo_return_fade)
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
@@ -659,8 +978,6 @@ screen navigation():
             else:
                 textbutton _("开始游戏") action Start()
             textbutton _("读取存档") action ShowMenu("load")
-            textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None)
-            textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None)
             textbutton _("音乐鉴赏") action ShowMenu("music_room")
         else:
             textbutton _("历史记录") action ShowMenu("history")
@@ -754,6 +1071,14 @@ screen file_slots(title):
 
                         key "save_delete" action FileDelete(slot)
 
+            ## 删除所有存档：存档界面右上角，二次确认后删除所有存档槽。
+            ## （从主菜单移来；不碰持久进度，只删存档文件。复用设置里同名按钮的翻译。）
+            textbutton _("删除所有存档"):
+                style "delete_saves_button"
+                xalign 1.0
+                yalign 0.0
+                action Confirm(_("确定要删除所有存档吗？此操作无法撤销。"), yes=Function(delete_all_saves), no=None)
+
             hbox:
                 style_prefix "page"
                 xalign 0.5
@@ -842,6 +1167,18 @@ screen preferences():
             hbox:
                 box_wrap True
 
+                ## 语言开关只在主菜单里显示。游戏内不让换 —— 之前用
+                ## renpy.rollback 想在游戏中实时换语言，但对 large_say + extend
+                ## 的组合不可靠（rollback 没法穿过 extend 重新执行 say）。
+                ## 限制在主菜单切换，下一次 Start/Continue 之后看到的所有文字
+                ## 都是新语言渲染的，避免 in-place refresh 的所有边角情况。
+                if main_menu:
+                    vbox:
+                        style_prefix "radio"
+                        label _("语言 / Language")
+                        textbutton "中文" action Language(None)
+                        textbutton "English" action Language("english")
+
                 if renpy.variant("pc") or renpy.variant("web"):
                     vbox:
                         style_prefix "radio"
@@ -856,11 +1193,6 @@ screen preferences():
                     textbutton _("选项后继续") action Preference("after choices", "toggle")
                     textbutton _("过场后继续") action Preference("skip", "toggle")
 
-                vbox:
-                    style_prefix "check"
-                    label _("开发者模式")
-                    textbutton _("显示场景与音乐参考") action ToggleField(persistent, "dev_mode")
-
             null height 30
 
             hbox:
@@ -869,7 +1201,12 @@ screen preferences():
 
                 vbox:
                     label _("文字速度")
-                    bar value Preference("text speed")
+                    ## 文字速度滑块上限砍半：默认 range=200cps，从中点往上（~100cps+）
+                    ## 肉眼已分不出快慢、纯属浪费行程。改成 range=100，最慢端（最小值）
+                    ## 不变，最大值取原来的一半，整条滑块的有效分辨率翻倍。
+                    ## 注：逐句点击 {w} 是按 dtt 拆出的独立交互、逐段等点击，瞬显也照常
+                    ## 生效（见 ClickPauseCharacter），所以这里**不需要**限制最高速度。
+                    bar value Preference("text speed", range=100)
 
                     label _("自动前进时间")
                     bar value Preference("auto-forward time")
@@ -898,7 +1235,7 @@ screen preferences():
                     label _("存档管理")
                     textbutton _("删除所有存档"):
                         style "delete_saves_button"
-                        action Confirm("确定要删除所有存档吗？此操作无法撤销。",
+                        action Confirm(_("确定要删除所有存档吗？此操作无法撤销。"),
                             yes=Function(delete_all_saves),
                             no=None)
 
@@ -1083,28 +1420,21 @@ style history_label_text:
 ## 音乐鉴赏界面 - Music Room
 ################################################################################
 
-init python:
-    ## 定义音乐列表
-    music_tracks = [
-        {"id": "main_theme", "name": "主题曲", "file": "audio/bgm/main_theme.ogg"},
-        {"id": "peaceful", "name": "日常", "file": "audio/bgm/peaceful.ogg"},
-        {"id": "emotional", "name": "感动", "file": "audio/bgm/emotional.ogg"},
-        {"id": "ending", "name": "结局", "file": "audio/bgm/ending.ogg"},
-    ]
-
 screen music_room():
     tag menu
 
+    ## 曲目列表从 scene_music 推导（见 get_music_room_tracks）；未解锁显示 ???。
+    ## 曲子在玩家第一次听到时（set_scene_music → unlock_music）解锁。
     use game_menu(_("音乐鉴赏"), scroll="viewport"):
         style_prefix "music_room"
 
         vbox:
             spacing 15
 
-            for track in music_tracks:
+            for track in get_music_room_tracks():
                 if is_music_unlocked(track["id"]):
-                    textbutton track["name"]:
-                        action Play("music", track["file"])
+                    textbutton _(track["name"]):
+                        action Play("music", "audio/bgm/" + track["file"])
                 else:
                     textbutton "???":
                         sensitive False
@@ -1141,10 +1471,10 @@ screen about():
             label "[config.name!t]"
             text _("版本 [config.version!t]\n")
 
-            text _("在此处添加游戏介绍...\n")
+            text _("感谢游玩本Demo！\n请务必在正作继续下潜~\n")
 
             text _("制作人员：\n")
-            text _("- 策划：\n- 程序：\n- 美术：\n- 音乐：\n")
+            text _("- 制作人：Jerrix\n- 剧本：Jerrix\n- 美术：Gara、Mermo\n- 音乐：Kevin, audionautix.com, FabienC@RustedMusicStudio\n- 音效：Sirderf，soundscalpel.com，rrehl, chewiesmissus, gravitysound.studio\n- 编辑：倪佼佼\n- 程序：Jerrix\n")
 
 style about_label is gui_label
 style about_label_text is gui_label_text
@@ -1282,13 +1612,17 @@ style skip_text:
 ## 周目标题界面 - Route Title Screen
 ################################################################################
 
-screen route_title(title, subtitle=None):
-    ## 全屏显示周目标题，点击后淡出
+screen route_title(title, subtitle=None, sfx=None):
+    ## 全屏显示周目标题（"浮潜"）。出现和消失都放慢；不允许鼠标点击快进，
+    ## 只有按住 ctrl（快进/skip）才能跳过（point 3）。
+    ## sfx：可选一次性音效，在标题"完整展示"（淡入 2.2s 结束）时播放一次。
+    ## 用于落水泡泡这类需要在标题出现后、下个场景登场前播完的声音。
 
     modal True
     zorder 100
 
     default closing = False
+    default sfx_played = False
 
     ## 整个画面容器
     frame:
@@ -1317,195 +1651,43 @@ screen route_title(title, subtitle=None):
                 text subtitle:
                     style "route_subtitle_text"
 
-    ## 点击任意处开始淡出
+    ## 标题完整展示（淡入 2.2s 结束）时播放一次性音效。play_sfx 同时记下结束时刻，
+    ## 供调用处的 wait_sfx 等它播完再让下个场景登场。sfx_played 防止 closing 重渲染
+    ## 时重复触发。
+    if sfx and not sfx_played:
+        timer 2.2 action [SetScreenVariable("sfx_played", True), Function(play_sfx, sfx)]
+
+    ## 自走时序：淡入(2.2s) + 停留 → 到点自动开始淡出。没有任何鼠标点击区域，
+    ## 因此点击不会快进；modal 也挡住了对下层的点击。
     if not closing:
-        button:
-            xfill True
-            yfill True
-            action SetScreenVariable("closing", True)
+        timer 4.0 action SetScreenVariable("closing", True)
 
-    ## 淡出完成后关闭
+    ## 淡出(2.2s)完成后关闭
     if closing:
-        timer 0.8 action Return()
+        timer 2.2 action Return()
 
+    ## 唯一的快进通道：按住 ctrl 进入 skip 时立即结束。轮询 is_skipping()，
+    ## 因为 skip 是全局键映射，不依赖本 screen 的可聚焦元件。
+    timer 0.05 repeat True action If(renpy.is_skipping(), true=Return(), false=NullAction())
+
+## 出现/消失都放慢（point 3）：原来 1.0 / 0.8，现在 2.2 / 2.2。
 transform route_title_fadein:
     alpha 0.0
-    ease 1.0 alpha 1.0
+    easein 2.2 alpha 1.0
 
 transform route_title_fadeout:
-    ease 0.8 alpha 0.0
+    easeout 2.2 alpha 0.0
 
 style route_title_text:
-    font gui.title_card_font
+    font gui.text_font
     size 120
     color "#ffffff"
     xalign 0.5
     outlines [(4, "#000000", 0, 0)]
 
 style route_subtitle_text:
-    font gui.title_card_font
+    font gui.text_font
     size 48
     color "#cccccc"
     xalign 0.5
     outlines [(2, "#000000", 0, 0)]
-
-################################################################################
-## 开发者场景信息显示 - Developer Scene Info Display
-################################################################################
-
-## Whether the scene description popup is visible
-default scene_desc_visible = False
-
-screen dev_scene_info():
-    ## Only show if we have a scene name and developer mode is enabled
-    if current_scene_name and persistent.dev_mode:
-        # Top-left corner panel
-        frame:
-            style "dev_scene_frame"
-            xalign 0.0
-            yalign 0.0
-            xoffset 10
-            yoffset 10
-
-            vbox:
-                spacing 5
-
-                # Scene name button - click to toggle description
-                textbutton current_scene_name:
-                    style "dev_scene_name"
-                    action ToggleVariable("scene_desc_visible")
-
-                # Scene description - shown when clicked
-                if scene_desc_visible and current_scene_desc:
-                    null height 5
-                    frame:
-                        style "dev_scene_desc_frame"
-                        text "[current_scene_desc]":
-                            style "dev_scene_desc_text"
-
-style dev_scene_frame:
-    background Solid("#1a1a2acc")
-    padding (15, 10, 15, 10)
-    xmaximum 500
-
-style dev_scene_name is button:
-    background None
-    hover_background None
-
-style dev_scene_name_text is button_text:
-    size 20
-    color "#00ccff"
-    hover_color "#66ddff"
-
-style dev_scene_desc_frame:
-    background Solid("#222233cc")
-    padding (10, 8, 10, 8)
-    xmaximum 470
-
-style dev_scene_desc_text:
-    size 16
-    color "#cccccc"
-    line_spacing 4
-
-################################################################################
-## 开发者音乐选择器 - Developer Music Selector
-################################################################################
-
-## Current scene music ID (set by script)
-default current_music_scene = None
-
-## Whether the music selector panel is expanded
-default dev_music_expanded = False
-
-screen dev_music_selector():
-    ## Only show if we have a valid scene and developer mode is enabled
-    if current_music_scene and current_music_scene in scene_music and persistent.dev_mode:
-        $ scene_data = scene_music[current_music_scene]
-        $ tracks = scene_data["tracks"]
-        $ scene_label = scene_data["label"]
-
-        # Top-right corner panel
-        frame:
-            style "dev_music_frame"
-            xalign 1.0
-            yalign 0.0
-            xoffset -10
-            yoffset 10
-
-            vbox:
-                spacing 5
-
-                # Header with toggle button
-                hbox:
-                    spacing 10
-                    if dev_music_expanded:
-                        textbutton "BGM参考菜单":
-                            style "dev_music_header"
-                            action SetVariable("dev_music_expanded", False)
-                    else:
-                        textbutton "BGM参考菜单 v":
-                            style "dev_music_header"
-                            action SetVariable("dev_music_expanded", True)
-
-                # Expanded track list
-                if dev_music_expanded:
-                    null height 5
-                    for track in tracks:
-                        $ is_selected = (persistent.scene_music_selections.get(current_music_scene) == track["id"])
-                        if is_selected:
-                            textbutton track["name"]:
-                                style "dev_music_track_selected"
-                                action Function(select_and_play_music, current_music_scene, track["id"])
-                        else:
-                            textbutton track["name"]:
-                                style "dev_music_track"
-                                action Function(select_and_play_music, current_music_scene, track["id"])
-
-                    null height 5
-                    hbox:
-                        spacing 15
-                        textbutton "■ 停止":
-                            style "dev_music_control"
-                            action Stop("music", fadeout=1.0)
-
-style dev_music_frame:
-    background Solid("#1a1a2acc")
-    padding (15, 10, 15, 10)
-    xmaximum 450
-
-style dev_music_header is button_text:
-    size 18
-    color "#ffcc00"
-    hover_color "#ffffff"
-
-style dev_music_track is button:
-    background Solid("#333333aa")
-    hover_background Solid("#555555aa")
-    padding (10, 5, 10, 5)
-    xfill True
-
-style dev_music_track_text is button_text:
-    size 16
-    color "#cccccc"
-    hover_color "#ffffff"
-
-style dev_music_track_selected is button:
-    background Solid("#4a5a3aaa")
-    hover_background Solid("#5a6a4aaa")
-    padding (10, 5, 10, 5)
-    xfill True
-
-style dev_music_track_selected_text is button_text:
-    size 16
-    color "#aaffaa"
-    hover_color "#ffffff"
-
-style dev_music_control is button:
-    background Solid("#552222aa")
-    hover_background Solid("#773333aa")
-    padding (8, 4, 8, 4)
-
-style dev_music_control_text is button_text:
-    size 14
-    color "#ffaaaa"
-    hover_color "#ffffff"

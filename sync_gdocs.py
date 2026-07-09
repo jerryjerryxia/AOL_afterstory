@@ -20,9 +20,11 @@ from googleapiclient.discovery import build
 # Configuration
 SCOPES = ['https://www.googleapis.com/auth/documents']
 DOCUMENT_ID = '1zwxsyE2W0buSmJcK_pYYGkjbZTNUcqBkBpAw2DOnd7w'
-LOCAL_FILE = r'X:\GameDev\AOL_afterstory\main_script_raw.txt'
-CREDENTIALS_FILE = r'X:\GameDev\AOL_afterstory\client_secret_584057721624-0m919ufs37dl7m4vdvcq5b22r83tf6vj.apps.googleusercontent.com.json'
-TOKEN_FILE = r'X:\GameDev\AOL_afterstory\token.json'
+# Paths derived from this script's own directory (rename-proof).
+_ROOT = os.path.dirname(os.path.abspath(__file__))
+LOCAL_FILE = os.path.join(_ROOT, 'main_script_raw.txt')
+CREDENTIALS_FILE = os.path.join(_ROOT, 'client_secret_584057721624-0m919ufs37dl7m4vdvcq5b22r83tf6vj.apps.googleusercontent.com.json')
+TOKEN_FILE = os.path.join(_ROOT, 'token.json')
 
 
 def get_credentials():
