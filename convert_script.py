@@ -209,6 +209,28 @@ def extract_lock(dialogue):
     cleaned = LOCK_RE.sub('', dialogue).strip()
     return cleaned, m.group(1)
 
+_SFX_TEXT_STMT_RE = re.compile(r'''^([a-z_]+ )?["']''')
+
+def insert_sfx_waits(script_text):
+    """在 `$ play_sfx(…)` 之后、下一句正文/对白之前插入 `$ wait_sfx()`。
+
+    正文/对白 = say / extend / 旁白（行首是「小写标识符 + 引号」或直接引号）。
+    转场（## 注释、scene、$ 赋值、call screen 等）都不算正文会被跳过 —— 所以
+    音效与碎裂等转场仍然同步触发，转场之后的第一句正文才阻塞等音效播完。
+    """
+    lines = script_text.split('\n')
+    out = []
+    pending = False
+    for line in lines:
+        if pending and _SFX_TEXT_STMT_RE.match(line.strip()):
+            indent = line[:len(line) - len(line.lstrip())]
+            out.append(f'{indent}$ wait_sfx()')
+            pending = False
+        out.append(line)
+        if 'play_sfx(' in line:
+            pending = True
+    return '\n'.join(out)
+
 # 左栏（固定高度）的视觉行容量与每视觉行字数估算。左栏约 800px 高、620px 宽、
 # 字号 33 + 行距 10 ≈ 每视觉行 ~46px → ~16 行；620px / ~33px(一个汉字) ≈ 每视觉行
 # ~18 字。改这两个数 = 改"左栏装多少才溢到右栏"。
@@ -552,6 +574,27 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
     # Music stop markers 【音乐停】 or 【音效和音乐停】
     if '音乐停' in line:
         return f'{indent}$ current_music_scene = None\n{indent}stop music fadeout 1.0'
+
+    # Music fade-out marker 【音乐开始fade out】：当前音乐缓缓淡出（进入幻视前的留白）。
+    # current_music_scene 置 None，淡出后存档/读档不会把这段音乐恢复回来。
+    # 时长 4s：调这里改淡出快慢（后面 set_scene_music 切幻视曲时会接管交叉淡入）。
+    if '音乐开始fade out' in line:
+        return (f'{indent}## 音乐开始 fade out\n'
+                f'{indent}$ current_music_scene = None\n'
+                f'{indent}stop music fadeout 4.0')
+
+    # Sound-effect markers 【…音效：filename】 -> one-shot on the sound channel.
+    # Convention: the marker names the clip explicitly (base name, no extension)
+    # of a file in audio/sfx/ (all .wav). play_sfx records the clip's duration so
+    # insert_sfx_waits can bracket the following dialogue with $ wait_sfx(); the
+    # sound mixer ("音效音量") controls its volume. A 音效 marker without a named
+    # file (e.g. 【呼吸音效】, or a "…，lock text：…" cue) does not match this
+    # regex and falls through to a plain comment (no sound) by design.
+    sfx_match = re.match(r'^【(.*?音效)[：:]\s*(.+?)\s*】$', line)
+    if sfx_match:
+        sfx_label = sfx_match.group(1)
+        sfx_name = sfx_match.group(2).strip()
+        return f'{indent}## {sfx_label}：{sfx_name}\n{indent}$ play_sfx("audio/sfx/{sfx_name}.wav")'
 
     # Pause markers 【停顿：N】 -> `pause N` (N is seconds, float ok)
     # Use sparingly — for breathing room before a scene's first line, etc.
@@ -1455,26 +1498,29 @@ def main():
     print(f"  Route 2: lines {boundaries['route2'][0]+1}-{boundaries['route2'][1]+1}")
     print(f"  Route 3: lines {boundaries['route3'][0]+1}-{boundaries['route3'][1]}")
 
+    # insert_sfx_waits is a no-op where there are no play_sfx lines, so it is
+    # safe to apply to every route (prologue + route1/2/3).
+
     # Prologue
-    prologue = convert_prologue(lines, boundaries['prologue'][0], boundaries['prologue'][1])
+    prologue = insert_sfx_waits(convert_prologue(lines, boundaries['prologue'][0], boundaries['prologue'][1]))
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\prologue.rpy', 'w', encoding='utf-8') as f:
         f.write(prologue)
     print("Prologue converted!")
 
     # Route 1
-    route1 = convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1)
+    route1 = insert_sfx_waits(convert_route(lines, boundaries['route1'][0], boundaries['route1'][1], "route1_start", 1))
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route1.rpy', 'w', encoding='utf-8') as f:
         f.write(route1)
     print("Route 1 converted!")
 
     # Route 2
-    route2 = convert_route(lines, boundaries['route2'][0], boundaries['route2'][1], "route2_start", 2)
+    route2 = insert_sfx_waits(convert_route(lines, boundaries['route2'][0], boundaries['route2'][1], "route2_start", 2))
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route2.rpy', 'w', encoding='utf-8') as f:
         f.write(route2)
     print("Route 2 converted!")
 
     # Route 3
-    route3 = convert_route(lines, boundaries['route3'][0], boundaries['route3'][1], "route3_start", 3)
+    route3 = insert_sfx_waits(convert_route(lines, boundaries['route3'][0], boundaries['route3'][1], "route3_start", 3))
     with open(r'X:\GameDev\AOL_afterstory\game\scripts\route3.rpy', 'w', encoding='utf-8') as f:
         f.write(route3)
     print("Route 3 converted!")

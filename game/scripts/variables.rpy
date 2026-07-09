@@ -147,6 +147,49 @@ init python:
             return
         renpy.pause(t, hard=True)
 
+    ##########################################################################
+    ## 音效（SFX）子系统
+    ## 转换器在音效标记处发 `$ play_sfx(...)`，在下一句正文前发 `$ wait_sfx()`，
+    ## 让音效与转场同步、其后的正文等音效播完再出现。
+    ##########################################################################
+
+    import wave as _wave
+    _sfx_dur_cache = {}
+    _sfx_end_time = [0.0]   # 最近一次音效的预计结束时刻（绝对游戏时钟，秒）
+
+    def _sfx_duration(path):
+        """读 wav 头算时长（秒），缓存。读不到就当 0（不阻塞）。"""
+        if path not in _sfx_dur_cache:
+            d = 0.0
+            try:
+                f = renpy.open_file(path)
+                w = _wave.open(f)
+                d = w.getnframes() / float(w.getframerate())
+                w.close()
+            except Exception:
+                d = 0.0
+            _sfx_dur_cache[path] = d
+        return _sfx_dur_cache[path]
+
+    def play_sfx(path):
+        """播放音效（sound 声道，受音效音量控制），并记下预计结束时刻供 wait_sfx 用。
+        转换器在音效标记处发 `$ play_sfx(...)`，在下一句正文前发 `$ wait_sfx()`。"""
+        renpy.sound.play(path)
+        _sfx_end_time[0] = time.time() + _sfx_duration(path)
+
+    def wait_sfx():
+        """阻塞到最近一次音效播完，再放行下一句正文。用「剩余时长」做**单次有界**
+        hard 暂停：自动结束（绝不卡死），中间转场已耗掉的时间会自动扣除，所以音效
+        与碎裂等转场仍同步、转场之后的正文才补等剩余部分。hard=True → 等待期间
+        点击/快进都跳不过，「音效播完前不出现下段文字」。
+        自动化测试（renpy ... test）里 hard 暂停无法被 advance 跳过，会吃满
+        `advance until` 的超时预算 → 直接跳过等待。正常游玩照常等。"""
+        if getattr(renpy.game.args, "command", None) == "test":
+            return
+        remaining = _sfx_end_time[0] - time.time()
+        if remaining > 0:
+            renpy.pause(remaining, hard=True)
+
     def unlock_route(route_num):
         """标记周目完成"""
         if route_num == 1:
@@ -224,7 +267,11 @@ init python:
                 break
 
     def set_scene_music(scene_id):
-        """设置当前场景音乐并自动播放"""
+        """设置当前场景音乐并播放（每个场景固定一首）。
+
+        if_changed=True：若该曲已在播放则不重启 —— 这样主菜单的 glitter_in_the_dark
+        能无缝续进序章（序章首曲也是它），玩家点"开始游戏"前后不断。
+        """
         global current_music_scene
         store.current_music_scene = scene_id
 
@@ -235,15 +282,21 @@ init python:
         if not tracks:
             return
 
-        # Check if we have a saved selection for this scene
-        saved_track_id = persistent.scene_music_selections.get(scene_id)
-
-        if saved_track_id:
-            # Play the saved selection
-            for track in tracks:
-                if track["id"] == saved_track_id:
-                    renpy.music.play("audio/bgm/" + track["file"], fadeout=1.0, fadein=1.0)
-                    return
-
-        # No saved selection - play first track
-        renpy.music.play("audio/bgm/" + tracks[0]["file"], fadeout=1.0, fadein=1.0)
+        track = tracks[0]
+        ## 玩家第一次听到这首曲子 → 在音乐鉴赏里解锁它。
+        unlock_music(track["id"])
+        ## 可选无缝循环（秒）：loop=回跳点，end=每遍结束点（切掉尾部静音，避免回跳爆 pop）。
+        filename = "audio/bgm/" + track["file"]
+        clauses = []
+        if "end" in track:
+            clauses.append("to %s" % track["end"])
+        if "loop" in track:
+            clauses.append("loop %s" % track["loop"])
+        ## 响度匹配增益（线性）。见 music_config.rpy 的 volume 注释。glitter 的前缀
+        ## 必须与 config.main_menu_music 逐字一致，否则 if_changed 会重启主菜单曲。
+        if "volume" in track:
+            clauses.append("volume %s" % track["volume"])
+        if clauses:
+            filename = "<%s>%s" % (" ".join(clauses), filename)
+        renpy.music.play(filename,
+                         fadeout=1.0, fadein=1.0, if_changed=True)

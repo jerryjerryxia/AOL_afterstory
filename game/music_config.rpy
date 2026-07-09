@@ -11,35 +11,32 @@ init python:
         "prologue_1": {
             "label": "序章 - 深海场景",
             "tracks": [
-                {"id": "gaidankousetsu", "name": "Gaidankousetsu", "file": "Gaidankousetsu.mp3"},
-                {"id": "electric_sea", "name": "Electric Sea", "file": "ElectricSea.mp3"},
-                {"id": "padmasana", "name": "Padmasana", "file": "Padmasana.mp3"},
-                {"id": "doutokutosetsu", "name": "Doutokutosetsu", "file": "Doutokutosetsu.mp3"},
-                {"id": "shinsou_no_reijou", "name": "Shinsou no reijou", "file": "Shinsou_no_reijou.mp3"},
+                ## id 保持 "polyhedron" 稳定 —— 它是 persistent.music_unlocked 的解锁键。
+                ## volume 0.737 必须与 options.rpy 的 config.main_menu_music 前缀一致，
+                ## 否则 if_changed 认作两首曲子、主菜单→序章会重启这首（破坏无缝续播）。
+                {"id": "polyhedron", "name": "Glitter in the Dark", "file": "glitter_in_the_dark.ogg", "volume": 0.737},
             ]
         },
         "route1_scene1": {
-            "label": "一周目 场景1 - 沙滩",
+            "label": "一周目 场景1 - 沙滩（夏日对视）",
             "tracks": [
-                {"id": "shianchu", "name": "Shianchu", "file": "Shianchu.mp3"},
-                {"id": "jellyfish", "name": "Jellyfish", "file": "Jellyfish.mp3"},
-                {"id": "shine_of_silver_thaw", "name": "Shine of Silver Thaw", "file": "Shine_of_Silver_Thaw.mp3"},
-                {"id": "sunflower_of_night", "name": "The sunflower of the night", "file": "The_sunflower_of_the_night.mp3"},
-                {"id": "running_waters", "name": "Running Waters", "file": "RunningWaters.mp3"},
+                ## loop 115→230s：230s 处波形与 115s 逐样本一致（ncc=1.0），无缝。
+                ## end=230 让每遍在 230s 收尾，不播到 232s 的静音尾巴（否则回跳会爆 pop）。
+                ## -12.5 LUFS（≈原生）—— 配到 -16 听感过轻。
+                {"id": "beach_v3", "name": "Endless Summer Time", "file": "endless_summer_time.ogg", "loop": 115.0, "end": 230.0, "volume": 0.995},
             ]
         },
         "route1_scene2": {
             "label": "一周目 对话场景",
             "tracks": [
-                {"id": "moonlit_reverie", "name": "Moonlit Reverie", "file": "Moonlit_Reverie.mp3"},
-                {"id": "hoyoku", "name": "Hoyoku", "file": "Hoyoku.mp3"},
-                {"id": "sutekimeppou", "name": "Sutekimeppou", "file": "Sutekimeppou.mp3"},
+                ## -18 LUFS（+1dB）—— 低音重，配到 -16 听感过响，压到 -18 刚好。
+                {"id": "420", "name": "420", "file": "420.ogg", "volume": 1.118},
             ]
         },
         "route1_hallucination": {
             "label": "一周目 幻视场景",
             "tracks": [
-                {"id": "beautiful_daughter", "name": "Beautiful Daughter", "file": "Beautiful_Daughter.mp3"},
+                {"id": "beautiful_daughter", "name": "Beautiful Daughter", "file": "Beautiful_Daughter.mp3", "volume": 0.438},
             ]
         },
         "route1_deepspace": {

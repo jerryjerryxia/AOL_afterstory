@@ -38,6 +38,7 @@ label route1_start:
     $ renpy.transition(Dissolve(0.2), layer="master")
     wangshuang "哦，不好意思，太阳在那儿。"
     ## 玻璃破碎音效：glass-smash-normalized
+    $ play_sfx("audio/sfx/glass-smash-normalized.wav")
     ## 转场：夏日对视
     scene bg_summergaze with scene_soft
     $ current_scene_name = "夏日对视"
@@ -49,6 +50,7 @@ label route1_start:
     ## 表情：大笑
     scene summergaze_laugh
     $ renpy.transition(Dissolve(0.2), layer="master")
+    $ wait_sfx()
     wangshuang "你看，太阳。"
     ahe "嗯，太阳。"
     wangshuang "金色的，温暖的，让人舒适而安心的太阳，它就在那里。"
@@ -458,7 +460,9 @@ label route1_start:
             ahe "那你还让我吃？"
             wangshuang "毕竟这也是实验的一部分——阿鹤，你喜欢红色还是蓝色？"
 
-    ## 音乐开始fade out
+    ## 音乐开始 fade out
+    $ current_music_scene = None
+    stop music fadeout 4.0
     ahe "蓝色啊，怎么了？"
     wangshuang "你看——"
     ## 转场：甜品店对视4
@@ -588,6 +592,7 @@ label route1_start:
     $ current_scene_desc = "就是黑屏"
     ## 剥落完成后，黑屏
     ## 水底泡泡上浮音效：Bubbles_10
+    $ play_sfx("audio/sfx/Bubbles_10.wav")
     ## 转场：粉红屏
     scene black with scene_soft
     $ current_scene_name = "粉红屏"
@@ -595,6 +600,7 @@ label route1_start:
     $ current_music_scene = None
     stop music fadeout 1.0
     ## Extended文本框开始 - accumulating textbox
+    $ wait_sfx()
     ahe "阿霜？"
     extend "\n你在吗？"
     extend "\n你要是再装消失的话我就要去死咯？"
