@@ -644,13 +644,16 @@ screen quick_menu():
     zorder 100
 
     if quick_menu:
-        hbox:
+        vbox:
             style_prefix "quick"
 
-            xalign 0.5
+            ## 竖排放在屏幕右下角（原本是横排居中底部）。
+            ## 想调位置就改 xoffset（离右边界）/ yoffset（离下边界）/ spacing（行距）。
+            xalign 1.0
             yalign 1.0
-            yoffset -10
-            spacing 20
+            xoffset -30
+            yoffset -15
+            spacing 6
 
             textbutton _("历史") action ShowMenu('history')
             textbutton _("跳过") action Skip() alternate Skip(fast=True, confirm=True)
@@ -668,12 +671,14 @@ style quick_button_text is button_text
 
 style quick_button:
     background None
+    xalign 1.0  # 竖排时每个按钮靠右对齐（贴右下角）
 
 style quick_button_text:
     size 21
     idle_color gui.idle_small_color
     hover_color gui.hover_color
     selected_color gui.selected_color
+    outlines gui.text_outlines  # 和正文一致的黑色描边，浮在画面上也清晰
 
 ################################################################################
 ## 选择支界面 - Choice Screen
@@ -776,15 +781,15 @@ screen main_menu():
     frame at menu_title_anim:
         style "main_menu_frame"
 
-    ## 游戏标题：上滑淡出
+    ## 游戏标题：上滑淡出。按语言切换中/英标题图。
     vbox at menu_title_anim:
         xalign 0.5
-        yalign 0.3
+        yalign 0.18
 
-        text _("无休夏日综合症"):
-            size 80
-            xalign 0.5
-            color "#ffffff"
+        if _preferences.language == "english":
+            add "images/ui/titles/en_title.png" zoom 0.24 xalign 0.5
+        else:
+            add "images/ui/titles/zh_title.png" zoom 0.30 xalign 0.5
 
     ## 主菜单按钮：直接 inline，不走 `use navigation`，因为每个要带自己的 delay。
     ## stagger = 0.06s。"开始游戏" 的 action 触发 _main_menu_starting=True 和
@@ -1161,6 +1166,18 @@ screen preferences():
             hbox:
                 box_wrap True
 
+                ## 语言开关只在主菜单里显示。游戏内不让换 —— 之前用
+                ## renpy.rollback 想在游戏中实时换语言，但对 large_say + extend
+                ## 的组合不可靠（rollback 没法穿过 extend 重新执行 say）。
+                ## 限制在主菜单切换，下一次 Start/Continue 之后看到的所有文字
+                ## 都是新语言渲染的，避免 in-place refresh 的所有边角情况。
+                if main_menu:
+                    vbox:
+                        style_prefix "radio"
+                        label _("语言 / Language")
+                        textbutton "中文" action Language(None)
+                        textbutton "English" action Language("english")
+
                 if renpy.variant("pc") or renpy.variant("web"):
                     vbox:
                         style_prefix "radio"
@@ -1188,7 +1205,12 @@ screen preferences():
 
                 vbox:
                     label _("文字速度")
-                    bar value Preference("text speed")
+                    ## 文字速度滑块上限砍半：默认 range=200cps，从中点往上（~100cps+）
+                    ## 肉眼已分不出快慢、纯属浪费行程。改成 range=100，最慢端（最小值）
+                    ## 不变，最大值取原来的一半，整条滑块的有效分辨率翻倍。
+                    ## 注：逐句点击 {w} 是按 dtt 拆出的独立交互、逐段等点击，瞬显也照常
+                    ## 生效（见 ClickPauseCharacter），所以这里**不需要**限制最高速度。
+                    bar value Preference("text speed", range=100)
 
                     label _("自动前进时间")
                     bar value Preference("auto-forward time")
@@ -1217,7 +1239,7 @@ screen preferences():
                     label _("存档管理")
                     textbutton _("删除所有存档"):
                         style "delete_saves_button"
-                        action Confirm("确定要删除所有存档吗？此操作无法撤销。",
+                        action Confirm(_("确定要删除所有存档吗？此操作无法撤销。"),
                             yes=Function(delete_all_saves),
                             no=None)
 
@@ -1460,10 +1482,10 @@ screen about():
             label "[config.name!t]"
             text _("版本 [config.version!t]\n")
 
-            text _("在此处添加游戏介绍...\n")
+            text _("感谢游玩本Demo！\n请务必在正作继续下潜~\n")
 
             text _("制作人员：\n")
-            text _("- 策划：\n- 程序：\n- 美术：\n- 音乐：\n")
+            text _("- 制作人：Jerrix\n- 剧本：Jerrix\n- 美术：Gara、Mermo\n- 音乐：Kevin, audionautix.com, FabienC@RustedMusicStudio\n- 音效：Sirderf，soundscalpel.com，rrehl, chewiesmissus, gravitysound.studio\n- 编辑：倪佼佼\n- 程序：Jerrix\n")
 
 style about_label is gui_label
 style about_label_text is gui_label_text
