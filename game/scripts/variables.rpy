@@ -8,7 +8,6 @@
 
 define config.developer = True  # 启用开发者模式
 default persistent.test_mode = True  # 测试模式开关
-default persistent.dev_mode = config.developer  # 开发者模式：显示左上角场景参考和右上角音乐菜单
 
 ## 玩家是否进入过游戏（用于判断 game→menu 回流时要不要强制重启 polyhedron channel）。
 ## 用 persistent 是因为 MainMenu() action 会清掉普通的游戏变量但保留 persistent。
@@ -72,9 +71,6 @@ default persistent.route3_complete = False  # 三周目完成
 ## 音乐解锁状态（用于音乐鉴赏）
 default persistent.music_unlocked = set()
 
-## 开发者音乐选择（场景ID -> 曲目ID）
-default persistent.scene_music_selections = {}
-
 ################################################################################
 ## 游戏内变量（每次游戏重置）
 ################################################################################
@@ -87,10 +83,6 @@ default madness = 0
 
 ## 关键选择记录
 default choice_flags = {}
-
-## 当前场景转场信息（开发者用）
-default current_scene_name = None  # 场景名称，如 "两座冰雕2"
-default current_scene_desc = None  # 场景描述
 
 ################################################################################
 ## 存档加载后恢复音乐
@@ -251,20 +243,6 @@ init python:
     ##########################################################################
     ## 开发者音乐选择器函数
     ##########################################################################
-
-    def select_and_play_music(scene_id, track_id):
-        """选择并播放场景音乐"""
-        if scene_id not in scene_music:
-            return
-
-        # Save selection
-        persistent.scene_music_selections[scene_id] = track_id
-
-        # Find track and play
-        for track in scene_music[scene_id]["tracks"]:
-            if track["id"] == track_id:
-                renpy.music.play("audio/bgm/" + track["file"], fadeout=1.0, fadein=1.0)
-                break
 
     def set_scene_music(scene_id):
         """设置当前场景音乐并播放（每个场景固定一首）。

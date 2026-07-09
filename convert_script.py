@@ -397,17 +397,6 @@ def emit_char_dialogue(char_var, dialogue, indent, comment=None):
         out.append(f'{indent}{char_var} {format_dialogue(cleaned)}')
     return '\n'.join(out)
 
-def _emit_dev_overlay(output, indent, scene_name, scene_desc):
-    """MAIN 特有：dev overlay（screens.rpy）读取 current_scene_name/desc。
-    每次转场后写入这两个变量，让开发者叠层显示当前场景名与描述。"""
-    scene_name_escaped = scene_name.replace('"', '\\"')
-    output.append(f'{indent}$ current_scene_name = "{scene_name_escaped}"')
-    if scene_desc:
-        scene_desc_escaped = scene_desc.replace('"', '\\"')
-        output.append(f'{indent}$ current_scene_desc = "{scene_desc_escaped}"')
-    else:
-        output.append(f'{indent}$ current_scene_desc = None')
-
 def _emit_scene(out, indent, scene_name, bg_image, transition):
     """发出 scene 行，并更新当前表情场景。overlay 表情场景额外把透明立绘默认
     表情叠上去（scene <bg> + show <default> + with，三者同一个过渡一起淡入）。"""
@@ -468,7 +457,7 @@ def emit_expression_change(action, indent):
 
 def emit_transition_lines(output, indent, scene_name, scene_desc):
     """把一个场景转场写进 output（供 Extended 累积块内部复用）。
-    MAIN 保留 dev overlay：转场后写 current_scene_name/desc（开发者叠层用）。"""
+    scene_desc 仅用于剧本可读性，不再写进 .rpy（开发者场景叠层已移除）。"""
     output.append(f'{indent}## 转场：{scene_name}')
     bg_image = SCENE_BG_MAP.get(scene_name, 'black')
     if scene_name in SCENE_TRANSITIONS:
@@ -480,7 +469,6 @@ def emit_transition_lines(output, indent, scene_name, scene_desc):
     else:
         transition = 'scene_soft'
     _emit_scene(output, indent, scene_name, bg_image, transition)
-    _emit_dev_overlay(output, indent, scene_name, scene_desc)
 
 def emit_extended_segments(collected, output, indent, large=False, centered=False):
     """Extended文本框（大/小）：保留源换行。每个源行 = 一句 say/extend，整句**干净
@@ -626,8 +614,7 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
 
         # Generate the comment and the background scene. Scenes without
         # dedicated art fall back to a plain black background. _emit_scene
-        # handles overlay / hard-fade scenes; _emit_dev_overlay keeps MAIN's
-        # dev overlay (current_scene_name/desc) working.
+        # handles overlay / hard-fade scenes.
         output_lines = [f'{indent}## 转场：{scene_name}']
         bg_image = SCENE_BG_MAP.get(scene_name, 'black')
         global _PROLOGUE_FIRST_TRANSITION_PENDING
@@ -644,7 +631,6 @@ def convert_content_line(line, indent="    ", use_large_textbox=False):
         else:
             transition = 'scene_soft'
         _emit_scene(output_lines, indent, scene_name, bg_image, transition)
-        _emit_dev_overlay(output_lines, indent, scene_name, scene_desc)
         return '\n'.join(output_lines)
 
     # Bad End markers - unlock ending and return to main menu (MUST be before general stage direction check)

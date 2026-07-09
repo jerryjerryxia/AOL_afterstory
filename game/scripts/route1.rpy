@@ -9,8 +9,6 @@ label route1_start:
     ## 脸入水后冒泡泡的音效，lock text：face-down-bubble
     ## 转场：虚空对视
     show void default with scene_dissolve
-    $ current_scene_name = "虚空对视"
-    $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来，阿鹤。"
     ahe "倒不如去死。"
     wangshuang "哦？有趣的提议，为什么呢？"
@@ -41,8 +39,6 @@ label route1_start:
     $ play_sfx("audio/sfx/glass-smash-normalized.wav")
     ## 转场：夏日对视
     scene bg_summergaze with scene_soft
-    $ current_scene_name = "夏日对视"
-    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，场景里依然只有王霜。"
     ## 场景背景里的黑暗碎裂，变为完美夏日，金色的沙滩和蔚蓝的海，只是一个人都没有
     ## 场景音乐参考风格1：樹氷の輝き (Shine of Silver Thaw)，夜の向日葵（The sunflower of the night），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu
     ## 场景音乐参考风格2：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
@@ -221,8 +217,6 @@ label route1_start:
     wangshuang "你看就是了。"
     ## 转场：张目对日pt1
     scene bg_sungaze with scene_soft
-    $ current_scene_name = "张目对日pt1"
-    $ current_scene_desc = "王霜右手对着太阳比出OK的姿势，阳光透过拇指和食指构成的细小的孔洞透了过来"
     ## 王霜右手轻轻握拳，阳光透过其中细小的孔洞透了过来
     ahe "什么都看不到。"
     wangshuang "凑近啊你，看仔细点！"
@@ -246,8 +240,6 @@ label route1_start:
     ## 右侧Split Extended大文本框结束
     ## 转场：白屏
     scene bg_white_video with scene_soft
-    $ current_scene_name = "白屏"
-    $ current_scene_desc = "就是白屏。"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "去找啊，否则这疼痛就永远不会有尽头。"
     extend "\n去别处，就是这样。"
@@ -272,8 +264,6 @@ label route1_start:
         linear 2.0 alpha 0.0
     $ hard_pause(2.0)
     hide black
-    $ current_scene_name = "甜品店对视1"
-    $ current_scene_desc = "基础款，暖色，桌上没有团子，背景完全正常"
     ## 一家疑似餐厅的背景，又是王霜和阿鹤面对面坐着
     ## 场景音乐风格参考：怎么说呢...虽然台词可能对抗感比较强，但这种场景还是得要一些 lo-fi 小调啊...Moonlit Reverie - 好lofi，Hoyoku, Sutekimeppou - 这几首物语的 ost 也很有内味儿嗷
     $ set_scene_music("route1_scene2")
@@ -342,8 +332,6 @@ label route1_start:
     ahe "..."
     ## 转场：甜品店对视2
     scene bg_dessertgaze2 with scene_dissolve
-    $ current_scene_name = "甜品店对视2"
-    $ current_scene_desc = "暖色，桌上出现了团子，背景完全正常"
     ## 表情：默认
     scene dessert2_default
     $ renpy.transition(Dissolve(0.2), layer="master")
@@ -372,8 +360,6 @@ label route1_start:
     wangshuang "哦，对，团子有得是，千万别客气，请吧——"
     ## 转场：甜品店对视3
     scene bg_dessertgaze3 with scene_dissolve
-    $ current_scene_name = "甜品店对视3"
-    $ current_scene_desc = "暖色，桌上的团子被吃了几口，背景完全正常"
     ahe "明明刚说完不想我染上。"
     wangshuang "{i}KAS{/i}生理上确实不怎么成瘾啊。"
     wangshuang "但太多人会陷进它能让人看到的那些东西，最后心里离不开了，所以你才能在安息地见到那么多活死人。"
@@ -467,8 +453,6 @@ label route1_start:
     wangshuang "你看——"
     ## 转场：甜品店对视4
     scene bg_dessertgaze4 with scene_dissolve
-    $ current_scene_name = "甜品店对视4"
-    $ current_scene_desc = "背景变成了蓝色调，桌上团子吃了几口，背景有微弱的波纹纹理"
     ## 蓝色波纹特效，并逐渐加入更多色彩
     ## 场景音乐参考：进入幻视，所以虽然场景没变音乐也要切换https://audionautix.com/Music/Beautiful%20Daughter.mp3 (Jason Shaw)，
     $ set_scene_music("route1_hallucination")
@@ -491,8 +475,6 @@ label route1_start:
     ## Split Extended大文本框开始 - 左右分栏
     ## 转场：甜品店对视5
     scene bg_dessertgaze5 with scene_dissolve
-    $ current_scene_name = "甜品店对视5"
-    $ current_scene_desc = "背景蓝色调，桌上团子吃了几口，背景有更明显的波纹纹理，王霜变得半透明，表情是默认表情"
     split_left_narrator "王霜的微笑越发邪魅——她逐渐成为了一个微笑。"
     extend "\n成瘾。糖分子的洪流只消一个浪头就使你深深染上了挥之不去的瘾。"
     extend "\n渴望的源头冲动的源头向往的源头发现了。"
@@ -527,8 +509,6 @@ label route1_start:
     ## Extended大文本框开始 - accumulating large textbox
     ## 转场：甜品店对视6
     scene bg_dessertgaze6 with scene_dissolve
-    $ current_scene_name = "甜品店对视6"
-    $ current_scene_desc = "背景蓝色调，桌上团子吃了几口，背景有更加明显的波纹纹理。从这里开始王霜消失了，但是是和世界融为一体的感觉。"
     large_narrator "更多思绪已无意义，一如时间。"
     extend "\n溶解在蓝色空间里的凉爽糖分让你浑身的燥热与恶意消减了大半，你置身一片透明的海域里，又像是漂浮在空洞的宇宙空间中。"
     extend "\n一切都是许可的，这样的冲动从未如此强烈过。"
@@ -541,8 +521,6 @@ label route1_start:
     ## Extended大文本框结束
     ## 转场：甜品店对视6.51
     scene bg_dessertgaze6_51 with scene_dissolve
-    $ current_scene_name = "甜品店对视6.51"
-    $ current_scene_desc = None
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "你的知能越是提升，它的样貌就越发模糊，模糊的面容中只显露出一抹依稀可见的残酷笑容，仿佛在嘲讽你的徒劳。"
     extend "\n但你已经满足了，由内而外地满足了，在饱满的感官刺激中感到一阵——疲劳？"
@@ -564,8 +542,6 @@ label route1_start:
     extend "\n和你所熟知的呕吐不同，你吐出的只有色彩。"
     ## 转场：甜品店对视7
     scene bg_dessertgaze7 with scene_dissolve
-    $ current_scene_name = "甜品店对视7"
-    $ current_scene_desc = "背景蓝色调和暖色调掺半，是那种正常色彩顺着阿鹤呕吐为中心开始向四周扩散的感觉，桌上团子吃了几口，背景里的波纹纹理消失，王霜完全消失"
     large_narrator "呕吐物与面前桌子接触的瞬间，水蓝的桌面便恢复了木材的颜色。你吐出的色彩越多，这令人沮丧的还原就越发提速，转眼便侵蚀了大半个视野。"
     extend "\n色彩还原的地方，水面般摇曳的空间停止了动态，原本随处可见的王霜的微笑也随着视野的复原逐渐消失了。"
     ## Extended大文本框结束
@@ -579,8 +555,6 @@ label route1_start:
     ## Extended大文本框开始 - accumulating large textbox
     ## 转场：甜品店对视8
     scene bg_dessertgaze8 with scene_dissolve
-    $ current_scene_name = "甜品店对视8"
-    $ current_scene_desc = "这里就是以7为基础，逐渐碎裂然后转入黑屏的过程，我想就在周围背景里加一些裂纹就行。"
     large_narrator "还原之后的世界仿佛脱了水般脆弱不堪，单是目光扫过就让其表面生出了细小的裂痕。"
     extend "\n更多裂痕。"
     extend "\n直到周身的一切如同一副缺乏保养的老旧油画那样一片片剥落。"
@@ -588,15 +562,11 @@ label route1_start:
     ## Extended大文本框结束
     ## 转场：黑屏
     scene bg_black_video with scene_soft
-    $ current_scene_name = "黑屏"
-    $ current_scene_desc = "就是黑屏"
     ## 剥落完成后，黑屏
     ## 水底泡泡上浮音效：Bubbles_10
     $ play_sfx("audio/sfx/Bubbles_10.wav")
     ## 转场：粉红屏
     scene black with scene_soft
-    $ current_scene_name = "粉红屏"
-    $ current_scene_desc = "就是粉红屏。"
     $ current_music_scene = None
     stop music fadeout 1.0
     ## Extended文本框开始 - accumulating textbox
@@ -703,8 +673,6 @@ label route1_start:
     ## Extended大文本框开始 - accumulating large textbox
     ## 转场：灰屏
     scene black with scene_soft
-    $ current_scene_name = "灰屏"
-    $ current_scene_desc = "就是灰屏。"
     large_narrator "仅此而已，仅此而已。"
     extend "\n她是治愈的灰，包容的灰。"
     extend "\n任何色彩倾泻其中，都只能归零的灰。"
@@ -736,8 +704,6 @@ label route1_start:
             ## 电视机关机音效
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "就是黑屏。"
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "..."
             extend "\n......"
@@ -766,8 +732,6 @@ label route1_start:
     ## 沙漠中的脚步声
     ## 转场：银白色沙漠
     scene bg_desert with scene_soft
-    $ current_scene_name = "银白色沙漠"
-    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Whispers in the Twilight - fullver, What's Left Feels Light - 怎么说呢，感觉这位 The Muun Lofi 的挺多东西味道都还挺对的，Sanpo - 迷幻电子沙漠风说的就是这个啊
     $ set_scene_music("route1_desert")
     wangshuang "喂，到了没啊？"
@@ -1008,8 +972,6 @@ label route1_start:
     ## Extended大文本框结束
     ## 转场：眼珠背景
     scene black with scene_soft
-    $ current_scene_name = "眼珠背景"
-    $ current_scene_desc = "全屏眼珠，表现方式：手拿一颗眼珠的特写"
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "每颗“沙砾”都是一颗无色透明多面体。"
     extend "\n每颗多面体里，都有一颗泛着血丝的眼珠。"
@@ -1054,8 +1016,6 @@ label route1_start:
     ## 脸入水后冒泡泡的音效
     ## 转场：虚空对视
     show void default with scene_dissolve
-    $ current_scene_name = "虚空对视"
-    $ current_scene_desc = "背景一片漆黑，场景里只有王霜和一张桌子，阿鹤第一视角看着盯着他的王霜，参考DDLC最后的莫妮卡"
     wangshuang "欢迎回来。"
     ahe "倒不如去死。"
     wangshuang "哦？为什么呢？"
@@ -1067,8 +1027,6 @@ label route1_start:
     wangshuang "当然了，我们走吧。"
     ## 转场：完美夏日
     scene black with scene_soft
-    $ current_scene_name = "完美夏日"
-    $ current_scene_desc = "金色的沙滩和蔚蓝的海，只是一个人都没有，和夏日对视的背景一致，只是没有人物。"
     ## 场景音乐参考风格：樹氷の輝き (岸部真明)，夜の向日葵（素晴日bgm），Running Waters - https://audionautix.com/Music/RunningWaters.mp3 (Jason Shaw)，Shianchu - 同场景不复用配乐的话，换成这首还挺合适的
     $ set_scene_music("route1_return")
     ## Extended大文本框开始 - accumulating large textbox
@@ -1127,14 +1085,10 @@ label route1_start:
             ahe "..."
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "就是黑屏。"
             ## 水中探头出水的音效
             wangshuang "可以睁眼了。"
             ## 转场：灰白夏日1
             scene black with scene_soft
-            $ current_scene_name = "灰白夏日1"
-            $ current_scene_desc = "完美夏日背景，但黑白配色，且一些地方长着眼睛（完美夏日差分）"
             ahe "这..."
             wangshuang "我眼中的世界——或者说，在我们来到这完美的夏日海滩之前，我眼中的世界。"
             ahe "你的灰..."
@@ -1160,8 +1114,6 @@ label route1_start:
             wangshuang "当然，回头就行。"
             ## 转场：灰白夏日2
             scene black with scene_soft
-            $ current_scene_name = "灰白夏日2"
-            $ current_scene_desc = "灰白夏日的第二版，整体构图可以类似，但因为是主角180度转身后看到的场景，所以要就旋转做出相应调整"
             ahe "门呢？"
             wangshuang "如你所见，门已经不在了。"
             ahe "回不去了吗？"
@@ -1207,8 +1159,6 @@ label route1_start:
     ## 从水中探头+大口吸气音效
     ## 转场：黑屏
     scene bg_black_video with scene_soft
-    $ current_scene_name = "黑屏"
-    $ current_scene_desc = None
 
     ## Route 1 结束
     $ unlock_route(1)

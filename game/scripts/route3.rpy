@@ -8,8 +8,6 @@ label route3_start:
     ## 头入水，气泡音效
     ## 转场：无色透明多面体
     scene bg_polyhedron_video with scene_soft
-    $ current_scene_name = "无色透明多面体"
-    $ current_scene_desc = "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
     ## 还是无色透明多面体，但这里看起来像是从水底往上看那样
     ## 场景音乐参考：Electric Sea (Buckethead), Padmasana (Buckethead)，DoutokutosetsuShinsou no reijouGaidankousetsu - 物语ost是好文化
     $ set_scene_music("route3_opening")
@@ -41,8 +39,6 @@ label route3_start:
     ## 场景重新清晰
     ## 转场：灰屏水母
     scene black with scene_soft
-    $ current_scene_name = "灰屏水母"
-    $ current_scene_desc = "灰屏，中间有一只巨大的水母。"
     ## 场景音乐参考：Shiniki - 神前晓是我爹
     $ set_scene_music("route3_shiniki")
     ## Extended大文本框开始 - accumulating large textbox
@@ -106,13 +102,9 @@ label route3_start:
     ## Extended大文本框结束
     ## 转场：黑屏
     scene bg_black_video with scene_soft
-    $ current_scene_name = "黑屏"
-    $ current_scene_desc = "就是黑屏。"
     ## 风声
     ## 转场：银白色沙漠
     scene bg_desert with scene_soft
-    $ current_scene_name = "银白色沙漠"
-    $ current_scene_desc = "夜晚的银白色沙漠，地上有很多尸骨"
     ## 场景音乐参考：Shitagokoro - 一些非常适合唠嗑的音乐
     $ set_scene_music("route3_chat")
     wangshuang "早上好。"
@@ -237,8 +229,6 @@ label route3_start:
     wangshuang "阿鹤...我累了...我们回去吧..."
     ## 转场：完美夏日
     scene black with scene_soft
-    $ current_scene_name = "完美夏日"
-    $ current_scene_desc = "金色的沙滩和蔚蓝的海，王霜在场景里。"
     ## 非常轻微的嘈杂人声
     ## 场景音乐参考风格：Jellyfish - https://audionautix.com/Music/Jellyfish.mp3  (Jason Shaw)
     $ set_scene_music("route3_jellyfish")
@@ -295,8 +285,6 @@ label route3_start:
     ## 场景逐渐开始变灰
     ## 转场：灰白夏日1
     scene black with scene_soft
-    $ current_scene_name = "灰白夏日1"
-    $ current_scene_desc = "完美夏日背景，但黑白配色，且一些地方长着眼睛（完美夏日差分）"
     "你正要开口，却见王霜从口袋里取出了另一颗一模一样的多面体，略作犹豫后把它也丢在了沙滩上。"
     "之后的一切在无言中徐徐展开。王霜在沉默中一颗接一颗地丢弃着无色透明多面体，而你则无声地观看这场盛大且无声的毁灭表演。"
     ahe "其他人不会反对吗？"
@@ -317,32 +305,22 @@ label route3_start:
     ## 扑通音效
     ## 转场：甜品店
     scene black with scene_soft
-    $ current_scene_name = "甜品店"
-    $ current_scene_desc = None
     "..."
     ## 扑通音效
     ## 转场：灰屏水母
     scene black with scene_soft
-    $ current_scene_name = "灰屏水母"
-    $ current_scene_desc = None
     "......"
     ## 扑通音效
     ## 转场：银白色沙漠
     scene bg_desert with scene_soft
-    $ current_scene_name = "银白色沙漠"
-    $ current_scene_desc = None
     "........."
     ## 扑通音效
     ## 转场：黑屏
     scene bg_black_video with scene_soft
-    $ current_scene_name = "黑屏"
-    $ current_scene_desc = None
     "......"
     ## 碎裂声
     ## 转场：灰白夏日1
     scene black with scene_soft
-    $ current_scene_name = "灰白夏日1"
-    $ current_scene_desc = None
     "..."
     ahe "你看，只要你不愿意放弃，它就又回来了。"
     wangshuang "阿鹤..."
@@ -380,8 +358,6 @@ label route3_start:
             ahe "这样...那希望...你也能找到自己的答案。"
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "就是黑屏。"
             ## Lovely Summer Time背景音乐：https://samply.app/p/zKOVrHFVD1PKSd4AyAhf?si=mhZIQjsjvpeL1K96BgcnRriTvN52
             $ set_scene_music("route3_lovely_summer")
             ## Extended大文本框开始 - 大文本框分句
@@ -394,8 +370,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：乌云压境的逝乐园
             scene black with scene_soft
-            $ current_scene_name = "乌云压境的逝乐园"
-            $ current_scene_desc = "逝乐园是一个高科技支撑的娱乐园区，可参考近未来的拉斯维加斯，这里是白天，且即将下雷雨"
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "逝乐园，大陆西南部半岛上人类智慧与欲望的结晶，此刻正从一场无声的灾变中缓慢恢复生机。"
             extend "\n天空阴沉沉的，厚重的灰色云层压得很低，一副时刻都要下雨的样子。"
@@ -463,8 +437,6 @@ label route3_start:
             ## 落水冒泡泡音效
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "就是黑屏。"
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "你步入洁白的浪花中，不假思索地开始了下潜。"
             extend "\n浅海的蔚蓝色不消多时便消失得无影无踪，深海的冷冽漆黑将你层层包裹。"
@@ -500,8 +472,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：白屏
             scene bg_white_video with scene_soft
-            $ current_scene_name = "白屏"
-            $ current_scene_desc = "就是白屏"
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "嗯..."
             extend "\n如此熟悉的感觉——在寻找失踪王霜的路上，你长久地下坠。"
@@ -512,8 +482,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：两座冰雕1
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕1"
-            $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，双眼直视前方"
             ## 场景音乐参考：Doutokutosetsu
             $ set_scene_music("route3_final")
             wangshuang "欢迎。"
@@ -537,8 +505,6 @@ label route3_start:
             ## Extended文本框结束
             ## 转场：两座冰雕2
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕2"
-            $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，王霜要突出死人微活感"
             ahe "所以说...就这样了？"
             wangshuang "你觉得呢？"
             ahe "眼珠子能动的话，其他部位总有一天也能动的吧？"
@@ -585,8 +551,6 @@ label route3_start:
             ## 电视关机音效
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "就是黑屏。"
             ## 无色透明多面体
             "Happy End(?) - 随波逐流者随波逐流"
             "又没了XD"
@@ -610,25 +574,17 @@ label route3_start:
             ahe "嗯，我明白。"
             ## 转场：逝乐园/深海
             scene black with scene_soft
-            $ current_scene_name = "逝乐园/深海"
-            $ current_scene_desc = "用逝乐园和深海背景各自剪一半拼成一张背景，用来表示阿鹤正式开始认知草拟，同时存在于“现实”和“深海”两个场景中"
             ahe "所以请你耐心地等待吧。"
             ahe "会花很长很长的时间的...大概..."
             ## 现实扭曲音效渐强
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "更多黑屏。"
             "..."
             ## 转场：白屏
             scene bg_white_video with scene_soft
-            $ current_scene_name = "白屏"
-            $ current_scene_desc = "还是白屏。"
             "......"
             ## 转场：两座冰雕2
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕2"
-            $ current_scene_desc = "阿鹤与王霜两人被冰封在一起的景象，只用画出上半身，王霜要突出死人微活感"
             "........."
             ahe "哟。我又来了。"
             wangshuang "哈欠——哦？学会快进了？"
@@ -661,8 +617,6 @@ label route3_start:
             ahe "好梦。"
             ## 转场：逝乐园
             scene black with scene_soft
-            $ current_scene_name = "逝乐园"
-            $ current_scene_desc = "就是逝乐园。"
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "哔——"
             extend "\n哔——"
@@ -681,8 +635,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：无色透明多面体
             scene bg_polyhedron_video with scene_soft
-            $ current_scene_name = "无色透明多面体"
-            $ current_scene_desc = None
             ## 很多奇怪的人声叠加在一起音效
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "啊，又是你。"
@@ -692,8 +644,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：灰白夏日
             scene black with scene_soft
-            $ current_scene_name = "灰白夏日"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "如果真要拦着我的话，直接限制权限岂不更容易些？你做起来应该不难。"
             extend "\n阿霜说她一票否了？你看，想要她永远留在那海底的，其实只有你吧。"
@@ -702,8 +652,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：逝乐园
             scene black with scene_soft
-            $ current_scene_name = "逝乐园"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "机房里黑黢黢的，但又并非完全无光。"
             extend "\n房间一角，几块显示屏上光线忽明忽暗，由成千上万的服务器和运算单元构成的高墙上也闪烁着各色微光，仿佛夏夜的星空。"
@@ -714,8 +662,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：银白色沙漠
             scene bg_desert with scene_soft
-            $ current_scene_name = "银白色沙漠"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "喂。至少把鼠标和键盘留给我啊。"
             extend "\n内存问题已经解决了，你还有什么事？为什么不继续跑？"
@@ -726,8 +672,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：逝乐园
             scene black with scene_soft
-            $ current_scene_name = "逝乐园"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "这是试图内化心理视像算法V27.3.9的第三十五年。这是你说的，我可没心思盯着时间。"
             extend "\n卡又不够了？整个逝乐园半岛的库存都已经被我们拿下了，还是不够？地皮也所剩无几了吧？"
@@ -739,8 +683,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：无色透明多面体
             scene bg_polyhedron_video with scene_soft
-            $ current_scene_name = "无色透明多面体"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "嗯...更多的硅该去哪儿找呢？彗星？"
             extend "\n你的意思是，我们需要派人上天捕捉彗星？"
@@ -791,8 +733,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：两座冰雕3
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕3"
-            $ current_scene_desc = "但是冰已经融化了。"
             ## 电火花音效
             wangshuang "啊啊——什么东西？！"
             ahe "早上好。"
@@ -822,8 +762,6 @@ label route3_start:
             ## 冰封音效
             ## 转场：两座冰雕2
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕2"
-            $ current_scene_desc = None
             ahe "哦，动手很迅速啊，我的蜂哥。"
             wangshuang "所以你们在我睡觉期间到底经历了什么..."
             ahe "我们关系还挺好的。应该说，没了它，我应该还要花更多时间才能完全内化你那无字天书。"
@@ -840,16 +778,12 @@ label route3_start:
             wangshuang "比起我的想法，你要不还是先关心关心自己吧，阿鹤。"
             ## 转场：两座冰雕4
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕4"
-            $ current_scene_desc = "阿鹤看起来正在迅速失温，肤色发青。"
             ahe "嗯...你说得对。"
             ahe "——虽然也很想随波逐流下去，但我现在没有这么做的余裕啊，蜂巢。"
             ahe "一旦被这冰彻底冻住身体的话，无论是谁都会立刻陷入永无止境的美梦吧。"
             ahe "但不幸的是，我现在正好能很好地应付这一招。"
             ## 转场：两座冰雕5
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕5"
-            $ current_scene_desc = "阿鹤全身散发出光芒，整个人亮了起来，身边的冰再次融化了。"
             wangshuang "喔，好亮。"
             ahe "一般亮吧，总比你让我看太阳的时候要好受。"
             wangshuang "别这么记仇啊！"
@@ -862,8 +796,6 @@ label route3_start:
             wangshuang "喂——"
             ## 转场：超新星
             scene black with scene_soft
-            $ current_scene_name = "超新星"
-            $ current_scene_desc = "阿鹤全身散发出如同太阳般的光芒，视野内的冰全部消融，只剩王霜浮在空中。"
             wangshuang "啊！好亮！"
             wangshuang "喂！阿鹤，听得见我说话吗？"
             wangshuang "阿鹤？！你他妈到底想干嘛！"
@@ -883,8 +815,6 @@ label route3_start:
             ## 冰封音效
             ## 转场：两座冰雕5
             scene black with scene_soft
-            $ current_scene_name = "两座冰雕5"
-            $ current_scene_desc = "俩人又被冻上了，王霜最开始表情非常吃惊，但马上就冷静了。阿鹤身上还是略微发光。"
             wangshuang "诶？"
             ahe "嘿嘿，这特效能给多少分？"
             wangshuang "你是准备在蜂巢冻住你之前先把自己烧死吗？"
@@ -922,8 +852,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：黑屏
             scene bg_black_video with scene_soft
-            $ current_scene_name = "黑屏"
-            $ current_scene_desc = "就是黑屏"
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "——重启失败——"
             extend "\n——强制重启——"
@@ -943,8 +871,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：超新星
             scene black with scene_soft
-            $ current_scene_name = "超新星"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "草拟重启的瞬间，你的全身由内而外燃起了熊熊烈焰。认知草拟之所以能够在Succumus构成的蜂巢心智中长时间运转，是因为有成千上万的其他意识为草拟主体分担了海量算力需求。"
             extend "\n但在方才的草拟重启后，并发处理已经关闭，想要整套系统不在计算量过载中烧毁，只能立刻把计算量分布到其他机器上——但由于现行规则要求顺序处理，每次算力分布只会动用一台机器，而海量的计算会在顷刻间将其点燃。"
@@ -994,8 +920,6 @@ label route3_start:
             ## Extended大文本框结束
             ## 转场：崩解
             scene black with scene_soft
-            $ current_scene_name = "崩解"
-            $ current_scene_desc = "用超新星为基础，展现整个草拟世界逐渐崩溃的场景。"
             ## 警报音效
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "[[SYS] Killing process 'renderer' to free memory... FAILED"
@@ -1044,8 +968,6 @@ label route3_start:
             ## 白噪音
             ## 转场：白屏
             scene bg_white_video with scene_soft
-            $ current_scene_name = "白屏"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "..."
             extend "\n......"
@@ -1054,8 +976,6 @@ label route3_start:
             ## 冰封音效
             ## 转场：无色透明多面体1
             scene black with scene_soft
-            $ current_scene_name = "无色透明多面体1"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "一颗无色透明的多面体在无垠的黑暗中幽幽地闪着冷光。"
             extend "\n你感到心平气和，脑海里没有任何多余的问题，只是冷静地观察着你眼前唯一的光源。"
@@ -1068,8 +988,6 @@ label route3_start:
             ## 电视关机音效
             ## 转场：逝乐园
             scene black with scene_soft
-            $ current_scene_name = "逝乐园"
-            $ current_scene_desc = None
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "阿鹤让你无论看到什么都不要动手，而你自然不会让他如愿——这是自你们认识的第一天起就从未发生过的事。"
             extend "\n在他全力以赴地燃烧自己的意识、即将尸骨无存永远消失的前一刻，你用仅存的权限造出了最后一点冰，把他封在了里面。"
