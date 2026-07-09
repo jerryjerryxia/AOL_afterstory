@@ -42,25 +42,57 @@ image bg_summergaze = Transform("images/bg/summergaze.png", xysize=(1920, 1080),
 image bg_sungaze = Transform("images/bg/sungaze.png", xysize=(1920, 1080), fit="cover")
 image bg_desert = Transform("images/bg/desert.png", xysize=(1920, 1080), fit="cover")
 
-## 甜品店对视 1-7 + 6.51：场景渐进。1-3 暖色（团子吃法递进），4-6 转入蓝色调
-## 幻视（波纹由弱到强、王霜由实体到融入背景），6.51 过渡，7 阿鹤呕吐导致色彩复原。
-## 源图均已 resize 到 3840x2160 以避开 GPU 4096 像素纹理限制（否则会被分块渲染、
-## 中间出现接缝；见 git 历史里 甜品店6.50.png 的资料）。
-image bg_dessertgaze1 = Transform("images/bg/甜品店对视1.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze2 = Transform("images/bg/甜品店对视2.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze3 = Transform("images/bg/甜品店对视3.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze4 = Transform("images/bg/甜品店对视4.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze5 = Transform("images/bg/甜品店对视5.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze6 = Transform("images/bg/甜品店对视6.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze6_51 = Transform("images/bg/甜品店对视6.51.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze7 = Transform("images/bg/甜品店对视7.png", xysize=(1920, 1080), fit="cover")
-image bg_dessertgaze8 = Transform("images/bg/甜品店对视8.png", xysize=(1920, 1080), fit="cover")
+## 甜品店对视 1-8 + 6.51：dessert-shop 场景渐进。
+## 1-3 暖色（团子吃法递进），4-6 转入蓝色调幻视（波纹由弱到强、王霜由实体到融入背景），
+## 6.51 过渡，7 阿鹤呕吐导致色彩复原，8 碎裂进入黑屏。
+## 源图均已 resize 到 3840x2160 以避开 GPU 4096 像素纹理限制。
+image bg_dessertgaze1 = Transform("images/bg/dessertgaze1.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze2 = Transform("images/bg/dessertgaze2.png", xysize=(1920, 1080), fit="cover")
+image bg_dessertgaze3 = Transform("images/bg/dessertgaze3.png", xysize=(1920, 1080), fit="cover")
+## 4→5→6→6.51→7：水面波纹（水面波纹 shader，见 shaders.rpy）。4 起幻视、微弱入场，
+## 5→6 渐强，6.51 顶峰，7 呕吐复原后留极微弱残留。振幅 u_ripple_strength 是主要"动态
+## 强度"旋钮，speed 顺带略升加剧。想调强弱就改各自的 strength / speed。
+image bg_dessertgaze4:
+    Transform("images/bg/dessertgaze4.png", xysize=(1920, 1080), fit="cover")
+    shader "game.water_ripple"
+    u_ripple_strength 0.1   # 微弱入场
+    u_ripple_speed 0.5
+    u_ripple_scale 12.0
+    function _ripple_tick
+image bg_dessertgaze5:
+    Transform("images/bg/dessertgaze5.png", xysize=(1920, 1080), fit="cover")
+    shader "game.water_ripple"
+    u_ripple_strength 0.2   # 非常微弱
+    u_ripple_speed 0.9
+    u_ripple_scale 12.0
+    function _ripple_tick
+image bg_dessertgaze6:
+    Transform("images/bg/dessertgaze6.png", xysize=(1920, 1080), fit="cover")
+    shader "game.water_ripple"
+    u_ripple_strength 0.5   # 加强
+    u_ripple_speed 1.0
+    u_ripple_scale 12.0
+    function _ripple_tick
+image bg_dessertgaze6_51:
+    Transform("images/bg/dessertgaze6_51.png", xysize=(1920, 1080), fit="cover")
+    shader "game.water_ripple"
+    u_ripple_strength 0.9   # 顶峰
+    u_ripple_speed 1.0
+    u_ripple_scale 12.0
+    function _ripple_tick
+image bg_dessertgaze7:
+    Transform("images/bg/dessertgaze7.png", xysize=(1920, 1080), fit="cover")
+    shader "game.water_ripple"
+    u_ripple_strength 0.1   # 极微弱残留
+    u_ripple_speed 0.5
+    u_ripple_scale 12.0
+    function _ripple_tick
+image bg_dessertgaze8 = Transform("images/bg/dessertgaze8.png", xysize=(1920, 1080), fit="cover")
 
-## 旧资源：之前实验用的甜品店 + 水面波纹 shader。剧本里已经没有 甜品店幻视 场景
-## 引用它了，留着以备后续如果要给某一帧加 shader 动画时直接复用。
+## 旧实验：甜品店 + 水面波纹 shader。当前没有场景引用，留作以后复用。
 ## shader 注册和 _ripple_tick callback 见 game/scripts/shaders.rpy。
 image bg_dessertshop:
-    Transform("images/bg/甜品店对视6.50.png", xysize=(1920, 1080), fit="cover")
+    Transform("images/bg/dessertgaze6_50.png", xysize=(1920, 1080), fit="cover")
     shader "game.water_ripple"
     u_ripple_strength 1.5
     u_ripple_speed 1.0
