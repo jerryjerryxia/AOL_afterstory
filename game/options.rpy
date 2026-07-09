@@ -4,13 +4,13 @@
 ## 游戏基本信息
 define config.name = _("无休夏日综合症")
 define config.version = "0.1.2"
-define build.name = "AOLAfterstory"
+define build.name = "EndlessSummerSyndrome"
 
 ## 是否显示游戏名称在主菜单
 define gui.show_name = True
 
 ## 游戏存档目录名称
-define config.save_directory = "AOLAfterstory-1234567890"
+define config.save_directory = "EndlessSummerSyndrome-1234567890"
 
 ## 分辨率配置 - 1920x1080 基准
 define config.screen_width = 1920

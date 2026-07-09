@@ -719,23 +719,14 @@ style choice_button_text is default:
 ################################################################################
 
 ## 主菜单"开始游戏"被点击时的退场动画状态。
-## 注意：这套连贯衔接（主菜单→序章不切场景）只有 route1 真正受益 —— 序章首场景
-## 就是同一段多面体视频，无缝接上去。route2/route3 的 prologue 会自己 `scene X
-## with scene_soft` 切回各自的背景，所以视觉上是正常切场，没问题。
-##
 ## 动画驱动方式：用 ATL 的 `function` 轮询状态变量 _main_menu_starting。
-## 试过的失败方案：
-##   1. showif + on hide —— showif 把 displayable 从树里抽走，on hide 来不及播。
-##   2. on exit + ScreenDisplayable.set_transform_event("exit") —— 事件能 dispatch，
-##      但 screen 重新求值时 transform 实例可能被复用/重建，事件丢失或者没触发。
-## 轮询方案：每帧调用 _wait_for_main_menu_exit。变量为 False 时返回 0（"下帧再叫
-## 我"），True 时返回 None（结束 function 块，ATL 继续走下一句）。下一句开始
-## 退场动画。displayable 一直留在树里，sensitive 关掉点击。
+## showif + on_hide 在 Ren'Py 里不能驱动退场动画（条件翻假 displayable 被
+## 立刻从树里抽走）；transform_event 在 screen 重新求值时也不可靠。轮询稳。
+default _main_menu_starting = False
+
 init python:
     def _wait_for_main_menu_exit(trans, st, at):
         return None if _main_menu_starting else 0
-
-default _main_menu_starting = False
 
 ## 标题：上滑淡出。先停在 alpha=1 yoffset=0，等变量翻 True，再易出动画。
 transform menu_title_anim:
@@ -759,25 +750,28 @@ screen main_menu():
 
     style_prefix "main_menu"
 
-    ## 玩家从游戏回到主菜单后强制重启 polyhedron channel —— 走过游戏一遭
+    ## 主菜单每次 mount 都强制重启 polyhedron channel —— 走过游戏一遭后
     ## Movie/channel lifecycle 会乱，channel 显示 playing 但 Movie() 渲染成
-    ## checker board。stop+play 一遍才能让显示恢复正常。flag 用 persistent
-    ## 因为 MainMenu() action 清普通变量但保留 persistent。
+    ## checker board。原来用 persistent flag 判断 "是否需要重启"，但有些边
+    ## 角情况 flag 没被设上（比如玩家不通过 start label 也不通过 after_load
+    ## 进游戏），checker board 又冒回来。直接无脑每次 main_menu mount 就
+    ## stop+play，最稳。fresh launch 时 splashscreen 刚 play 完会被立刻 stop
+    ## +play 一遍，肉眼基本看不出来，但能保证后续永远不出 checker board。
+    ## flag 留着只是为了清，对外语义已经废弃。
     python:
-        if persistent.polyhedron_started_game:
-            try:
-                renpy.music.stop(channel="polyhedron_video")
-            except Exception:
-                pass
-            renpy.music.play(
-                "images/bg/polyhedron.webm",
-                channel="polyhedron_video", loop=True)
-            persistent.polyhedron_started_game = False
+        try:
+            renpy.music.stop(channel="polyhedron_video")
+        except Exception:
+            pass
+        renpy.music.play(
+            "images/bg/polyhedron.webm",
+            channel="polyhedron_video", loop=True)
+        persistent.polyhedron_started_game = False
 
     ## 背景：polyhedron Movie 从共享 channel 取帧，主菜单 → 序章首场景无缝。
     add "bg_polyhedron_video"
 
-    ## 暗化效果（也跟标题一起上飞）
+    ## 暗化效果（也跟标题一起淡出）
     frame at menu_title_anim:
         style "main_menu_frame"
 
@@ -792,41 +786,42 @@ screen main_menu():
             add "images/ui/titles/zh_title.png" zoom 0.30 xalign 0.5
 
     ## 主菜单按钮：直接 inline，不走 `use navigation`，因为每个要带自己的 delay。
-    ## stagger = 0.06s。"开始游戏" 的 action 触发 _main_menu_starting=True 和
-    ## "exit" 事件；sensitive 在退场期间关掉所有按钮，避免误触发。
+    ## stagger = 0.06s。点击"开始游戏" → _main_menu_starting=True → 所有 transform
+    ## 同时翻动；sensitive 在退场期间关掉所有按钮，避免误触发。
     vbox:
         style_prefix "navigation"
         xpos gui.navigation_xpos
         yalign 0.5
         spacing gui.navigation_spacing
 
-        ## "通关之后做的存档" 才显示"继续游戏"，否则"开始游戏"。
-        ## has_continuable_save() 比较 max(slot_mtime) > last_route_completion_time —
-        ## 通关后旧存档还在磁盘上，但 mtime 早于 completion_time，会回到 Start。
-        ## 玩家在新周目里再存档时，mtime 比 completion_time 晚，Continue 又自动出现。
-        ## 两个按钮共用退场动画，timer 跑完后 exit_main_menu_to_game() 用同一个判断
-        ## 决定走 load 还是走 start label，避免按钮和动作不一致。
+        ## 通关之后做的存档 → 显示"继续游戏"；否则显示"开始游戏"。
+        ## has_continuable_save() 比较 max(slot_mtime) 和 last_route_completion_time，
+        ## 通关后老存档自动失效；玩家新周目存档后又自动出 Continue。
         if has_continuable_save():
             textbutton _("继续游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
         else:
             textbutton _("开始游戏") action SetVariable("_main_menu_starting", True) sensitive not _main_menu_starting at menu_btn_anim(0.42)
         textbutton _("读取存档") action ShowMenu("load") sensitive not _main_menu_starting at menu_btn_anim(0.36)
-        textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.30)
-        textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None) sensitive not _main_menu_starting at menu_btn_anim(0.24)
-        textbutton _("音乐鉴赏") action ShowMenu("music_room") sensitive not _main_menu_starting at menu_btn_anim(0.18)
-        textbutton _("设置") action ShowMenu("preferences") sensitive not _main_menu_starting at menu_btn_anim(0.12)
-        textbutton _("关于") action ShowMenu("about") sensitive not _main_menu_starting at menu_btn_anim(0.06)
+        textbutton _("音乐鉴赏") action ShowMenu("music_room") sensitive not _main_menu_starting at menu_btn_anim(0.30)
+        textbutton _("设置") action ShowMenu("preferences") sensitive not _main_menu_starting at menu_btn_anim(0.24)
+        textbutton _("关于") action ShowMenu("about") sensitive not _main_menu_starting at menu_btn_anim(0.18)
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-            textbutton _("退出") action Quit(confirm=not main_menu) sensitive not _main_menu_starting at menu_btn_anim(0.0)
+            textbutton _("退出") action Quit(confirm=not main_menu) sensitive not _main_menu_starting at menu_btn_anim(0.12)
 
-    ## 时序：
-    ##   按钮 stagger: 最顶按钮 0.42s 延迟 + 0.35s 动画 = 0.77s 完成
-    ##   标题:        0.5s 完成（更早）
+    ## 时序：按钮 stagger 最顶 0.42 + 0.35 = 0.77s 完成；标题 0.5s。
     ## 再加 ~0.5s 让玩家看到纯背景视频"喘口气"，文本框再进。
+    ## timer 跑完 → 重置状态 → exit_main_menu_to_game() 决定 Continue / Start。
+    ## (exit_main_menu_to_game 内部按 has_save_in_run 选 load_most_recent_save
+    ## 或者武装 intro_fade_pending + jump_out_of_context("start")。)
     if _main_menu_starting:
-        ## 进游戏前先武装 intro 淡入标志，下一条 large_say（序章首句）会消费它一次。
         timer 1.25 action [SetVariable("_main_menu_starting", False), Function(exit_main_menu_to_game)]
+
+    ## demo 通关 reboot 回主菜单：整屏从黑淡入一次，然后清标志（只淡入这一次）。
+    ## 放在 screen 最后 = 盖在背景/标题/按钮之上；淡完由 timer 清 session 标志。
+    if renpy.session.get("_demo_return_fade"):
+        add Solid("#000000") at _demo_return_fadein
+        timer 1.25 action Function(_clear_demo_return_fade)
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
@@ -983,8 +978,6 @@ screen navigation():
             else:
                 textbutton _("开始游戏") action Start()
             textbutton _("读取存档") action ShowMenu("load")
-            textbutton _("删除存档") action Confirm("确定要删除所有存档吗？此操作无法撤销。", yes=Function(delete_all_saves), no=None)
-            textbutton _("清除进度") action Confirm("确定要清除所有进度吗？\n（周目、结局解锁等，游戏将重启）", yes=Function(delete_persistent_data), no=None)
             textbutton _("音乐鉴赏") action ShowMenu("music_room")
         else:
             textbutton _("历史记录") action ShowMenu("history")
@@ -1077,6 +1070,14 @@ screen file_slots(title):
                                 action FileDelete(slot)
 
                         key "save_delete" action FileDelete(slot)
+
+            ## 删除所有存档：存档界面右上角，二次确认后删除所有存档槽。
+            ## （从主菜单移来；不碰持久进度，只删存档文件。复用设置里同名按钮的翻译。）
+            textbutton _("删除所有存档"):
+                style "delete_saves_button"
+                xalign 1.0
+                yalign 0.0
+                action Confirm(_("确定要删除所有存档吗？此操作无法撤销。"), yes=Function(delete_all_saves), no=None)
 
             hbox:
                 style_prefix "page"
@@ -1191,11 +1192,6 @@ screen preferences():
                     textbutton _("未读文本") action Preference("skip", "toggle")
                     textbutton _("选项后继续") action Preference("after choices", "toggle")
                     textbutton _("过场后继续") action Preference("skip", "toggle")
-
-                vbox:
-                    style_prefix "check"
-                    label _("开发者模式")
-                    textbutton _("显示场景与音乐参考") action ToggleField(persistent, "dev_mode")
 
             null height 30
 
@@ -1424,28 +1420,21 @@ style history_label_text:
 ## 音乐鉴赏界面 - Music Room
 ################################################################################
 
-init python:
-    ## 定义音乐列表
-    music_tracks = [
-        {"id": "main_theme", "name": "主题曲", "file": "audio/bgm/main_theme.ogg"},
-        {"id": "peaceful", "name": "日常", "file": "audio/bgm/peaceful.ogg"},
-        {"id": "emotional", "name": "感动", "file": "audio/bgm/emotional.ogg"},
-        {"id": "ending", "name": "结局", "file": "audio/bgm/ending.ogg"},
-    ]
-
 screen music_room():
     tag menu
 
+    ## 曲目列表从 scene_music 推导（见 get_music_room_tracks）；未解锁显示 ???。
+    ## 曲子在玩家第一次听到时（set_scene_music → unlock_music）解锁。
     use game_menu(_("音乐鉴赏"), scroll="viewport"):
         style_prefix "music_room"
 
         vbox:
             spacing 15
 
-            for track in music_tracks:
+            for track in get_music_room_tracks():
                 if is_music_unlocked(track["id"]):
-                    textbutton track["name"]:
-                        action Play("music", track["file"])
+                    textbutton _(track["name"]):
+                        action Play("music", "audio/bgm/" + track["file"])
                 else:
                     textbutton "???":
                         sensitive False
@@ -1623,13 +1612,17 @@ style skip_text:
 ## 周目标题界面 - Route Title Screen
 ################################################################################
 
-screen route_title(title, subtitle=None):
-    ## 全屏显示周目标题，点击后淡出
+screen route_title(title, subtitle=None, sfx=None):
+    ## 全屏显示周目标题（"浮潜"）。出现和消失都放慢；不允许鼠标点击快进，
+    ## 只有按住 ctrl（快进/skip）才能跳过（point 3）。
+    ## sfx：可选一次性音效，在标题"完整展示"（淡入 2.2s 结束）时播放一次。
+    ## 用于落水泡泡这类需要在标题出现后、下个场景登场前播完的声音。
 
     modal True
     zorder 100
 
     default closing = False
+    default sfx_played = False
 
     ## 整个画面容器
     frame:
@@ -1658,195 +1651,43 @@ screen route_title(title, subtitle=None):
                 text subtitle:
                     style "route_subtitle_text"
 
-    ## 点击任意处开始淡出
+    ## 标题完整展示（淡入 2.2s 结束）时播放一次性音效。play_sfx 同时记下结束时刻，
+    ## 供调用处的 wait_sfx 等它播完再让下个场景登场。sfx_played 防止 closing 重渲染
+    ## 时重复触发。
+    if sfx and not sfx_played:
+        timer 2.2 action [SetScreenVariable("sfx_played", True), Function(play_sfx, sfx)]
+
+    ## 自走时序：淡入(2.2s) + 停留 → 到点自动开始淡出。没有任何鼠标点击区域，
+    ## 因此点击不会快进；modal 也挡住了对下层的点击。
     if not closing:
-        button:
-            xfill True
-            yfill True
-            action SetScreenVariable("closing", True)
+        timer 4.0 action SetScreenVariable("closing", True)
 
-    ## 淡出完成后关闭
+    ## 淡出(2.2s)完成后关闭
     if closing:
-        timer 0.8 action Return()
+        timer 2.2 action Return()
 
+    ## 唯一的快进通道：按住 ctrl 进入 skip 时立即结束。轮询 is_skipping()，
+    ## 因为 skip 是全局键映射，不依赖本 screen 的可聚焦元件。
+    timer 0.05 repeat True action If(renpy.is_skipping(), true=Return(), false=NullAction())
+
+## 出现/消失都放慢（point 3）：原来 1.0 / 0.8，现在 2.2 / 2.2。
 transform route_title_fadein:
     alpha 0.0
-    ease 1.0 alpha 1.0
+    easein 2.2 alpha 1.0
 
 transform route_title_fadeout:
-    ease 0.8 alpha 0.0
+    easeout 2.2 alpha 0.0
 
 style route_title_text:
-    font gui.title_card_font
+    font gui.text_font
     size 120
     color "#ffffff"
     xalign 0.5
     outlines [(4, "#000000", 0, 0)]
 
 style route_subtitle_text:
-    font gui.title_card_font
+    font gui.text_font
     size 48
     color "#cccccc"
     xalign 0.5
     outlines [(2, "#000000", 0, 0)]
-
-################################################################################
-## 开发者场景信息显示 - Developer Scene Info Display
-################################################################################
-
-## Whether the scene description popup is visible
-default scene_desc_visible = False
-
-screen dev_scene_info():
-    ## Only show if we have a scene name and developer mode is enabled
-    if current_scene_name and persistent.dev_mode:
-        # Top-left corner panel
-        frame:
-            style "dev_scene_frame"
-            xalign 0.0
-            yalign 0.0
-            xoffset 10
-            yoffset 10
-
-            vbox:
-                spacing 5
-
-                # Scene name button - click to toggle description
-                textbutton current_scene_name:
-                    style "dev_scene_name"
-                    action ToggleVariable("scene_desc_visible")
-
-                # Scene description - shown when clicked
-                if scene_desc_visible and current_scene_desc:
-                    null height 5
-                    frame:
-                        style "dev_scene_desc_frame"
-                        text "[current_scene_desc]":
-                            style "dev_scene_desc_text"
-
-style dev_scene_frame:
-    background Solid("#1a1a2acc")
-    padding (15, 10, 15, 10)
-    xmaximum 500
-
-style dev_scene_name is button:
-    background None
-    hover_background None
-
-style dev_scene_name_text is button_text:
-    size 20
-    color "#00ccff"
-    hover_color "#66ddff"
-
-style dev_scene_desc_frame:
-    background Solid("#222233cc")
-    padding (10, 8, 10, 8)
-    xmaximum 470
-
-style dev_scene_desc_text:
-    size 16
-    color "#cccccc"
-    line_spacing 4
-
-################################################################################
-## 开发者音乐选择器 - Developer Music Selector
-################################################################################
-
-## Current scene music ID (set by script)
-default current_music_scene = None
-
-## Whether the music selector panel is expanded
-default dev_music_expanded = False
-
-screen dev_music_selector():
-    ## Only show if we have a valid scene and developer mode is enabled
-    if current_music_scene and current_music_scene in scene_music and persistent.dev_mode:
-        $ scene_data = scene_music[current_music_scene]
-        $ tracks = scene_data["tracks"]
-        $ scene_label = scene_data["label"]
-
-        # Top-right corner panel
-        frame:
-            style "dev_music_frame"
-            xalign 1.0
-            yalign 0.0
-            xoffset -10
-            yoffset 10
-
-            vbox:
-                spacing 5
-
-                # Header with toggle button
-                hbox:
-                    spacing 10
-                    if dev_music_expanded:
-                        textbutton "BGM参考菜单":
-                            style "dev_music_header"
-                            action SetVariable("dev_music_expanded", False)
-                    else:
-                        textbutton "BGM参考菜单 v":
-                            style "dev_music_header"
-                            action SetVariable("dev_music_expanded", True)
-
-                # Expanded track list
-                if dev_music_expanded:
-                    null height 5
-                    for track in tracks:
-                        $ is_selected = (persistent.scene_music_selections.get(current_music_scene) == track["id"])
-                        if is_selected:
-                            textbutton track["name"]:
-                                style "dev_music_track_selected"
-                                action Function(select_and_play_music, current_music_scene, track["id"])
-                        else:
-                            textbutton track["name"]:
-                                style "dev_music_track"
-                                action Function(select_and_play_music, current_music_scene, track["id"])
-
-                    null height 5
-                    hbox:
-                        spacing 15
-                        textbutton "■ 停止":
-                            style "dev_music_control"
-                            action Stop("music", fadeout=1.0)
-
-style dev_music_frame:
-    background Solid("#1a1a2acc")
-    padding (15, 10, 15, 10)
-    xmaximum 450
-
-style dev_music_header is button_text:
-    size 18
-    color "#ffcc00"
-    hover_color "#ffffff"
-
-style dev_music_track is button:
-    background Solid("#333333aa")
-    hover_background Solid("#555555aa")
-    padding (10, 5, 10, 5)
-    xfill True
-
-style dev_music_track_text is button_text:
-    size 16
-    color "#cccccc"
-    hover_color "#ffffff"
-
-style dev_music_track_selected is button:
-    background Solid("#4a5a3aaa")
-    hover_background Solid("#5a6a4aaa")
-    padding (10, 5, 10, 5)
-    xfill True
-
-style dev_music_track_selected_text is button_text:
-    size 16
-    color "#aaffaa"
-    hover_color "#ffffff"
-
-style dev_music_control is button:
-    background Solid("#552222aa")
-    hover_background Solid("#773333aa")
-    padding (8, 4, 8, 4)
-
-style dev_music_control_text is button_text:
-    size 14
-    color "#ffaaaa"
-    hover_color "#ffffff"
