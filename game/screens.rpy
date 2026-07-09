@@ -8,10 +8,45 @@
 init offset = -1
 
 ################################################################################
+## SFX Lock Screen - blocks player input until sound channel finishes playing
+################################################################################
+
+screen sfx_lock():
+    modal True
+    timer 0.1 repeat True action Function(sfx_lock_check)
+
+init python:
+    def sfx_lock_check():
+        if not renpy.music.get_playing(channel='sound'):
+            renpy.hide_screen('sfx_lock')
+
+################################################################################
 ## 存档删除功能
 ################################################################################
 
 init python:
+    ## English boxes use the full-size font (33) and so sit a touch lower than
+    ## they did at the shrunk size; nudge the large/split boxes up in English
+    ## only. Bump EN_BOX_YSHIFT to move them further up; Chinese is untouched.
+    EN_BOX_YSHIFT = 40
+    def box_ypos(base):
+        if _preferences.language == "english":
+            return base - EN_BOX_YSHIFT
+        return base
+
+    def dialog_size():
+        """Per-language dialogue font size.
+
+        English needs more horizontal room than the same Chinese — sentences
+        stretch where 4–5 hanzi convey a clause. Shrinking the dialogue font
+        a bit in English mode prevents big monologue blocks from overflowing
+        the large_say textbox. Tweak the English value if the contrast feels
+        too aggressive.
+        """
+        if _preferences.language == "english":
+            return 27
+        return gui.text_size
+
     def delete_all_saves():
         """Delete all save files using Ren'Py's built-in functions."""
         deleted_count = 0
@@ -21,14 +56,14 @@ init python:
             deleted_count += 1
         # 没存档了，主菜单按钮回到"开始游戏"
         persistent.has_save_in_run = False
-        renpy.notify("已删除 {} 个存档".format(deleted_count))
+        renpy.notify(_("已删除 {} 个存档").format(deleted_count))
 
     def delete_persistent_data():
         """Delete all persistent data (route progress, endings, etc.)."""
         # Clear all persistent data by resetting to defaults
         persistent._clear(progress=True)
         # Notify the user
-        renpy.notify("已清除所有持久化数据，请重启游戏")
+        renpy.notify(_("已清除所有持久化数据，请重启游戏"))
         # Restart the game to apply changes
         renpy.utter_restart()
 
@@ -122,6 +157,68 @@ style prompt_text is gui_text
 ## 对话界面 - Say Screen
 ################################################################################
 
+init python:
+    ## 运行时「逐句点击」：显示时在句末标点后插入 {w}（等待点击）标签，而不是把
+    ## 分句写进源文本。好处：翻译 ID 永远是干净整句、与英文源 1:1，以后改分句规则
+    ## 再也不会冲掉翻译（这是把转换期分句改成运行时分句的核心）。
+    ## 规则（中英通吃）：
+    ##   - 。！？… 和 ASCII . ! ? 之后断句（标点留在前），等待点击；—— 之后也断；
+    ##   - 省略号不断：ASCII 连续 ≥2 个点当省略号（…/...），单个 . 当英文句号要断；
+    ##   - 句尾（后面再无实质内容）不加 {w}——say 收尾本身就等点击；
+    ##   - extend 边界（标点紧跟 Ren'Py 的 {fast} 标签）也不加 {w}：那个 {w} 会被
+    ##     {fast} 瞬显跳过（冗余），更糟的是会吞掉紧随其后的 \n 换行（split/大文本框
+    ##     里"几乎没有跨行"的元凶）。statement 边界本身就是一次点击。
+    ##   - 用于旁白和所有有名字的角色对白（point：句号/问号/感叹号/破折号处处分句）；
+    ##     只有居中大字框不分句。
+    def add_click_pauses(what):
+        if not what:
+            return what
+        STRONG = u"。！？!?…"          # 单个即断的句末标点
+        def wants_pause(rest):
+            rest = rest.lstrip()
+            if not rest or rest.startswith('{fast}'):
+                return False
+            ## 去掉文本标签（{size}/{i}/{/…} 等）后还有实质文字才断句——避免在闭合标签
+            ## 前插看不见的空 {w}（如小字行 "…——{/size}"、斜体专有名词收尾）。
+            import re as _re
+            return bool(_re.sub(r'\{[^}]*\}', '', rest).strip())
+        out = []
+        n = len(what)
+        i = 0
+        while i < n:
+            ch = what[i]
+            if ch == '.':                # ASCII 点：≥2 个=省略号不断，单个=句号断
+                j = i
+                while j < n and what[j] == '.':
+                    j += 1
+                out.append(what[i:j])
+                if j - i == 1 and wants_pause(what[j:]):
+                    out.append('{w}')
+                i = j
+                continue
+            if ch in STRONG or ch == u'—':
+                j = i + 1
+                while j < n and (what[j] in STRONG or what[j] == u'—'):
+                    j += 1
+                out.append(what[i:j])
+                if wants_pause(what[j:]):
+                    out.append('{w}')
+                i = j
+                continue
+            out.append(ch)
+            i += 1
+        return ''.join(out)
+
+    class ClickPauseCharacter(renpy.character.ADVCharacter):
+        ## 旁白/对白角色：在 __call__ 最早处把整句 what 插入 {w}（逐句点击）。
+        ## 关键——必须在 __call__ 里改，不能在 do_display 里改：ADVCharacter.__call__
+        ## 会先 `dtt = DialogueTextTags(what)` 从原文解析出 {w} 停顿点，再带着这个 dtt
+        ## 调 do_display。在 do_display 里加的 {w} 进了屏幕文本却没进 dtt，会被当成无效
+        ## 标签静默吞掉 —— 整句一次显示、完全不分句（和文字速度无关，这是之前的真 bug）。
+        ## {w} 停顿是按 dtt 拆出的独立 saybehavior 交互，逐段等点击，瞬显也照样生效。
+        def __call__(self, what, *args, **kwargs):
+            return super(ClickPauseCharacter, self).__call__(add_click_pauses(what), *args, **kwargs)
+
 screen say(who, what):
     style_prefix "say"
 
@@ -142,12 +239,6 @@ screen say(who, what):
 
     ## 快捷按钮（跳过、自动、菜单等）
     use quick_menu
-
-    ## 开发者场景信息
-    use dev_scene_info
-
-    ## 开发者音乐选择器
-    use dev_music_selector
 
 style window is default
 style say_label is default
@@ -200,6 +291,11 @@ style namebox:
 default _intro_fade_pending = False
 
 init python:
+    def _clear_demo_return_fade():
+        # 清掉主菜单入场淡入标志。必须返回 None —— 若返回非 None（如 session.pop
+        # 返回的 True），screen action 会以该值结束主菜单交互，被当成"开始游戏"。
+        renpy.session.pop("_demo_return_fade", None)
+
     def _say_intro_fade_or_halt(trans, st, at):
         if renpy.store._intro_fade_pending:
             renpy.store._intro_fade_pending = False
@@ -213,6 +309,119 @@ transform say_intro_fade:
     function _say_intro_fade_or_halt
     easein 0.6 alpha 1.0
 
+## demo 通关 reboot 回主菜单后，整屏（背景+标题+按钮）从纯黑淡入一次。
+## 出屏是 fade_to_black_long，落到黑；reboot 后主菜单本会瞬间弹出（很生硬），
+## 这里盖一层黑幕 easeout 淡出，视觉上就是主菜单从黑里缓缓浮现。
+transform _demo_return_fadein:
+    alpha 1.0
+    easeout 1.2 alpha 0.0
+
+################################################################################
+## 点击继续指示器 - CTC (click-to-continue) 打字光标（point 2）
+## ----------------------------------------------------------------
+## 一行文字打完、等待玩家点击时，在文字末尾出现一个闪烁的打字光标（竖条 ▏），
+## 亮 0.5s / 灭 0.5s 循环，像文本框里在等你继续输入。挂在 Character 的 ctc 上
+## （nestled，自动紧跟正文末尾）。
+##
+## 为什么用"竖条"而不是省略号：文字里的内联显示物是从基线往下挂的，句点 "."
+## 落在基线最底端，看起来又低又"离得远"；而占满整行高度的竖条字形天然和正文
+## 对齐。位置还想微调就改 characters.rpy 里 `define ctc = Transform("ctc_dots", …)`
+## 的 xoffset / yoffset。
+################################################################################
+
+## 光标画成一根实心竖条（不是 Text "|"——那种会被字体上沿空白拖低，长度和位置分不开）。
+## 每个 (文本框类型, 语言) 三个**互相独立**的旋钮：
+##   length：竖条高度（长度）
+##   yoff  ：上下位置。0 = 条顶和这行文字顶部齐平；往大调（正数）= 整条往下。
+##           注意：往上只能到 0（内联元素超出行顶会被裁掉、变不可见），到 0 就和正文齐了。
+##   width ：竖条粗细
+##   xoff  ：左右位置。0 = 紧贴文字末尾；往大调（正数）= 往右留空。往左只能到 0
+##           （超出文字末尾左边会被裁掉，和 yoff 同理）。
+init python:
+    _CARET_CFG = {
+        # (类型,    语言)        (length, yoff, width, xoff)
+        ("normal", "chinese"): (31, 5, 3, 0),
+        ("normal", "english"): (30, 6, 3, 6),
+        ("large",  "chinese"): (33, 5, 3, 0),
+        ("large",  "english"): (33, 5, 3, 6),
+    }
+    def _caret_size(kind):
+        def f(st, at):
+            lang = "english" if _preferences.language == "english" else "chinese"
+            length, yoff, width, xoff = _CARET_CFG[(kind, lang)]
+            ow = 2  # 黑色描边宽度（浮在亮背景上也清晰）
+            bar = Composite((width + 2 * ow, length + 2 * ow),
+                            (0, 0), Solid("#000000", xsize=width + 2 * ow, ysize=length + 2 * ow),
+                            (ow, ow), Solid(gui.text_color, xsize=width, ysize=length))
+            # 内联元素裁掉文字行框以外的部分，所以横竖都靠在「框内」摆放竖条：
+            # yoff 往下、xoff 往右（负值会被裁，下限 0）。
+            bx = max(0, xoff)
+            box_h = length + 2 * ow
+            cur = Composite((width + 2 * ow + bx, box_h), (bx, yoff), bar)
+            on = (st % 1.0) < 0.5
+            return (Transform(cur, alpha=(1.0 if on else 0.0)),
+                    ((0.5 - (st % 1.0)) if on else (1.0 - (st % 1.0))))
+        return f
+
+image ctc_dots = DynamicDisplayable(_caret_size("normal"))
+image ctc_dots_large = DynamicDisplayable(_caret_size("large"))
+
+################################################################################
+## 操作锁定屏幕 - op_lock（point 5）
+## ----------------------------------------------------------------
+## 用一个全屏按钮把"点击/回车/空格"吃掉（NullAction），让玩家在 N 秒内无法靠点击
+## 跳过文字展示或前进；但**不 modal**，所以 ctrl 快进（skip 是 keysym，不落到按钮
+## 上）依然有效。N 秒后自动隐藏。配合 convert_script.py 的 【锁定操作Ns】。
+## （"盯——"：不允许点击快速结束文字展示，但允许 ctrl 快进。）
+################################################################################
+
+screen op_lock(seconds):
+    zorder 200
+    button:
+        xfill True
+        yfill True
+        background None
+        hover_background None
+        action NullAction()
+    timer seconds action Hide("op_lock")
+
+################################################################################
+## 颤动文字标签 - {shake}...{/shake}（point 8）
+## ----------------------------------------------------------------
+## 给一段文字加持续颤动。把内容逐字替换为带 tremble 变换的内联 displayable，
+## 这样只有被包裹的文字抖动，其余文字与名字框不受影响。
+## 用法（剧本/raw script 内）：{shake}好刻薄{/shake}
+################################################################################
+
+transform tremble:
+    subpixel True
+    block:
+        ease 0.06 yoffset -2 xoffset 1
+        ease 0.06 yoffset 2 xoffset -1
+        ease 0.06 yoffset -1 xoffset -2
+        ease 0.06 yoffset 1 xoffset 2
+        repeat
+
+style tremble_char is default:
+    font gui.text_font
+    size gui.text_size
+    color gui.text_color
+    outlines gui.text_outlines
+
+init python:
+    def _shake_text_tag(tag, argument, contents):
+        new_list = []
+        for kind, text in contents:
+            if kind == renpy.TEXT_TEXT:
+                for ch in text:
+                    new_list.append(
+                        (renpy.TEXT_DISPLAYABLE, At(Text(ch, style="tremble_char"), tremble)))
+            else:
+                new_list.append((kind, text))
+        return new_list
+
+    config.custom_text_tags["shake"] = _shake_text_tag
+
 ################################################################################
 ## 大文本框界面 - Large Textbox Screen (Full-height narrative text)
 ## 居中在屏幕正中央 (1920-1520)/2=200, (1080-800)/2=140
@@ -222,7 +431,7 @@ screen large_say(who, what):
     frame:
         at say_intro_fade
         xpos 200
-        ypos 140
+        ypos box_ypos(140)
         xsize 1520
         ysize 800
         padding (80, 80, 80, 80)
@@ -235,6 +444,9 @@ screen large_say(who, what):
             text_align 0.0
             xsize 1360
             font gui.text_font
+            ## Full-height box has room to spare, so keep English at the normal
+            ## gui.text_size (33) — same as the other text — instead of shrinking
+            ## it to dialog_size() (27) like the narrower boxes do.
             size gui.text_size
             color "#ffffff"
             line_spacing 10
@@ -242,12 +454,6 @@ screen large_say(who, what):
 
     ## 快捷按钮
     use quick_menu
-
-    ## 开发者场景信息
-    use dev_scene_info
-
-    ## 开发者音乐选择器
-    use dev_music_selector
 
 ################################################################################
 ## 居中文本框界面 - Centered Textbox Screen (for striking single lines)
@@ -269,19 +475,13 @@ screen centered_say(who, what):
             text_align 0.5
             xsize 1360
             font gui.text_font
-            size gui.text_size
+            size dialog_size()  # smaller in English; see init python at top
             color "#ffffff"
             line_spacing 10
             outlines gui.text_outlines
 
     ## 快捷按钮
     use quick_menu
-
-    ## 开发者场景信息
-    use dev_scene_info
-
-    ## 开发者音乐选择器
-    use dev_music_selector
 
 ################################################################################
 ## 居中大字文本框界面 - Centered Large Font Textbox Screen
@@ -297,13 +497,15 @@ screen centered_large_say(who, what):
         background None
 
         text what id "what":
-            ## Centered with larger font for dramatic effect
+            ## Centered with a much larger font — these are the prologue's
+            ## single-sentence gut-punches (疯子。/ 逃避吧！/ 瘾。). The size jump
+            ## is the whole point: make the impact land (point 1).
             xalign 0.5
             yalign 0.5
             text_align 0.5
             xsize 1360
             font gui.text_font
-            size gui.text_size + 6
+            size dialog_size() + 39  # ≈72 in CN / ≈66 in EN; see init python at top
             color "#ffffff"
             line_spacing 10
             outlines gui.text_outlines
@@ -311,11 +513,128 @@ screen centered_large_say(who, what):
     ## 快捷按钮
     use quick_menu
 
-    ## 开发者场景信息
-    use dev_scene_info
+################################################################################
+## 左右分栏大文本框 - Split Large Textbox（甜品店幻视段）
+## ----------------------------------------------------------------
+## 把大文本框分成左右两栏：先逐行点击填满左栏，再填右栏。中间留空避开王霜的头
+## （她大致在画面正中）。两栏字数由转换器按行边界尽量切平均（见 convert_script.py
+## 的 emit_split_large_block）。
+##
+## 两阶段，各阶段的"活动栏"就是带 id "what" 的那个 text —— 所以逐字速度（文字
+## 速度设置）和"单击推进下一段"在两栏里都和普通文本框一样。
+##   split_say_left ：左栏 = 活动 say（id "what"，逐字显示）。
+##   split_say_right：左栏 = 静态 _split_left_text（上阶段冻结的内容）；
+##                    右栏 = 活动 say（id "what"，逐字显示）。
+## 左栏在两阶段坐标一致（xpos 90），切换时不跳动。两栏放在 fixed 里各自定位
+## （frame 只能放单个子项，多个会乱——这是之前"前两句消失/重复"的根源）。
+################################################################################
 
-    ## 开发者音乐选择器
-    use dev_music_selector
+## 上阶段填满的左栏内容（由转换器 `$ _split_left_text = ...` 设置）
+default _split_left_text = ""
+
+## 分栏几何：左栏 90..710、右栏 1210..1830，中间 710..1210（~500px，画面正中）
+## 留给王霜的头。想调就改下面 xpos / xsize。
+style split_column_text is default:
+    font gui.text_font
+    color "#ffffff"
+    xanchor 0.0
+    yalign 0.0
+    text_align 0.0
+    line_spacing 10
+    outlines gui.text_outlines
+
+## 关键：活动 say（id "what"）和静态左栏必须渲染得**一模一样**，否则左栏在切到
+## 右栏阶段时会"变高/行距变大"。两个差异都得内联写死（style 里的设不到 say 的 what）：
+##   1. line_spacing 10 —— say 的 what 拿不到 style 里的行距（受 what_style 影响）。
+##   2. adjust_spacing False —— 逐字显示默认 adjust_spacing=True，会为"打字时宽度稳定"
+##      微调字间距，导致最终折行/高度和静态文本不一致。中文是逐字折行，关掉它不会
+##      有"打字时回流"的副作用，却能让 say 和静态左栏折行、高度完全一致。
+screen split_say_left(who, what):
+    ## 左栏阶段：左栏就是活动 say（id "what" → 逐字显示、单击推进）。
+    ## 顺手把（已翻译的）what 存进 _split_left_text，供右栏阶段静态显示——这样
+    ## 英文模式下右栏开始后，左栏仍是英文，不会变回中文。
+    ## 关键：必须用 renpy.predicting() 门控。Ren'Py 会预渲染（predict）后面的
+    ## split_say_left，预测时这个 $ 会带着「后面某个分栏块」的 what 执行，污染
+    ## _split_left_text，导致右栏阶段左栏显示成后文（例如"鼓的声音"那段反复顶替
+    ## 前文）。只在真正显示（非预测）时写入，预测不写，bug 即消。
+    ## 冻结左栏给右栏阶段静态显示：去掉 {w}（ClickPauseCharacter 给活动 what 插了
+    ## 逐句点击标签，但静态左栏已全部显示完，不需要也不能用 {w}）。
+    $ if not renpy.predicting(): store._split_left_text = what.replace("{w}", "")
+    fixed:
+        xpos 0
+        ypos box_ypos(260)
+        xsize 1920
+        ysize 760
+
+        text what id "what":
+            style "split_column_text"
+            xpos 90
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+    use quick_menu
+
+screen split_say_right(who, what):
+    ## 右栏阶段：左栏静态（已填满），右栏是活动 say（id "what" → 逐字显示）。
+    fixed:
+        xpos 0
+        ypos box_ypos(260)
+        xsize 1920
+        ysize 760
+
+        ## 左栏：已填满，静态（和 split_say_left 同坐标 + 同行距 + 同字距 + 同纵向锚点，
+        ## 切换不跳动/不上移）
+        text _split_left_text:
+            style "split_column_text"
+            xpos 90
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+        ## 右栏：活动 say，逐字显示
+        text what id "what":
+            style "split_column_text"
+            xpos 1210
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+    use quick_menu
+
+################################################################################
+## 右侧Split 大文本框 - 只占右半屏的单栏、分页（每页满 8 行翻页）
+## 比左右分栏的"右栏"略往中间推一点（xpos 1120 vs 1210），左半屏留空。
+## 想再往中间/往右挪就改下面的 xpos（越小越靠中间）。
+## 翻页由转换器控制：每页第一行是新 say（清屏），其余 extend；满 8 行就开新页。
+################################################################################
+screen split_right_page(who, what):
+    fixed:
+        xpos 0
+        ypos box_ypos(260)
+        xsize 1920
+        ysize 760
+
+        text what id "what":
+            style "split_column_text"
+            xpos 1120
+            ypos 0
+            yanchor 0.0
+            xsize 620
+            size gui.text_size  # full size in English too; matches large_say
+            line_spacing 10
+            adjust_spacing False
+
+    use quick_menu
 
 ################################################################################
 ## 快捷菜单 - Quick Menu
