@@ -88,8 +88,10 @@ label route1_prologue:
     ## 居中大字文本框结束
     ## 转场：黑屏
     scene bg_black_video with scene_soft
-    ## 头出水面后大吸一口气音效，lock text：out-of-water-deep-breath
+    ## 头出水面音效：Bubbles_10
+    $ play_sfx("audio/sfx/Bubbles_10.wav")
     ## Extended大文本框开始 - accumulating large textbox
+    $ wait_sfx()
     large_narrator "仿佛完成了一场亘古的潜行，你轻轻浮出水面。"
     extend "\n可眼前只有一片黑暗，比你所熟知的海底更加幽深。"
     extend "\n世界本就是海，海平面以上自然一无所有。"
@@ -113,6 +115,8 @@ label route1_prologue:
     ## 居中大字文本框开始 - centered large font textbox
     centered_large_narrator "逃避吧！"
     ## 居中大字文本框结束
+    $ current_music_scene = None
+    stop music fadeout 1.0
     ## Extended大文本框开始 - accumulating large textbox
     large_narrator "虽然早就无路可逃，但移开目光就能解燃眉之急，如此便利之事又有什么推脱的借口？"
     extend "\n于是就这样，你纹丝不动地在闪着微光的海面上漂浮，宛如一段朽木。"

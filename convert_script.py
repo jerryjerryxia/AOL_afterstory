@@ -1179,7 +1179,12 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
 
             # Generate menu structure
             # Keep the dialogue line before menu, use "extend" to keep textbox visible
+            # 成就埋点（"每个选择都选 madness+1"）：只要这个菜单有任一 madness+ 选项，
+            # 进入即 seen+1；被选的那一项若带 +1，则各分支里 taken+1。seen==taken==>全选了+1。
+            has_madness_choice = (choice_a_madness > 0 or choice_b_madness > 0 or choice_c_madness > 0)
             output.append("")
+            if has_madness_choice:
+                output.append("    $ madness_choices_seen += 1")
             output.append("    menu:")
             output.append('        extend ""')
             last_dialogue = None
@@ -1188,6 +1193,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
             output.append(f'        "{choice_a_text}":')
             if choice_a_madness > 0:
                 output.append(f"            $ madness += {choice_a_madness}")
+                output.append("            $ madness_plus_taken += 1")
             # Handle special actions
             if choice_a_action == 'return_to_menu':
                 output.append("            return")
@@ -1204,6 +1210,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                 output.append(f'        "{choice_b_text}":')
                 if choice_b_madness > 0:
                     output.append(f"            $ madness += {choice_b_madness}")
+                    output.append("            $ madness_plus_taken += 1")
                 # Handle special actions
                 if choice_b_action == 'return_to_menu':
                     output.append("            return")
@@ -1220,6 +1227,7 @@ def convert_route(lines, start_line, end_line, label_name, route_num):
                 output.append(f'        "{choice_c_text}" if persistent.normal_end_unlocked and persistent.happy_end_unlocked:')
                 if choice_c_madness > 0:
                     output.append(f"            $ madness += {choice_c_madness}")
+                    output.append("            $ madness_plus_taken += 1")
                 if choice_c_action == 'return_to_menu':
                     output.append("            return")
                 elif choice_c_content:

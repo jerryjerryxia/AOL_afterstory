@@ -81,6 +81,12 @@ default current_route = None
 ## madness 值 - 根据选择增加
 default madness = 0
 
+## 成就"一个存档里每个选择都选 madness+1"用：本存档遇到的 madness 选择数 /
+## 其中选了 +1 的次数。转换器在每个 madness 菜单埋点（menu 前 seen+1；带 +1 的分支
+## taken+1）。default → 新游戏归零；同一存档跨周目累积（madness 本身也不重置）。
+default madness_choices_seen = 0
+default madness_plus_taken = 0
+
 ## 关键选择记录
 default choice_flags = {}
 
@@ -101,6 +107,8 @@ label after_load:
     ## Character mutation 没有重新跑，名字框还是中文。
     ## force=True 即使语言没变也重跑一遍 translate python，把 .name 全部刷成英文。
     $ renpy.change_language(_preferences.language, force=True)
+    ## Steam 成就：把本地已记录的成就补推给 Steam（填好名字后 / 换设备 / 离线解锁后）。
+    $ sync_achievements()
     return
 
 ################################################################################
@@ -131,6 +139,9 @@ init python:
             persistent.happy_end_unlocked = True
         elif ending_id == "true_end":
             persistent.true_end_unlocked = True
+        ## Steam 成就：该结局本身 + 检查"本存档每个选择都选了 madness+1"（见 achievements.rpy）
+        grant_achievement(ending_id)
+        check_madness_achievement()
 
     def hard_pause(t):
         """不可点击快进的暂停（长黑场过渡用）。自动化测试里跳过 —— 否则 5s+ 的 hard
@@ -186,8 +197,10 @@ init python:
         """标记周目完成"""
         if route_num == 1:
             persistent.route1_complete = True
+            grant_achievement("route1_clear")   # Steam 成就：一周目通关
         elif route_num == 2:
             persistent.route2_complete = True
+            grant_achievement("route2_clear")   # Steam 成就：二周目通关
         elif route_num == 3:
             persistent.route3_complete = True
         ## 通关时记下时间戳。主菜单按钮按 max(slot_mtime) > 该值 决定 Continue 还是 Start —

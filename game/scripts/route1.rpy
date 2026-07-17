@@ -6,20 +6,24 @@ label route1_start:
 ## 一周目：浮潜
 
     call screen route_title(_("浮潜"))
-    ## 脸入水后冒泡泡的音效，lock text：face-down-bubble
+    ## 脸入水后冒泡泡的音效：face-down-bubble
+    $ play_sfx("audio/sfx/face-down-bubble.wav")
     ## 转场：虚空对视
     show void default with scene_dissolve
+    $ wait_sfx()
     wangshuang "欢迎回来，阿鹤。"
     ahe "倒不如去死。"
     wangshuang "哦？有趣的提议，为什么呢？"
     ahe "我...不好意思...我觉得我有点..."
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "不对劲...":
             pass
         "很有精神！":
             $ madness += 1
+            $ madness_plus_taken += 1
             pass
 
     wangshuang "嗯，从之前的病史来看，你总在这两个状态之间来回反复，但现在具体是什么感觉呢？"
@@ -58,12 +62,14 @@ label route1_start:
     wangshuang "那就闭上眼睛，你的问题便迎刃而解了。"
     ahe "可我还是觉得我快要..."
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "疯了...":
             pass
         "睡着了。":
             $ madness += 1
+            $ madness_plus_taken += 1
             pass
 
     ## 表情：默认
@@ -249,6 +255,15 @@ label route1_start:
     extend "\n只有这一个选择。"
     extend "\n去找吧。"
     ## Extended大文本框结束
+    ## Extended大文本框开始 - accumulating large textbox
+    large_narrator "去无人的深海。"
+    extend "\n去银白的沙漠。"
+    extend "\n去漆黑的深渊。"
+    extend "\n去伸手。"
+    extend "\n去坠落。"
+    extend "\n去沉默。"
+    extend "\n直到你再次回到这里为止。"
+    ## Extended大文本框结束
     ## 白屏逐渐褪去
     ## 转场：甜品店对视1
     ## 长黑场过渡（不可点击快进）
@@ -425,7 +440,10 @@ label route1_start:
     wangshuang "哦，这个？不是什么重要的东西，但你可以尝尝看。"
     ahe "尝尝看？"
     wangshuang "对啊，吃的。要不要试试？"
+    $ current_music_scene = None
+    stop music fadeout 1.0
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "算了":
@@ -437,6 +455,7 @@ label route1_start:
             wangshuang "随你便咯——说起来，阿鹤，你喜欢红色还是蓝色？"
         "接受。":
             $ madness += 1
+            $ madness_plus_taken += 1
             "虽然你清楚地意识到你跳动的血管里，{i}KAS{/i}即将穿越脑血屏障，随时可能把你的意识送上云端，你那该死的好奇心还是压过了残存的理性。"
             "你接过王霜手里那无色透明的多面体。"
             "那东西轻若无物又变幻莫测，看似是固体，摸起来却又有介于凝胶和麻薯之间的质感，躺在你手心里，冰冰凉的。"
@@ -496,10 +515,12 @@ label route1_start:
     ahe "如此美妙..."
     ahe "我想要..."
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "更多。":
             $ madness += 1
+            $ madness_plus_taken += 1
             ahe "我想要就这样继续下去。"
             wangshuang "那就这样继续下去吧。"
         "就这样睡去。":
@@ -557,7 +578,7 @@ label route1_start:
     scene bg_dessertgaze8 with scene_dissolve
     large_narrator "还原之后的世界仿佛脱了水般脆弱不堪，单是目光扫过就让其表面生出了细小的裂痕。"
     extend "\n更多裂痕。"
-    extend "\n直到周身的一切如同一副缺乏保养的老旧油画那样一片片剥落。"
+    extend "\n直到周身的一切如同一幅缺乏保养的老旧油画那样一片片剥落。"
     extend "\n即使如此，王霜依旧没有回来。"
     ## Extended大文本框结束
     ## 转场：黑屏
@@ -691,6 +712,7 @@ label route1_start:
     extend "\n所以还要保持呼吸么？"
     ## Extended文本框结束
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "保持呼吸。":
@@ -711,6 +733,7 @@ label route1_start:
             ## Extended大文本框结束
         "放弃。":
             $ madness += 1
+            $ madness_plus_taken += 1
             ## 呼吸音效停止
             ## Extended大文本框开始 - 大文本框分句
             large_narrator "主动放弃呼吸后，你反倒听见了某种远超于你存在的召唤。"

@@ -256,10 +256,12 @@ label route2_start:
     ## Extended大文本框结束
     "这味道——"
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "还蛮好吃":
             $ madness += 1
+            $ madness_plus_taken += 1
             pass
         "好奇怪":
             pass
@@ -987,6 +989,7 @@ label route2_start:
     wangshuang "对。我的愿望恰恰相反——我只能说到这儿了。"
     ahe "...所以我"
 
+    $ madness_choices_seen += 1
     menu:
         extend ""
         "为什么要“帮”你？":
@@ -1005,6 +1008,7 @@ label route2_start:
             ahe "我明白了。"
         "随便了，如果这你是想要的":
             $ madness += 1
+            $ madness_plus_taken += 1
             wangshuang "嗯？半吊子的态度可是办不到接下来的事情的哦。"
             ahe "你只管看着就是了。"
 

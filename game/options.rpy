@@ -6,6 +6,11 @@ define config.name = _("无休夏日综合症")
 define config.version = "0.1.2"
 define build.name = "EndlessSummerSyndrome"
 
+## Steam AppID（成就用）。开发模式下 Ren'Py 会据此自动写 steam_appid.txt；
+## 还需在启动器 Install Libraries → Steam 装好 Steam 库，成就在 Steamworks 后台注册。
+## 成就名字映射见 game/scripts/achievements.rpy。
+define config.steam_appid = 4714410
+
 ## 是否显示游戏名称在主菜单
 define gui.show_name = True
 
