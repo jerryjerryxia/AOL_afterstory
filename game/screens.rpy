@@ -173,6 +173,11 @@ init python:
     def add_click_pauses(what):
         if not what:
             return what
+        ## 段落级「不分句」开关（转换器在 Extended 大文本框「不分句」块前后置 True/False）：
+        ## 整段每行按 statement 边界一次点击展示，句中不插 {w}。用于破折号单句成行、
+        ## 逐句点击太繁琐的段落。
+        if getattr(renpy.store, "no_click_split", False):
+            return what
         STRONG = u"。！？!?…"          # 单个即断的句末标点
         def wants_pause(rest):
             rest = rest.lstrip()
@@ -218,6 +223,39 @@ init python:
         ## {w} 停顿是按 dtt 拆出的独立 saybehavior 交互，逐段等点击，瞬显也照样生效。
         def __call__(self, what, *args, **kwargs):
             return super(ClickPauseCharacter, self).__call__(add_click_pauses(what), *args, **kwargs)
+
+    ## 大文本框行数封顶。问询段的循环选项（"没有"→重新作答）会反复 extend 同一行，
+    ## 不设限的话堆积文字迟早溢出到屏幕外。机制：Ren'Py 的 extend 在拼接前会调用
+    ## 角色的 do_extend()，且拼接源是 store._last_say_what —— 在这里做行数预算：
+    ## 已堆内容 + 新块 预计超过 LARGE_BOX_MAX_LINES 视觉行时，清空累积，本次
+    ## extend 就"新开一箱"只显示新块。对所有 large_narrator 的 extend 生效
+    ## （含转换器静态生成的长块），其他文本框不受影响。
+    LARGE_BOX_MAX_LINES = 10       # 箱内可用高 640px ÷ 行高约 56px ≈ 11，留 1 行余量
+    LARGE_BOX_CHARS_PER_LINE = 38  # 可用宽 1360px ÷ 汉字约 36px，保守取整；半角按半字计
+
+    import re as _box_re
+    _BOX_TAG_RE = _box_re.compile(r'\{[^}]*\}')
+
+    def _box_visual_lines(text):
+        """估算一段文本在大文本框里占多少视觉行（含自动折行）。半字为计数单位。"""
+        if not text:
+            return 0
+        text = _BOX_TAG_RE.sub('', text)
+        total = 0
+        for seg in text.split('\n'):
+            halves = sum(1 if ord(c) < 0x2E80 else 2 for c in seg)
+            total += max(1, -(-halves // (LARGE_BOX_CHARS_PER_LINE * 2)))
+        return total
+
+    class CappedBoxCharacter(ClickPauseCharacter):
+        def do_extend(self):
+            super(CappedBoxCharacter, self).do_extend()
+            prev = store._last_say_what or ""
+            new = (store._last_raw_what or "").lstrip('\n')
+            if _box_visual_lines(prev) + _box_visual_lines(new) > LARGE_BOX_MAX_LINES:
+                store._last_say_what = ""
+                ## 去掉新块的前导换行，否则新箱第一行是空行
+                store._last_raw_what = new
 
 screen say(who, what):
     style_prefix "say"

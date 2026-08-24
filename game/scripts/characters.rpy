@@ -27,8 +27,9 @@ define ctc_large = Transform("ctc_dots_large", xoffset=-5)
 ## 最后一个 pause 用 ctc，中间的 {w} pause 用 ctc_pause——之前没设所以中间断句没光标。
 define narrator = ClickPauseCharacter(None, kind=adv, ctc=ctc, ctc_pause=ctc)
 
-## 大文本框旁白（用于长篇背景叙述）
-define large_narrator = ClickPauseCharacter(None, kind=adv, screen="large_say", ctc=ctc_large, ctc_pause=ctc_large)
+## 大文本框旁白（用于长篇背景叙述）—— CappedBoxCharacter：行数封顶，问询段循环
+## 选项反复 extend 时超限自动"新开一箱"（见 screens.rpy CappedBoxCharacter）。
+define large_narrator = CappedBoxCharacter(None, kind=adv, screen="large_say", ctc=ctc_large, ctc_pause=ctc_large)
 
 ## 居中文本框旁白（用于戏剧性的单行文字）—— 不挂 CTC（point 1）
 define centered_narrator = Character(None, kind=adv, screen="centered_say")
